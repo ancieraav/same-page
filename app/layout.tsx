@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SamePage — Are you actually aligned?",
-  description: "A clickable SamePage prototype that reveals whether two people really mean the same thing.",
+  title: "SamePage Dashboard",
+  description: "A simple SamePage dashboard for sharing a join code and bringing a group together.",
   other: {
     "codex-preview": "development",
   },
