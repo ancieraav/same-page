@@ -98,8 +98,8 @@ export default function Home() {
         <div className="dashboard-topline">
           <div>
             <span className="dashboard-eyebrow">Workspace / Dashboard</span>
-            <h1>Ready to join.</h1>
-            <p>Enter the code someone shared with you to join their page.</p>
+            <h1>Welcome back.</h1>
+            <p>Your workspace is waiting for an invite.</p>
           </div>
         </div>
 
@@ -111,9 +111,9 @@ export default function Home() {
             </div>
 
             <div className="join-panel-copy">
-              <span className="panel-kicker">Start here</span>
+              <span className="panel-kicker">Join a shared page</span>
               <h2>Enter your join code.</h2>
-              <p>Use the code from your host to enter the shared page. You can still look around before joining.</p>
+              <p>Paste the code from your host to continue.</p>
             </div>
 
             <div className="join-code-block">
