@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Bell, Check, ChevronDown, MoreHorizontal, Users } from "lucide-react";
+import { ArrowRight, Bell, Check, ChevronDown, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -101,7 +101,6 @@ export default function Home() {
             <h1>Ready to join.</h1>
             <p>Enter the code someone shared with you to join their page.</p>
           </div>
-          <span className="empty-state-badge"><i /> No active page</span>
         </div>
 
         <div className="dashboard-feature-grid">
@@ -140,35 +139,6 @@ export default function Home() {
               <span><i /> Waiting for a code</span>
               <span>No participants yet</span>
             </div>
-          </article>
-
-          <article className="profile-panel">
-            <div className="panel-topline">
-              <span className="panel-label">Profile</span>
-              <button className="card-icon-button" type="button" onClick={() => showNotice("Profile actions are a visual placeholder.")} aria-label="More profile actions">
-                <MoreHorizontal size={18} />
-              </button>
-            </div>
-
-            <div className="profile-intro">
-              <div className="profile-photo large" aria-label="Alex Morgan profile photo" role="img">
-                <span>AV</span>
-                <i />
-              </div>
-              <div>
-                <h2>Alex Morgan</h2>
-                <p>alex@example.com</p>
-              </div>
-            </div>
-
-            <div className="profile-status">
-              <span><i /> Profile ready</span>
-              <small>Your profile photo appears here.</small>
-            </div>
-
-            <button className="profile-link" type="button" onClick={() => { setProfileOpen(true); showNotice("Profile menu opened for the prototype."); }}>
-              View profile <ArrowRight size={16} />
-            </button>
           </article>
         </div>
 
