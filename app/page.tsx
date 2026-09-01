@@ -1,36 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ArrowRight,
-  Bell,
-  Check,
-  ChevronDown,
-  Copy,
-  LayoutDashboard,
-  MoreHorizontal,
-  Plus,
-  Search,
-  Users,
-} from "lucide-react";
-
-const JOIN_CODE = "8Q7 LM2";
-
-const recentPages = [
-  { title: "Weekend plans", detail: "4 people · updated 8 min ago", color: "lime" },
-  { title: "Q3 launch alignment", detail: "7 people · updated yesterday", color: "lavender" },
-  { title: "Studio offsite", detail: "12 people · updated Aug 28", color: "butter" },
-];
-
-const activity = [
-  { initials: "JM", name: "Jamie joined", detail: "Weekend plans", color: "blue" },
-  { initials: "RK", name: "Raka joined", detail: "Weekend plans", color: "coral" },
-  { initials: "AV", name: "You created", detail: "Q3 launch alignment", color: "green" },
-];
+import { ArrowRight, Bell, Check, ChevronDown, MoreHorizontal, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
-  const [activeNav, setActiveNav] = useState("Overview");
-  const [copied, setCopied] = useState(false);
+  const [joinCode, setJoinCode] = useState("");
   const [notice, setNotice] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -39,15 +15,13 @@ export default function Home() {
     window.setTimeout(() => setNotice(""), 2200);
   }
 
-  function copyJoinCode() {
-    setCopied(true);
-    showNotice("Join code copied for this demo.");
-    window.setTimeout(() => setCopied(false), 1800);
-  }
+  function previewJoin() {
+    if (!joinCode.trim()) {
+      showNotice("Enter a join code to preview the next step.");
+      return;
+    }
 
-  function selectNavigation(label: string) {
-    setActiveNav(label);
-    showNotice(`${label} selected — more views can be added here.`);
+    showNotice("Join flow is a visual placeholder — you are still not joined.");
   }
 
   return (
@@ -66,8 +40,8 @@ export default function Home() {
           <button
             className="dashboard-brand"
             type="button"
-            onClick={() => selectNavigation("Overview")}
-            aria-label="Go to SamePage overview"
+            onClick={() => showNotice("You are already on the dashboard.")}
+            aria-label="SamePage dashboard"
           >
             <span className="brand-mark" aria-hidden="true">
               <span />
@@ -76,29 +50,8 @@ export default function Home() {
             <span>SamePage</span>
           </button>
 
-          <nav className="dashboard-nav" aria-label="Primary navigation">
-            {[
-              { label: "Overview", icon: LayoutDashboard },
-              { label: "Pages", icon: Users },
-            ].map(({ label, icon: Icon }) => (
-              <button
-                key={label}
-                className={activeNav === label ? "nav-button active" : "nav-button"}
-                type="button"
-                onClick={() => selectNavigation(label)}
-              >
-                <Icon size={16} />
-                {label}
-              </button>
-            ))}
-          </nav>
-
           <div className="dashboard-header-actions">
-            <button className="header-code" type="button" onClick={copyJoinCode}>
-              <span>Join code</span>
-              <strong>{JOIN_CODE}</strong>
-              <Copy size={15} />
-            </button>
+            <span className="join-state-pill"><i /> Not joined</span>
             <button
               className="header-icon-button"
               type="button"
@@ -141,54 +94,51 @@ export default function Home() {
         </div>
       </header>
 
-      <section className="dashboard-main" id="overview">
+      <section className="dashboard-main">
         <div className="dashboard-topline">
           <div>
-            <span className="dashboard-eyebrow">Workspace / Overview</span>
-            <h1>Good morning, Alex.</h1>
-            <p>Everything you need to get your group on the same page.</p>
+            <span className="dashboard-eyebrow">Workspace / Dashboard</span>
+            <h1>Ready to join.</h1>
+            <p>Enter the code someone shared with you to join their page.</p>
           </div>
-          <button className="primary-action" type="button" onClick={() => showNotice("New page flow is ready for the next prototype step.")}>
-            <Plus size={17} />
-            New page
-          </button>
+          <span className="empty-state-badge"><i /> No active page</span>
         </div>
 
         <div className="dashboard-feature-grid">
           <article className="join-panel">
             <div className="panel-topline light">
-              <span className="panel-label">Live page</span>
-              <span className="live-status"><i /> Ready to join</span>
+              <span className="panel-label">Join a page</span>
+              <span className="live-status"><i /> Not joined</span>
             </div>
 
             <div className="join-panel-copy">
-              <span className="panel-kicker">Current page</span>
-              <h2>Weekend plans</h2>
-              <p>Share the code below with your group to bring everyone into the same conversation.</p>
+              <span className="panel-kicker">Start here</span>
+              <h2>Enter your join code.</h2>
+              <p>Use the code from your host to enter the shared page. You can still look around before joining.</p>
             </div>
 
             <div className="join-code-block">
-              <span>Join code</span>
-              <strong>{JOIN_CODE}</strong>
-              <button type="button" onClick={copyJoinCode}>
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? "Copied" : "Copy code"}
-              </button>
+              <label htmlFor="join-code">Join code</label>
+              <div className="join-input-row">
+                <Input
+                  id="join-code"
+                  className="join-input"
+                  value={joinCode}
+                  onChange={(event) => setJoinCode(event.target.value.toUpperCase())}
+                  placeholder="Enter code"
+                  autoComplete="off"
+                  aria-describedby="join-code-helper"
+                />
+                <Button className="join-button" type="button" onClick={previewJoin}>
+                  Join page <ArrowRight size={16} />
+                </Button>
+              </div>
+              <span className="join-helper" id="join-code-helper">Example code: 8Q7 LM2</span>
             </div>
 
             <div className="join-panel-footer">
-              <div className="participant-summary">
-                <div className="mini-avatars" aria-hidden="true">
-                  <span className="avatar-lavender">A</span>
-                  <span className="avatar-butter">J</span>
-                  <span className="avatar-coral">R</span>
-                  <span className="avatar-lime">+1</span>
-                </div>
-                <span>4 people are ready</span>
-              </div>
-              <button className="light-action" type="button" onClick={() => showNotice("Current page preview selected.")}>
-                Open page <ArrowRight size={16} />
-              </button>
+              <span><i /> Waiting for a code</span>
+              <span>No participants yet</span>
             </div>
           </article>
 
@@ -211,9 +161,9 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="profile-stats">
-              <div><strong>12</strong><span>pages joined</span></div>
-              <div><strong>04</strong><span>active today</span></div>
+            <div className="profile-status">
+              <span><i /> Profile ready</span>
+              <small>Your profile photo appears here.</small>
             </div>
 
             <button className="profile-link" type="button" onClick={() => { setProfileOpen(true); showNotice("Profile menu opened for the prototype."); }}>
@@ -222,50 +172,17 @@ export default function Home() {
           </article>
         </div>
 
-        <div className="dashboard-section-grid">
-          <section className="recent-panel" id="pages">
-            <div className="section-heading">
-              <div>
-                <span className="panel-label">Your pages</span>
-                <h2>Recent activity</h2>
-              </div>
-              <button className="text-action" type="button" onClick={() => selectNavigation("Pages")}>
-                View all <ArrowRight size={15} />
-              </button>
-            </div>
-
-            <div className="recent-list">
-              {recentPages.map((page) => (
-                <button className="recent-row" type="button" key={page.title} onClick={() => showNotice(`${page.title} selected for the prototype.`)}>
-                  <span className={`page-icon ${page.color}`}><Users size={17} /></span>
-                  <span className="recent-copy"><strong>{page.title}</strong><small>{page.detail}</small></span>
-                  <ArrowRight className="row-arrow" size={17} />
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <aside className="activity-panel">
-            <div className="section-heading compact">
-              <div>
-                <span className="panel-label">Live feed</span>
-                <h2>Who is here?</h2>
-              </div>
-              <button className="card-icon-button" type="button" onClick={() => showNotice("Activity filters are a visual placeholder.")} aria-label="Filter activity">
-                <Search size={17} />
-              </button>
-            </div>
-
-            <div className="activity-list">
-              {activity.map((item) => (
-                <button className="activity-row" type="button" key={`${item.name}-${item.detail}`} onClick={() => showNotice(`${item.name} selected for the prototype.`)}>
-                  <span className={`activity-avatar ${item.color}`}>{item.initials}</span>
-                  <span><strong>{item.name}</strong><small>{item.detail}</small></span>
-                </button>
-              ))}
-            </div>
-          </aside>
-        </div>
+        <section className="empty-panel">
+          <div className="empty-icon"><Users size={21} /></div>
+          <div className="empty-copy">
+            <span className="panel-label">No active page</span>
+            <h2>Your pages will show up here after you join.</h2>
+            <p>For now, this is your clean waiting state.</p>
+          </div>
+          <button className="text-action" type="button" onClick={() => showNotice("The join flow is the only active step in this prototype.")}>
+            How it works <ArrowRight size={15} />
+          </button>
+        </section>
       </section>
 
       <footer className="dashboard-footer">
