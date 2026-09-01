@@ -76,6 +76,7 @@ button { cursor: pointer; }
 .status-dot { width: 7px; height: 7px; border-radius: 100%; background: #b6bdb0; }
 .tool-pill[data-status="ready"] .status-dot { background: #58ad47; box-shadow: 0 0 0 4px rgba(88,173,71,.13); }
 .tool-pill[data-status="fallback"] .status-dot { background: var(--butter); }
+.tool-pill[data-status="prototype"] .status-dot { background: #8dac58; box-shadow: 0 0 0 4px rgba(141,172,88,.15); }
 .header-link { gap: 6px; color: #62685d; font-size: .78rem; font-weight: 700; text-decoration: none; }
 .header-link:hover { color: var(--ink); }
 

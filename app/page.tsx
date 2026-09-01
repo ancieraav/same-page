@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -47,27 +47,6 @@ type ScoreResult = {
     match: boolean;
   }>;
 };
-
-type WebMCPTool = {
-  name: string;
-  description: string;
-  inputSchema: Record<string, unknown>;
-  annotations?: Record<string, unknown>;
-  execute: (input: unknown, context?: { signal?: AbortSignal }) => unknown;
-};
-
-type ModelContext = {
-  registerTool: (
-    tool: WebMCPTool,
-    options?: { signal?: AbortSignal },
-  ) => Promise<void>;
-};
-
-declare global {
-  interface Document {
-    modelContext?: ModelContext;
-  }
-}
 
 const QUESTIONS: Question[] = [
   {
@@ -134,41 +113,50 @@ const QUESTIONS: Question[] = [
 
 const INITIAL_ANSWERS: Answers = { a: {}, b: {} };
 
-function getOptionLabel(question: Question, answerId?: string) {
-  return question.options.find((option) => option.id === answerId)?.label ?? "No answer";
-}
-
-function compareAnswers(
-  answers: Answers,
-  firstName: string,
-  secondName: string,
-): ScoreResult {
-  const breakdown = QUESTIONS.map((question) => {
-    const firstId = answers.a[question.id];
-    const secondId = answers.b[question.id];
-    return {
-      questionId: question.id,
-      prompt: question.prompt,
-      first: `${firstName}: ${getOptionLabel(question, firstId)}`,
-      second: `${secondName}: ${getOptionLabel(question, secondId)}`,
-      match: Boolean(firstId && secondId && firstId === secondId),
-    };
-  });
-
-  const matches = breakdown.filter((item) => item.match).length;
-  const score = Math.round((matches / QUESTIONS.length) * 100);
-  const verdict =
-    score >= 80
-      ? "Same brain. Same page. Slightly suspicious."
-      : score >= 60
-        ? "Mostly aligned. One tab is still loading."
-        : score >= 40
-          ? "This is not even same💀"
-          : "Different universes. Same group chat.";
-  const verdictTone = score >= 80 ? "great" : score >= 60 ? "okay" : "chaos";
-
-  return { score, matches, total: QUESTIONS.length, verdict, verdictTone, breakdown };
-}
+const PROTOTYPE_RESULT: ScoreResult = {
+  score: 80,
+  matches: 4,
+  total: 5,
+  verdict: "Same brain. Same page. Slightly suspicious.",
+  verdictTone: "great",
+  breakdown: [
+    {
+      questionId: "energy",
+      prompt: QUESTIONS[0].prompt,
+      first: "A camera and a suspicious amount of snacks",
+      second: "A camera and a suspicious amount of snacks",
+      match: true,
+    },
+    {
+      questionId: "timing",
+      prompt: QUESTIONS[1].prompt,
+      first: "7:00 sharp. I am already outside",
+      second: "7:00 sharp. I am already outside",
+      match: true,
+    },
+    {
+      questionId: "budget",
+      prompt: QUESTIONS[2].prompt,
+      first: "An experience we will talk about later",
+      second: "One incredible meal",
+      match: false,
+    },
+    {
+      questionId: "change",
+      prompt: QUESTIONS[3].prompt,
+      first: "Improvise. The new plan might be better",
+      second: "Improvise. The new plan might be better",
+      match: true,
+    },
+    {
+      questionId: "finish",
+      prompt: QUESTIONS[4].prompt,
+      first: "Everyone laughed at least once",
+      second: "Everyone laughed at least once",
+      match: true,
+    },
+  ],
+};
 
 function scoreColor(score: number) {
   if (score >= 80) return "#b5f36b";
@@ -184,185 +172,23 @@ export default function Home() {
   const [answers, setAnswers] = useState<Answers>(INITIAL_ANSWERS);
   const [activeParticipant, setActiveParticipant] = useState<Participant>("a");
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [result, setResult] = useState<ScoreResult | null>(null);
-  const [notice, setNotice] = useState("");
-  const [webmcpStatus, setWebmcpStatus] = useState<"checking" | "ready" | "fallback">(
-    "checking",
-  );
   const [copied, setCopied] = useState(false);
-
-  const answersRef = useRef(answers);
-  const namesRef = useRef({ firstName, secondName });
-  const topicRef = useRef(topic);
-  const stageRef = useRef(stage);
-
-  useEffect(() => {
-    answersRef.current = answers;
-  }, [answers]);
-
-  useEffect(() => {
-    namesRef.current = { firstName, secondName };
-  }, [firstName, secondName]);
-
-  useEffect(() => {
-    topicRef.current = topic;
-  }, [topic]);
-
-  useEffect(() => {
-    stageRef.current = stage;
-  }, [stage]);
-
-  useEffect(() => {
-    const modelContext = document.modelContext;
-    if (!modelContext?.registerTool) {
-      setWebmcpStatus("fallback");
-      return;
-    }
-
-    const controller = new AbortController();
-    const getSnapshot = () => ({
-      topic: topicRef.current,
-      participants: namesRef.current,
-      stage: stageRef.current,
-      questions: QUESTIONS.map((question) => ({
-        id: question.id,
-        prompt: question.prompt,
-        options: question.options,
-        firstAnswer: answersRef.current.a[question.id] ?? null,
-        secondAnswer: answersRef.current.b[question.id] ?? null,
-      })),
-    });
-
-    const tools: WebMCPTool[] = [
-      {
-        name: "get_samepage_snapshot",
-        description:
-          "Read the current SamePage quiz, participant names, and both participants' submitted answers.",
-        inputSchema: { type: "object", properties: {} },
-        annotations: { readOnlyHint: true },
-        execute: () => getSnapshot(),
-      },
-      {
-        name: "submit_samepage_answer",
-        description:
-          "Submit one participant's answer to a SamePage quiz question. Use participant 'a' or 'b', a question id, and an option id.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            participant: { type: "string", enum: ["a", "b"] },
-            questionId: { type: "string", enum: QUESTIONS.map((question) => question.id) },
-            optionId: { type: "string" },
-          },
-          required: ["participant", "questionId", "optionId"],
-        },
-        annotations: { readOnlyHint: false },
-        execute: (rawInput) => {
-          const input = (rawInput ?? {}) as {
-            participant?: Participant;
-            questionId?: string;
-            optionId?: string;
-          };
-          const participant = input.participant;
-          const question = QUESTIONS.find((item) => item.id === input.questionId);
-          const option = question?.options.find((item) => item.id === input.optionId);
-          if (!participant || !question || !option) {
-            return { ok: false, error: "Unknown participant, question, or option." };
-          }
-
-          const nextAnswers = {
-            ...answersRef.current,
-            [participant]: {
-              ...answersRef.current[participant],
-              [question.id]: option.id,
-            },
-          } as Answers;
-          answersRef.current = nextAnswers;
-          setAnswers(nextAnswers);
-          setStage("quiz");
-          return {
-            ok: true,
-            participant,
-            questionId: question.id,
-            answer: option.label,
-          };
-        },
-      },
-      {
-        name: "compare_samepage_answers",
-        description:
-          "Compare the two completed SamePage answer sets, calculate their percentage match, and reveal the playful verdict.",
-        inputSchema: {
-          type: "object",
-          properties: {
-            firstAnswers: { type: "object", description: "Map question ids to option ids for participant A." },
-            secondAnswers: { type: "object", description: "Map question ids to option ids for participant B." },
-          },
-          required: ["firstAnswers", "secondAnswers"],
-        },
-        annotations: { readOnlyHint: false, untrustedContentHint: true },
-        execute: (rawInput) => {
-          const input = (rawInput ?? {}) as {
-            firstAnswers?: Record<string, string>;
-            secondAnswers?: Record<string, string>;
-          };
-          const nextAnswers: Answers = {
-            a: input.firstAnswers ?? answersRef.current.a,
-            b: input.secondAnswers ?? answersRef.current.b,
-          };
-          answersRef.current = nextAnswers;
-          setAnswers(nextAnswers);
-          const nextResult = compareAnswers(
-            nextAnswers,
-            namesRef.current.firstName,
-            namesRef.current.secondName,
-          );
-          setResult(nextResult);
-          setStage("result");
-          return {
-            topic: topicRef.current,
-            score: nextResult.score,
-            matches: nextResult.matches,
-            total: nextResult.total,
-            verdict: nextResult.verdict,
-            breakdown: nextResult.breakdown,
-          };
-        },
-      },
-    ];
-
-    Promise.all(
-      tools.map((tool) => modelContext.registerTool(tool, { signal: controller.signal })),
-    )
-      .then(() => setWebmcpStatus("ready"))
-      .catch(() => setWebmcpStatus("fallback"));
-
-    return () => controller.abort();
-  }, []);
 
   const currentQuestion = QUESTIONS[questionIndex];
   const currentAnswers = answers[activeParticipant];
-  const currentAnswered = Boolean(currentAnswers[currentQuestion?.id]);
-  const bothAnswered = Boolean(
-    answers.a[currentQuestion?.id] && answers.b[currentQuestion?.id],
-  );
   const totalAnswered = Object.values(answers).reduce(
     (total, participantAnswers) => total + Object.keys(participantAnswers).length,
     0,
   );
   const progress = ((questionIndex + 1) / QUESTIONS.length) * 100;
-
-  const scoreLabel = useMemo(() => {
-    if (!result) return "—";
-    return `${result.score}%`;
-  }, [result]);
+  const result = PROTOTYPE_RESULT;
+  const scoreLabel = `${result.score}%`;
 
   function startQuiz() {
     setAnswers({ a: {}, b: {} });
-    answersRef.current = { a: {}, b: {} };
     setQuestionIndex(0);
     setActiveParticipant("a");
-    setResult(null);
-    setNotice("");
+    setCopied(false);
     setStage("quiz");
   }
 
@@ -375,26 +201,17 @@ export default function Home() {
       },
     } as Answers;
     setAnswers(nextAnswers);
-    answersRef.current = nextAnswers;
-    setNotice("");
   }
 
   function continueQuiz() {
-    if (!currentAnswered) {
-      setNotice(`${activeParticipant === "a" ? firstName : secondName} needs an answer first.`);
-      return;
-    }
-
-    if (!bothAnswered) {
+    if (activeParticipant === "a") {
       setActiveParticipant(activeParticipant === "a" ? "b" : "a");
-      setNotice("");
       return;
     }
 
     if (questionIndex < QUESTIONS.length - 1) {
       setQuestionIndex((index) => index + 1);
       setActiveParticipant("a");
-      setNotice("");
       return;
     }
 
@@ -402,27 +219,17 @@ export default function Home() {
   }
 
   function revealResult() {
-    const nextResult = compareAnswers(answersRef.current, firstName, secondName);
-    setResult(nextResult);
     setStage("result");
   }
 
   function resetToSetup() {
     setStage("setup");
-    setResult(null);
-    setNotice("");
+    setCopied(false);
   }
 
-  async function copyResult() {
-    if (!result) return;
-    const text = `${firstName} and ${secondName} are ${result.score}% on the same page. ${result.verdict}`;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
+  function copyResult() {
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1800);
   }
 
   return (
@@ -437,9 +244,9 @@ export default function Home() {
           <span>SamePage</span>
         </button>
         <div className="header-actions">
-          <div className="tool-pill" data-status={webmcpStatus}>
+          <div className="tool-pill" data-status="prototype">
             <span className="status-dot" aria-hidden="true" />
-            <span>{webmcpStatus === "ready" ? "WebMCP live" : "WebMCP preview"}</span>
+            <span>Prototype mode</span>
           </div>
           <a className="header-link" href="#how-it-works">
             How it works <ArrowRight size={15} />
@@ -498,14 +305,14 @@ export default function Home() {
             <button className="primary-button full" onClick={startQuiz}>
               Start the quiz <ArrowRight size={18} />
             </button>
-            <div className="card-footnote"><Zap size={14} /> 5 questions · about 2 minutes · no account needed</div>
+            <div className="card-footnote"><Zap size={14} /> 5 questions · click-through demo · no account needed</div>
           </div>
 
           <div className="feature-strip" id="how-it-works">
             <div className="feature-number">01</div>
             <div><strong>Answer apart.</strong><span>Each person gets their own interpretation.</span></div>
             <div className="feature-number">02</div>
-            <div><strong>Compare in public.</strong><span>WebMCP turns the answers into a clear verdict.</span></div>
+            <div><strong>Compare in public.</strong><span>The prototype turns the flow into a clear verdict.</span></div>
             <div className="feature-number">03</div>
             <div><strong>Fix the gaps.</strong><span>Now you know exactly what to talk about.</span></div>
           </div>
@@ -553,20 +360,19 @@ export default function Home() {
               <div className="quiz-footer">
                 <span className="privacy-note"><Clipboard size={15} /> Answers stay in this page</span>
                 <button className="primary-button" onClick={continueQuiz}>
-                  {!currentAnswered ? "Choose an answer" : !bothAnswered ? "Pass the phone" : questionIndex === QUESTIONS.length - 1 ? "Reveal our reality" : "Next question"}
+                  {activeParticipant === "a" ? "Pass the phone" : questionIndex === QUESTIONS.length - 1 ? "Reveal prototype" : "Next question"}
                   <ArrowRight size={18} />
                 </button>
               </div>
-              {notice && <p className="notice" role="status">{notice}</p>}
             </div>
 
             <aside className="quiz-aside">
               <div className="aside-card tool-card">
                 <div className="aside-icon"><Zap size={18} /></div>
-                <div className="aside-label">Agent-ready</div>
-                <h3>WebMCP is watching the state.</h3>
-                <p>The page exposes structured tools so an agent can read answers, submit them, and run the comparison without guessing at buttons.</p>
-                <div className="tool-list"><span><Check size={13} /> get snapshot</span><span><Check size={13} /> submit answer</span><span><Check size={13} /> compare score</span></div>
+                <div className="aside-label">Prototype mode</div>
+                <h3>Click through the story.</h3>
+                <p>Every screen is prefilled for a presentation. Buttons move the demo forward without a live data layer.</p>
+                <div className="tool-list"><span><Check size={13} /> setup screen</span><span><Check size={13} /> quiz screens</span><span><Check size={13} /> result preview</span></div>
               </div>
               <div className="aside-card handoff-card">
                 <div className="aside-label">Tiny ritual</div>
@@ -579,7 +385,7 @@ export default function Home() {
         </section>
       )}
 
-      {stage === "result" && result && (
+      {stage === "result" && (
         <section className="result-page mx-auto w-full max-w-[1180px] px-5 pb-20 pt-8 sm:px-8 lg:px-10 lg:pt-12">
           <div className="result-heading">
             <button className="back-button" onClick={resetToSetup}><ArrowLeft size={16} /> New page</button>
@@ -590,7 +396,7 @@ export default function Home() {
             <div>
               <div className="eyebrow"><Sparkles size={15} /> The results are in</div>
               <h1>How much are you<br /><em>on the same page?</em></h1>
-              <p>SamePage compared all five answers. No vibes were used in the calculation.</p>
+              <p>This is a fixed readout for the clickable prototype. No live calculation is connected.</p>
             </div>
             <div className="score-wrap" style={{ "--score-color": scoreColor(result.score), "--score-angle": `${result.score * 3.6}deg` } as React.CSSProperties}>
               <div className="score-ring"><div className="score-inner"><strong>{scoreLabel}</strong><span>match</span></div></div>
@@ -600,7 +406,7 @@ export default function Home() {
           <div className={`verdict-card ${result.verdictTone}`}>
             <div className="verdict-emoji">{result.verdictTone === "great" ? "🤝" : result.verdictTone === "okay" ? "🫡" : "💀"}</div>
             <div><span className="mini-label">SamePage verdict</span><h2>{result.verdict}</h2><p>{result.matches} out of {result.total} answers landed on the same option.</p></div>
-            <button className="icon-button light" onClick={copyResult} aria-label="Copy result"><Copy size={17} /> {copied ? "Copied" : "Copy"}</button>
+            <button className="icon-button light" onClick={copyResult} aria-label="Copy result preview"><Copy size={17} /> {copied ? "Preview copied" : "Copy"}</button>
           </div>
 
           <div className="breakdown-heading"><div><span className="mini-label">The evidence</span><h2>Where did you drift?</h2></div><span className="match-count"><CheckCircle2 size={16} /> {result.matches} aligned</span></div>
@@ -609,15 +415,15 @@ export default function Home() {
               <article key={item.questionId} className={item.match ? "breakdown-row matched" : "breakdown-row"}>
                 <div className="breakdown-index">{String(index + 1).padStart(2, "0")}</div>
                 <div className="breakdown-question"><span>{item.prompt}</span><strong>{item.match ? "Same answer" : "Different answer"}</strong></div>
-                <div className="breakdown-answer"><span className="person-dot first" /><p>{item.first.replace(`${firstName}: `, "")}</p></div>
-                <div className="breakdown-answer"><span className="person-dot second" /><p>{item.second.replace(`${secondName}: `, "")}</p></div>
+                <div className="breakdown-answer"><span className="person-dot first" /><p>{item.first}</p></div>
+                <div className="breakdown-answer"><span className="person-dot second" /><p>{item.second}</p></div>
                 <div className="match-mark">{item.match ? <Check size={16} /> : <span>×</span>}</div>
               </article>
             ))}
           </div>
 
           <div className="result-actions"><button className="primary-button" onClick={startQuiz}><RotateCcw size={17} /> Run it again</button><button className="secondary-button" onClick={resetToSetup}><Users size={17} /> Start a new page</button></div>
-          <p className="result-footnote"><Link2 size={14} /> Built for conversations that deserve a clearer answer than “I thought you meant…”</p>
+          <p className="result-footnote"><Link2 size={14} /> Static prototype · built for conversations that deserve a clearer answer</p>
         </section>
       )}
     </main>
