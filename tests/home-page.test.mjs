@@ -1,0 +1,47 @@
+import assert from "node:assert/strict";
+import test, { after } from "node:test";
+
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { createServer } from "vite";
+
+const vite = await createServer({
+  appType: "custom",
+  configFile: false,
+  root: new URL("..", import.meta.url).pathname,
+  resolve: {
+    alias: {
+      "@": new URL("..", import.meta.url).pathname,
+    },
+  },
+  server: {
+    middlewareMode: true,
+  },
+});
+
+after(async () => {
+  await vite.close();
+});
+
+test("renders the SamePage join room prototype", async () => {
+  const { default: Home } = await vite.ssrLoadModule("/app/page.tsx");
+  const html = renderToStaticMarkup(React.createElement(Home));
+
+  assert.match(html, /samepage-logo\.svg/);
+  assert.match(html, /gavel-illustration\.svg/);
+  assert.match(html, /cloud-illustration\.svg/);
+  assert.match(html, /add-icon\.svg/);
+  assert.match(html, /arrow-right-icon\.svg/);
+  assert.ok(html.includes(">Same Page</span>"));
+  assert.ok(html.includes(">Drafts</button>"));
+  assert.ok(html.includes(">History</button>"));
+  assert.match(html, /Alex Morgan profile/);
+  assert.ok(html.includes(">Join or create room!</h1>"));
+  assert.match(html, /role="group" aria-label="Room code"/);
+  assert.equal((html.match(/id="room-code-\d"/g) ?? []).length, 7);
+  assert.match(html, /id="room-code-1"/);
+  assert.match(html, /id="room-code-7"/);
+  assert.match(html, />Create/);
+  assert.match(html, />Join/);
+  assert.match(html, /aria-disabled="true"/);
+});
