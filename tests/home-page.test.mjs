@@ -28,14 +28,13 @@ test("renders the SamePage join room prototype", async () => {
   const html = renderToStaticMarkup(React.createElement(Home));
 
   assert.match(html, /samepage-logo\.svg/);
-  assert.match(html, /gavel-illustration\.svg/);
-  assert.match(html, /cloud-illustration\.svg/);
+  assert.match(html, /samepage-decorations\.svg/);
   assert.match(html, /add-icon\.svg/);
   assert.match(html, /arrow-right-icon\.svg/);
   assert.ok(html.includes(">Same Page</span>"));
   assert.ok(html.includes(">Drafts</button>"));
   assert.ok(html.includes(">History</button>"));
-  assert.match(html, /Alex Morgan profile/);
+  assert.match(html, /User profile/);
   assert.ok(html.includes(">Join or create room!</h1>"));
   assert.match(html, /role="group" aria-label="Room code"/);
   assert.equal((html.match(/id="room-code-\d"/g) ?? []).length, 7);

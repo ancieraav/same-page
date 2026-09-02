@@ -41,15 +41,10 @@ export default function Home() {
 
   return (
     <div className="site-shell">
+      <div className="design-stage">
       <img
-        className="gavel-illustration"
-        src="/gavel-illustration.svg"
-        alt=""
-        aria-hidden="true"
-      />
-      <img
-        className="cloud-illustration"
-        src="/cloud-illustration.svg"
+        className="decorative-group"
+        src="/samepage-decorations.svg"
         alt=""
         aria-hidden="true"
       />
@@ -75,15 +70,15 @@ export default function Home() {
             <button className="nav-link" type="button" aria-disabled="true">
               History
             </button>
-            <Avatar className="profile-avatar" aria-label="Alex Morgan profile">
+            <Avatar className="profile-avatar" aria-label="User profile">
               <AvatarFallback aria-hidden="true" />
             </Avatar>
           </nav>
         </div>
-      </header>
+        </header>
 
-      <main className="site-main">
-        <section className="join-area" aria-labelledby="join-title">
+        <main className="site-main">
+          <section className="join-area" aria-labelledby="join-title">
           <h1 id="join-title">Join or create room!</h1>
 
           <div className="code-inputs" role="group" aria-label="Room code">
@@ -126,6 +121,7 @@ export default function Home() {
           </div>
         </section>
       </main>
+      </div>
     </div>
   );
 }
