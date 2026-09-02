@@ -514,7 +514,13 @@ export function CreateRoomForm() {
               <Button className="form-action-button" variant="outline" asChild>
                 <Link href="/">Cancel</Link>
               </Button>
-              <Button className="form-action-button" type="button">
+              <Button
+                className="form-action-button"
+                type="button"
+                onClick={() => {
+                  window.location.href = "/waiting-room";
+                }}
+              >
                 Create
               </Button>
             </div>
