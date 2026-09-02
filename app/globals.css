@@ -21,13 +21,12 @@
 :root {
   --ink: #191918;
   --muted-ink: #777772;
-  --canvas: #f7f7f5;
+  --canvas: #ffffff;
   --surface: #ffffff;
-  --line: #e7e7e2;
-  --line-strong: #d8d8d1;
-  --soft: #f1f1ee;
+  --line: #ecece8;
+  --line-strong: #d6d6cf;
+  --soft: #f5f5f2;
   --green: #27845a;
-  --shadow-card: 0 24px 60px rgba(28, 28, 22, 0.07);
 }
 
 @theme inline {
@@ -88,14 +87,13 @@ input:focus-visible {
 }
 
 .site-header {
-  border-bottom: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--surface);
 }
 
 .site-header-inner {
   display: flex;
   align-items: center;
-  width: min(1180px, calc(100% - 56px));
+  width: min(100% - 40px, 1260px);
   min-height: 72px;
   margin: 0 auto;
 }
@@ -109,19 +107,19 @@ input:focus-visible {
 
 .brand-logo-frame {
   display: grid;
-  width: 29px;
-  height: 29px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--line-strong);
-  border-radius: 9px;
+  border-radius: 8px;
   background: var(--surface);
 }
 
 .brand-logo {
   display: block;
-  width: 21px;
-  height: 21px;
+  width: 23px;
+  height: 23px;
   object-fit: contain;
 }
 
@@ -134,8 +132,8 @@ input:focus-visible {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 2px;
-  margin-left: 64px;
+  gap: 4px;
+  margin-left: auto;
 }
 
 .nav-link {
@@ -160,7 +158,7 @@ input:focus-visible {
 .profile-cluster {
   display: flex;
   align-items: center;
-  margin-left: auto;
+  margin-left: 18px;
 }
 
 .profile-avatar {
@@ -182,67 +180,57 @@ input:focus-visible {
 
 .site-main {
   display: grid;
-  min-height: calc(100svh - 73px);
+  min-height: calc(100svh - 72px);
   place-items: center;
-  padding: 48px 24px 64px;
+  padding: 40px 24px 72px;
 }
 
-.join-card {
-  width: min(100%, 456px);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 40px;
-  background: var(--surface);
-  box-shadow: var(--shadow-card);
+.join-area {
+  width: min(100%, 360px);
+  margin-top: -28px;
 }
 
-.join-card h1 {
+.join-area h1 {
   margin: 0;
   color: var(--ink);
-  font-size: clamp(1.65rem, 3vw, 2rem);
+  font-size: clamp(1.45rem, 3vw, 1.75rem);
   font-weight: 750;
   letter-spacing: -0.06em;
-  line-height: 1.05;
+  line-height: 1.08;
   text-align: center;
 }
 
 .join-description {
-  max-width: 315px;
-  margin: 13px auto 0;
+  max-width: 270px;
+  margin: 12px auto 0;
   color: var(--muted-ink);
-  font-size: 0.84rem;
-  line-height: 1.55;
+  font-size: 0.78rem;
+  line-height: 1.5;
   text-align: center;
 }
 
 .join-form {
-  margin-top: 29px;
+  margin-top: 34px;
 }
 
 .join-label {
   display: block;
   color: var(--ink);
-  font-size: 0.73rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.join-input-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  margin-top: 9px;
 }
 
 .join-input {
   height: 48px !important;
   min-width: 0;
+  margin-top: 9px;
   border: 1px solid var(--line-strong) !important;
-  border-radius: 10px !important;
+  border-radius: 9px !important;
   background: var(--surface) !important;
   color: var(--ink) !important;
-  font-size: 0.86rem !important;
-  letter-spacing: 0.05em;
+  font-size: 0.84rem !important;
+  text-align: center;
+  letter-spacing: 0.08em;
 }
 
 .join-input::placeholder {
@@ -255,11 +243,20 @@ input:focus-visible {
   box-shadow: 0 0 0 3px rgba(25, 25, 24, 0.1) !important;
 }
 
+.room-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+
 .join-button,
 .create-button {
-  height: 48px !important;
-  border-radius: 10px !important;
-  font-size: 0.79rem !important;
+  width: 100%;
+  height: 46px !important;
+  gap: 7px;
+  border-radius: 9px !important;
+  font-size: 0.75rem !important;
   font-weight: 750 !important;
   transition:
     background-color 160ms ease,
@@ -269,9 +266,8 @@ input:focus-visible {
 }
 
 .join-button {
-  gap: 8px;
   border: 1px solid var(--ink) !important;
-  padding: 0 17px !important;
+  padding: 0 12px !important;
   background: var(--ink) !important;
   color: #ffffff !important;
 }
@@ -282,40 +278,13 @@ input:focus-visible {
   transform: translateY(-1px);
 }
 
-.join-button svg {
-  width: 15px;
-  height: 15px;
-}
-
-.join-code-hint {
-  margin: 9px 0 0;
-  color: #a1a19a;
-  font-size: 0.7rem;
-  line-height: 1.4;
-}
-
-.action-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 25px 0 19px;
-  color: #aaa9a2;
-  font-size: 0.7rem;
-  font-weight: 650;
-  text-transform: lowercase;
-}
-
-.action-divider::before,
-.action-divider::after {
-  height: 1px;
-  flex: 1;
-  background: var(--line);
-  content: "";
+.join-button svg,
+.create-button svg {
+  width: 14px;
+  height: 14px;
 }
 
 .create-button {
-  width: 100%;
-  gap: 8px;
   border-color: var(--line-strong) !important;
   background: var(--surface) !important;
   color: var(--ink) !important;
@@ -327,47 +296,55 @@ input:focus-visible {
   transform: translateY(-1px);
 }
 
-.create-button svg {
-  width: 15px;
-  height: 15px;
-}
-
 @media (max-width: 640px) {
   .site-header-inner {
-    width: min(100% - 32px, 1180px);
+    width: min(100% - 32px, 1260px);
     min-height: 64px;
-    flex-wrap: wrap;
-    gap: 0;
   }
 
   .main-nav {
-    order: 3;
-    width: 100%;
-    margin: 0;
-    padding: 4px 0 12px;
+    gap: 0;
   }
 
   .nav-link {
-    flex: 1;
-    text-align: center;
+    padding: 8px 8px;
+  }
+
+  .profile-cluster {
+    margin-left: 10px;
   }
 
   .site-main {
-    min-height: calc(100svh - 113px);
-    padding: 32px 16px 44px;
+    min-height: calc(100svh - 64px);
+    padding: 32px 16px 48px;
   }
 
-  .join-card {
-    border-radius: 17px;
-    padding: 30px 20px;
+  .join-area {
+    margin-top: -12px;
   }
 
-  .join-input-row {
-    grid-template-columns: 1fr;
+  .room-actions {
+    gap: 9px;
+  }
+}
+
+@media (max-width: 390px) {
+  .brand-name {
+    font-size: 0.9rem;
   }
 
-  .join-button {
-    width: 100%;
+  .main-nav {
+    margin-left: 10px;
+  }
+
+  .nav-link {
+    padding-inline: 6px;
+    font-size: 0.72rem;
+  }
+
+  .profile-avatar {
+    width: 33px;
+    height: 33px;
   }
 }
 

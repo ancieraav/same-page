@@ -48,29 +48,29 @@ export default function Home() {
       </header>
 
       <main className="site-main">
-        <section className="join-card" aria-labelledby="join-title">
-          <h1 id="join-title">Join your team</h1>
+        <section className="join-area" aria-labelledby="join-title">
+          <h1 id="join-title">Join or create a room</h1>
           <p className="join-description">
-            Enter the room code shared with you to continue.
+            Enter a room code to join your team.
           </p>
 
           <div className="join-form">
             <label className="join-label" htmlFor="join-code">
               Room code
             </label>
-            <div className="join-input-row">
-              <Input
-                id="join-code"
-                className="join-input"
-                value={joinCode}
-                onChange={(event) =>
-                  setJoinCode(event.target.value.toUpperCase())
-                }
-                placeholder="Paste room code"
-                autoComplete="off"
-                spellCheck={false}
-                aria-describedby="join-code-hint"
-              />
+            <Input
+              id="join-code"
+              className="join-input"
+              value={joinCode}
+              onChange={(event) =>
+                setJoinCode(event.target.value.toUpperCase())
+              }
+              placeholder="Enter room code"
+              autoComplete="off"
+              spellCheck={false}
+            />
+
+            <div className="room-actions">
               <Button
                 className="join-button"
                 type="button"
@@ -79,25 +79,17 @@ export default function Home() {
                 Join room
                 <ArrowRight aria-hidden="true" />
               </Button>
+              <Button
+                className="create-button"
+                type="button"
+                variant="outline"
+                aria-disabled="true"
+              >
+                <Plus aria-hidden="true" />
+                Create room
+              </Button>
             </div>
-            <p className="join-code-hint" id="join-code-hint">
-              Use the code shared by your team.
-            </p>
           </div>
-
-          <div className="action-divider" aria-hidden="true">
-            <span>or</span>
-          </div>
-
-          <Button
-            className="create-button"
-            type="button"
-            variant="outline"
-            aria-disabled="true"
-          >
-            <Plus aria-hidden="true" />
-            Create a room
-          </Button>
         </section>
       </main>
     </div>

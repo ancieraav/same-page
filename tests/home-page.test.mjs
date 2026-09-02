@@ -32,11 +32,11 @@ test("renders the SamePage join room prototype", async () => {
   assert.ok(html.includes(">Drafts</button>"));
   assert.ok(html.includes(">History</button>"));
   assert.match(html, /Alex Morgan profile/);
-  assert.ok(html.includes(">Join your team</h1>"));
-  assert.match(html, /Enter the room code shared with you to continue./);
+  assert.ok(html.includes(">Join or create a room</h1>"));
+  assert.match(html, /Enter a room code to join your team./);
   assert.match(html, /id="join-code"/);
-  assert.match(html, /placeholder="Paste room code"/);
+  assert.match(html, /placeholder="Enter room code"/);
   assert.match(html, />Join room/);
-  assert.match(html, />Create a room/);
+  assert.match(html, />Create room/);
   assert.match(html, /aria-disabled="true"/);
 });
