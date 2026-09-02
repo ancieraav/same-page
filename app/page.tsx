@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { ArrowRight, Plus } from "lucide-react";
+import { useState, type KeyboardEvent } from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,10 @@ export default function Home() {
   const [joinCode, setJoinCode] = useState<string[]>(
     () => Array.from({ length: ROOM_CODE_LENGTH }, () => ""),
   );
-  const codeInputs = useRef<Array<HTMLInputElement | null>>([]);
+
+  function focusCodeInput(index: number) {
+    document.getElementById("room-code-" + (index + 1))?.focus();
+  }
 
   function updateCode(index: number, value: string) {
     const nextCharacter = value
@@ -24,21 +26,28 @@ export default function Home() {
     setJoinCode(nextCode);
 
     if (nextCharacter && index < ROOM_CODE_LENGTH - 1) {
-      codeInputs.current[index + 1]?.focus();
+      focusCodeInput(index + 1);
     }
   }
 
   function handleCodeKeyDown(
     index: number,
-    event: React.KeyboardEvent<HTMLInputElement>,
+    event: KeyboardEvent<HTMLInputElement>,
   ) {
     if (event.key === "Backspace" && !joinCode[index] && index > 0) {
-      codeInputs.current[index - 1]?.focus();
+      focusCodeInput(index - 1);
     }
   }
 
   return (
     <div className="site-shell">
+      <img
+        className="decorative-group"
+        src="/samepage-decorations.svg"
+        alt=""
+        aria-hidden="true"
+      />
+
       <header className="site-header">
         <div className="site-header-inner">
           <div className="brand-lockup" aria-label="Same Page">
@@ -75,9 +84,6 @@ export default function Home() {
             {joinCode.map((character, index) => (
               <Input
                 key={index}
-                ref={(element) => {
-                  codeInputs.current[index] = element;
-                }}
                 id={"room-code-" + (index + 1)}
                 className="code-input"
                 type="text"
@@ -94,11 +100,21 @@ export default function Home() {
 
           <div className="room-actions">
             <Button className="room-button" type="button" aria-disabled="true">
-              <Plus aria-hidden="true" />
+              <img
+                className="button-icon"
+                src="/add-icon.svg"
+                alt=""
+                aria-hidden="true"
+              />
               Create
             </Button>
             <Button className="room-button" type="button" aria-disabled="true">
-              <ArrowRight aria-hidden="true" />
+              <img
+                className="button-icon"
+                src="/arrow-right-icon.svg"
+                alt=""
+                aria-hidden="true"
+              />
               Join
             </Button>
           </div>

@@ -28,6 +28,9 @@ test("renders the SamePage join room prototype", async () => {
   const html = renderToStaticMarkup(React.createElement(Home));
 
   assert.match(html, /samepage-logo\.svg/);
+  assert.match(html, /samepage-decorations\.svg/);
+  assert.match(html, /add-icon\.svg/);
+  assert.match(html, /arrow-right-icon\.svg/);
   assert.ok(html.includes(">Same Page</span>"));
   assert.ok(html.includes(">Drafts</button>"));
   assert.ok(html.includes(">History</button>"));
