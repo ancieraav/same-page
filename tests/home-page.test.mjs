@@ -28,15 +28,16 @@ test("renders the SamePage join room prototype", async () => {
   const html = renderToStaticMarkup(React.createElement(Home));
 
   assert.match(html, /samepage-logo\.svg/);
-  assert.ok(html.includes(">SamePage</span>"));
+  assert.ok(html.includes(">Same Page</span>"));
   assert.ok(html.includes(">Drafts</button>"));
   assert.ok(html.includes(">History</button>"));
   assert.match(html, /Alex Morgan profile/);
-  assert.ok(html.includes(">Join or create a room</h1>"));
-  assert.match(html, /Enter a room code to join your team./);
-  assert.match(html, /id="join-code"/);
-  assert.match(html, /placeholder="Enter room code"/);
-  assert.match(html, />Join room/);
-  assert.match(html, />Create room/);
+  assert.ok(html.includes(">Join or create room!</h1>"));
+  assert.match(html, /role="group" aria-label="Room code"/);
+  assert.equal((html.match(/id="room-code-\d"/g) ?? []).length, 7);
+  assert.match(html, /id="room-code-1"/);
+  assert.match(html, /id="room-code-7"/);
+  assert.match(html, />Create/);
+  assert.match(html, />Join/);
   assert.match(html, /aria-disabled="true"/);
 });

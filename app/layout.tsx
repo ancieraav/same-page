@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SamePage — Join a room",
-  description: "Join your team on SamePage with a shared room code.",
+  title: "Same Page — Join or create a room",
+  description: "Join or create a room on Same Page.",
   other: {
     "codex-preview": "development",
   },
