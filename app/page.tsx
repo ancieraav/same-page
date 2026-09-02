@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type KeyboardEvent } from "react";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import Link from "next/link";
+import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -49,33 +50,7 @@ export default function Home() {
         aria-hidden="true"
       />
 
-      <header className="site-header">
-        <div className="site-header-inner">
-          <div className="brand-lockup" aria-label="Same Page">
-            <span className="brand-logo-frame">
-              <img
-                className="brand-logo"
-                src="/samepage-logo.svg"
-                alt=""
-                aria-hidden="true"
-              />
-            </span>
-            <span className="brand-name">Same Page</span>
-          </div>
-
-          <nav className="main-nav" aria-label="Primary navigation">
-            <button className="nav-link" type="button" aria-disabled="true">
-              Drafts
-            </button>
-            <button className="nav-link" type="button" aria-disabled="true">
-              History
-            </button>
-            <Avatar className="profile-avatar" aria-label="User profile">
-              <AvatarFallback aria-hidden="true" />
-            </Avatar>
-          </nav>
-        </div>
-        </header>
+        <SiteHeader />
 
         <main className="site-main">
           <section className="join-area" aria-labelledby="join-title">
@@ -100,14 +75,16 @@ export default function Home() {
           </div>
 
           <div className="room-actions">
-            <Button className="room-button" type="button" aria-disabled="true">
-              <img
-                className="button-icon"
-                src="/add-icon.svg"
-                alt=""
-                aria-hidden="true"
-              />
-              Create
+            <Button className="room-button" asChild>
+              <Link href="/create-room">
+                <img
+                  className="button-icon"
+                  src="/add-icon.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                Create
+              </Link>
             </Button>
             <Button className="room-button" type="button" aria-disabled="true">
               <img

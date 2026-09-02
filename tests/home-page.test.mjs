@@ -41,6 +41,7 @@ test("renders the SamePage join room prototype", async () => {
   assert.match(html, /id="room-code-1"/);
   assert.match(html, /id="room-code-7"/);
   assert.match(html, />Create/);
+  assert.match(html, /href="\/create-room"/);
   assert.match(html, />Join/);
   assert.match(html, /aria-disabled="true"/);
 });
