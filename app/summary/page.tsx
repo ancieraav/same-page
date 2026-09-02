@@ -82,23 +82,13 @@ export default function SummaryPage() {
         primaryLabel="See participant responses"
       />
 
-      <section className="summary-section" aria-labelledby="summary-patterns-title">
-        <div className="summary-section-heading">
-          <div>
-            <span className="flow-eyebrow">What the room found</span>
-            <h2 id="summary-patterns-title">Three patterns to carry forward</h2>
-          </div>
-          <span className="summary-section-count">03 themes</span>
+      <section className="summary-outcome" aria-labelledby="summary-outcome-title">
+        <div className="summary-outcome-copy">
+          <span className="flow-eyebrow">The clearest signal</span>
+          <h2 id="summary-outcome-title">Make the outcome visible before the work begins.</h2>
+          <p>Every participant connected their answer to a shared direction.</p>
         </div>
-        <div className="summary-theme-grid">
-          {themes.map((theme, index) => (
-            <article className={`summary-theme-card ${theme.accent}`} key={theme.title}>
-              <span className="summary-theme-number">0{index + 1}</span>
-              <h3>{theme.title}</h3>
-              <p>{theme.description}</p>
-            </article>
-          ))}
-        </div>
+        <FlowPill>4 shared signals</FlowPill>
       </section>
 
       <section className="summary-section summary-reflection" aria-labelledby="summary-reflection-title">
@@ -120,6 +110,25 @@ export default function SummaryPage() {
               <ParticipantAvatar name="Maya" /> Maya will share the recap.
             </strong>
           </article>
+        </div>
+      </section>
+
+      <section className="summary-section" aria-labelledby="summary-patterns-title">
+        <div className="summary-section-heading">
+          <div>
+            <span className="flow-eyebrow">What the room found</span>
+            <h2 id="summary-patterns-title">Three patterns to carry forward</h2>
+          </div>
+          <span className="summary-section-count">03 themes</span>
+        </div>
+        <div className="summary-theme-grid">
+          {themes.map((theme, index) => (
+            <article className={`summary-theme-card ${theme.accent}`} key={theme.title}>
+              <span className="summary-theme-number">0{index + 1}</span>
+              <h3>{theme.title}</h3>
+              <p>{theme.description}</p>
+            </article>
+          ))}
         </div>
       </section>
 

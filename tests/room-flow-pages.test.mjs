@@ -21,7 +21,8 @@ after(async () => {
 const pages = [
   ["/app/waiting-room/page.tsx", "Waiting room", "/question"],
   ["/app/question/page.tsx", "Answer the question", "/question-two"],
-  ["/app/question-two/page.tsx", "Compare responses", "/meme"],
+  ["/app/question-two/page.tsx", "Compare responses", "/question-two-options"],
+  ["/app/question-two-options/page.tsx", "Choose an answer", "/meme"],
   ["/app/meme/page.tsx", "Meme break", "/add-question"],
   ["/app/add-question/page.tsx", "Add a question", "/summary"],
   ["/app/summary/page.tsx", "Room summary", "/see-participant"],

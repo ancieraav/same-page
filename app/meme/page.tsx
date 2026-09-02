@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { ArrowRightIcon, HeartIcon, SparklesIcon } from "lucide-react";
+import { ArrowRightIcon, HeartIcon } from "lucide-react";
 
-import { FlowPill, RoomFlowShell } from "@/components/room-flow";
+import { RoomFlowShell } from "@/components/room-flow";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -22,10 +22,6 @@ export default function MemePage() {
     >
       <section className="meme-stage" aria-labelledby="meme-title">
         <div className="meme-stage-heading">
-          <FlowPill>
-            <SparklesIcon aria-hidden="true" />
-            Optional intermission
-          </FlowPill>
           <h2 id="meme-title">When the brainstorm finally clicks</h2>
           <p>Take a breath. The next question is waiting when you are ready.</p>
         </div>
@@ -42,7 +38,6 @@ export default function MemePage() {
         </div>
 
         <div className="meme-footer">
-          <span>Shared by the room</span>
           <Button className="flow-action flow-action-primary" asChild>
             <Link href="/add-question">
               Next question

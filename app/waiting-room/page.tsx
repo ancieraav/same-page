@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { CopyIcon, LockKeyholeIcon, UsersIcon } from "lucide-react";
 
 import {
   FlowActions,
@@ -7,7 +6,6 @@ import {
   ParticipantAvatar,
   RoomFlowShell,
 } from "@/components/room-flow";
-import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "Waiting room — Same Page",
@@ -31,77 +29,45 @@ export default function WaitingRoomPage() {
       backHref="/create-room"
       backLabel="Back to create room"
     >
-      <section className="waiting-room-layout" aria-labelledby="waiting-room-title">
-        <div className="waiting-room-copy">
+      <section className="waiting-room-stage" aria-labelledby="waiting-room-title">
+        <div className="waiting-room-stage-heading">
           <FlowPill>
             <span className="status-dot" aria-hidden="true" />
             Room is open
           </FlowPill>
-          <h2 id="waiting-room-title">Invite your group</h2>
-          <p className="waiting-room-lede">
-            Everyone can join with this code. The room will start when you are
-            ready.
+          <h2 id="waiting-room-title">Everyone is here</h2>
+          <p>
+            4 people are ready · Room code <strong>H7K2Q9A</strong>
           </p>
-
-          <div className="room-code-panel">
-            <div>
-              <span className="flow-label">Room code</span>
-              <strong>H7K2Q9A</strong>
-            </div>
-            <Button className="small-flow-button" type="button" variant="outline">
-              <CopyIcon aria-hidden="true" />
-              Copy code
-            </Button>
-          </div>
-
-          <div className="waiting-room-meta">
-            <span>
-              <UsersIcon aria-hidden="true" />
-              4 people in the room
-            </span>
-            <span>
-              <LockKeyholeIcon aria-hidden="true" />
-              Invite-only
-            </span>
-          </div>
-
-          <FlowActions
-            className="waiting-room-actions"
-            secondaryHref="/create-room"
-            secondaryLabel="Edit room"
-            primaryHref="/question"
-            primaryLabel="Start room"
-          />
         </div>
 
-        <div className="waiting-room-people" aria-label="People in the room">
-          <div className="waiting-room-people-heading">
-            <div>
-              <span className="flow-label">Participants</span>
-              <strong>Everyone is here</strong>
-            </div>
-            <span className="participant-count">4 / 4</span>
-          </div>
-          <div className="participant-orbit">
-            <span className="orbit-line orbit-line-one" aria-hidden="true" />
-            <span className="orbit-line orbit-line-two" aria-hidden="true" />
-            {participants.map((participant) => (
-              <div
-                className={`participant-bubble ${participant.className}`}
-                key={participant.name}
-              >
-                <ParticipantAvatar name={participant.name} />
-                <div>
-                  <strong>{participant.name}</strong>
-                  <span>{participant.role}</span>
-                </div>
+        <div className="participant-orbit waiting-room-stage-people" aria-label="People in the room">
+          <span className="orbit-line orbit-line-one" aria-hidden="true" />
+          <span className="orbit-line orbit-line-two" aria-hidden="true" />
+          {participants.map((participant) => (
+            <div
+              className={`participant-bubble ${participant.className}`}
+              key={participant.name}
+            >
+              <ParticipantAvatar name={participant.name} />
+              <div>
+                <strong>{participant.name}</strong>
+                <span>{participant.role}</span>
               </div>
-            ))}
-            <div className="participant-center-mark" aria-hidden="true">
-              <span>SP</span>
             </div>
+          ))}
+          <div className="participant-center-mark" aria-hidden="true">
+            <span>SP</span>
           </div>
         </div>
+
+        <FlowActions
+          className="waiting-room-actions"
+          secondaryHref="/create-room"
+          secondaryLabel="Leave room"
+          primaryHref="/question"
+          primaryLabel="Start room"
+        />
       </section>
     </RoomFlowShell>
   );

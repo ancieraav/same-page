@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { CheckIcon, MessageCircleIcon } from "lucide-react";
-
 import {
   FlowActions,
-  FlowPill,
   ParticipantAvatar,
   RoomFlowShell,
 } from "@/components/room-flow";
@@ -25,11 +22,8 @@ export default function QuestionTwoPage() {
     >
       <section className="compare-stage" aria-labelledby="compare-prompt">
         <div className="compare-stage-heading">
-          <FlowPill>
-            <CheckIcon aria-hidden="true" />
-            Everyone has answered
-          </FlowPill>
           <h2 id="compare-prompt">What stood out in each answer?</h2>
+          <p>Both perspectives are ready to compare.</p>
         </div>
 
         <div className="response-comparison">
@@ -68,14 +62,9 @@ export default function QuestionTwoPage() {
           </article>
         </div>
 
-        <div className="compare-reflection">
-          <MessageCircleIcon aria-hidden="true" />
-          <span>Notice a connection? Keep it in mind for the next question.</span>
-        </div>
-
         <FlowActions
           className="compare-actions"
-          primaryHref="/meme"
+          primaryHref="/question-two-options"
           primaryLabel="Continue"
         />
       </section>

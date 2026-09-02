@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { Clock3Icon, LockKeyholeIcon } from "lucide-react";
+import { LockKeyholeIcon } from "lucide-react";
 
-import { FlowActions, FlowPill, RoomFlowShell } from "@/components/room-flow";
+import { FlowActions, RoomFlowShell } from "@/components/room-flow";
 import { Textarea } from "@/components/ui/textarea";
 
 export const metadata: Metadata = {
@@ -20,13 +20,7 @@ export default function QuestionPage() {
       backLabel="Back to waiting room"
     >
       <section className="question-stage" aria-labelledby="question-prompt">
-        <div className="question-stage-meta">
-          <FlowPill>Everyone answers</FlowPill>
-          <span>
-            <Clock3Icon aria-hidden="true" />
-            About 2 minutes
-          </span>
-        </div>
+        <span className="question-counter">Question 1 of 6</span>
         <h2 id="question-prompt">
           What should everyone understand the same way before we move forward?
         </h2>

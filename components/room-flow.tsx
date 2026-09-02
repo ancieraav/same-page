@@ -12,6 +12,7 @@ type RoomFlowShellProps = {
   eyebrow?: string;
   backHref?: string;
   backLabel?: string;
+  showHeading?: boolean;
   className?: string;
   children: ReactNode;
 };
@@ -22,6 +23,7 @@ export function RoomFlowShell({
   eyebrow = "Same Page room",
   backHref = "/",
   backLabel = "Back",
+  showHeading = false,
   className = "",
   children,
 }: RoomFlowShellProps) {
@@ -29,25 +31,31 @@ export function RoomFlowShell({
     <div className={`room-flow-shell ${className}`.trim()}>
       <SiteHeader />
 
-      <main className="room-flow-main">
+      <main className="room-flow-main" aria-labelledby="room-flow-page-title">
         <div className="room-flow-content">
-          <div className="room-flow-heading">
-            <Button
-              className="flow-back-button"
-              variant="ghost"
-              size="icon"
-              asChild
-            >
-              <Link href={backHref} aria-label={backLabel}>
-                <ArrowLeftIcon aria-hidden="true" />
-              </Link>
-            </Button>
-            <div className="room-flow-heading-copy">
-              <span className="flow-eyebrow">{eyebrow}</span>
-              <h1>{title}</h1>
-              <p>{description}</p>
+          {showHeading ? (
+            <div className="room-flow-heading">
+              <Button
+                className="flow-back-button"
+                variant="ghost"
+                size="icon"
+                asChild
+              >
+                <Link href={backHref} aria-label={backLabel}>
+                  <ArrowLeftIcon aria-hidden="true" />
+                </Link>
+              </Button>
+              <div className="room-flow-heading-copy">
+                <span className="flow-eyebrow">{eyebrow}</span>
+                <h1 id="room-flow-page-title">{title}</h1>
+                <p>{description}</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <h1 id="room-flow-page-title" className="room-flow-page-title">
+              {title}
+            </h1>
+          )}
 
           {children}
         </div>
