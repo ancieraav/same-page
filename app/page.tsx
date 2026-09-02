@@ -42,8 +42,14 @@ export default function Home() {
   return (
     <div className="site-shell">
       <img
-        className="decorative-group"
-        src="/samepage-decorations.svg"
+        className="gavel-illustration"
+        src="/gavel-illustration.svg"
+        alt=""
+        aria-hidden="true"
+      />
+      <img
+        className="cloud-illustration"
+        src="/cloud-illustration.svg"
         alt=""
         aria-hidden="true"
       />

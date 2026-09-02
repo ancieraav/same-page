@@ -24,7 +24,6 @@
   --canvas: #f4ffd9;
   --olive: #0d1200;
   --olive-hover: #202b00;
-  --icon: #e3e3e3;
 }
 
 @theme inline {
@@ -84,13 +83,27 @@ input:focus-visible {
   background: var(--canvas);
 }
 
-.decorative-group {
+.gavel-illustration {
   position: absolute;
-  top: 101px;
-  left: -192px;
+  top: 82px;
+  left: 50%;
   z-index: 0;
-  width: 922.96px;
-  height: 800px;
+  width: 560px;
+  height: 344px;
+  transform: translateX(-50%);
+  opacity: 0.47;
+  pointer-events: none;
+  object-fit: fill;
+}
+
+.cloud-illustration {
+  position: absolute;
+  top: 790px;
+  left: 50%;
+  z-index: 0;
+  width: 500px;
+  height: 121px;
+  transform: translateX(-50%);
   opacity: 0.47;
   pointer-events: none;
   object-fit: fill;
@@ -122,18 +135,20 @@ input:focus-visible {
   color: var(--ink);
 }
 
-.brand-logo-frame {
-  display: grid;
+.brand-logo-frame,
+.brand-logo {
   width: 50px;
   height: 50px;
+}
+
+.brand-logo-frame {
+  display: grid;
   place-items: center;
   overflow: hidden;
 }
 
 .brand-logo {
   display: block;
-  width: 50px;
-  height: 50px;
   object-fit: contain;
 }
 
@@ -184,7 +199,6 @@ input:focus-visible {
 }
 
 .site-main {
-  position: relative;
   min-height: calc(100svh - 64px);
   padding: 0;
 }
@@ -286,8 +300,17 @@ input:focus-visible {
 }
 
 @media (max-width: 1000px) {
-  .decorative-group {
-    display: none;
+  .gavel-illustration {
+    top: 85px;
+    width: min(560px, 78vw);
+    height: auto;
+  }
+
+  .cloud-illustration {
+    top: auto;
+    bottom: 28px;
+    width: min(500px, 74vw);
+    height: auto;
   }
 
   .site-header {
