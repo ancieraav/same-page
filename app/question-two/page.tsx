@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import {
-  FlowActions,
-  ParticipantAvatar,
-  RoomFlowShell,
-} from "@/components/room-flow";
+import { RoomRuntime } from "@/components/room-runtime";
 
 export const metadata: Metadata = {
   title: "Compare answers — Same Page",
@@ -11,63 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function QuestionTwoPage() {
-  return (
-    <RoomFlowShell
-      className="question-two-page"
-      eyebrow="Product critique · Question 1 of 6"
-      title="Compare responses"
-      description="Take in both perspectives before the room moves to the next prompt."
-      backHref="/question"
-      backLabel="Back to question"
-    >
-      <section className="compare-stage" aria-labelledby="compare-prompt">
-        <div className="compare-stage-heading">
-          <h2 id="compare-prompt">What stood out in each answer?</h2>
-          <p>Both perspectives are ready to compare.</p>
-        </div>
-
-        <div className="response-comparison">
-          <article className="response-card response-card-primary">
-            <div className="response-card-heading">
-              <ParticipantAvatar name="You" />
-              <div>
-                <strong>You</strong>
-                <span>Your response</span>
-              </div>
-            </div>
-            <p>
-              We need one shared definition first, otherwise every decision
-              will be interpreted differently.
-            </p>
-            <span className="response-tag">Shared understanding</span>
-          </article>
-
-          <div className="comparison-divider" aria-hidden="true">
-            <span>vs</span>
-          </div>
-
-          <article className="response-card">
-            <div className="response-card-heading">
-              <ParticipantAvatar name="Maya" />
-              <div>
-                <strong>Maya</strong>
-                <span>Source of truth</span>
-              </div>
-            </div>
-            <p>
-              Let&apos;s agree on the outcome we want people to leave with, then
-              choose the simplest path to get there.
-            </p>
-            <span className="response-tag">Clear outcome</span>
-          </article>
-        </div>
-
-        <FlowActions
-          className="compare-actions"
-          primaryHref="/question-two-options"
-          primaryLabel="Continue"
-        />
-      </section>
-    </RoomFlowShell>
-  );
+  return <RoomRuntime mode="compare" />;
 }

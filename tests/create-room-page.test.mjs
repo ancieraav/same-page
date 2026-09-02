@@ -27,8 +27,6 @@ test("renders the initial Create room prototype", async () => {
 
   assert.match(html, /samepage-logo\.svg/);
   assert.ok(html.includes(">Same Page</span>"));
-  assert.ok(html.includes(">Drafts</button>"));
-  assert.ok(html.includes(">History</button>"));
   assert.match(html, /User profile/);
   assert.match(html, /href="\/"/);
   assert.ok(html.includes(">Create room</h1>"));
@@ -36,6 +34,8 @@ test("renders the initial Create room prototype", async () => {
   assert.match(html, /Upload attachment/);
   assert.match(html, /Choose attachment/);
   assert.match(html, /Any other information\?/);
+  assert.match(html, />Room name<\/label>/);
+  assert.match(html, />Topic<\/label>/);
   assert.match(html, /Number of participants/);
   assert.match(html, /Use memes\?/);
   assert.match(html, /Use roles\?/);
@@ -45,6 +45,7 @@ test("renders the initial Create room prototype", async () => {
   );
   assert.match(html, />Cancel<\/a>/);
   assert.match(html, />Create<\/button>/);
+  assert.match(html, /<form[^>]*class="create-room-form"/);
 
   assert.doesNotMatch(html, /How many participants\?/);
   assert.doesNotMatch(html, /Which roles do you want to use\?/);

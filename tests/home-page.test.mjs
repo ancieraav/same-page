@@ -32,8 +32,6 @@ test("renders the SamePage join room prototype", async () => {
   assert.match(html, /add-icon\.svg/);
   assert.match(html, /arrow-right-icon\.svg/);
   assert.ok(html.includes(">Same Page</span>"));
-  assert.ok(html.includes(">Drafts</button>"));
-  assert.ok(html.includes(">History</button>"));
   assert.match(html, /User profile/);
   assert.ok(html.includes(">Join or create room!</h1>"));
   assert.match(html, /role="group" aria-label="Room code"/);
@@ -43,5 +41,6 @@ test("renders the SamePage join room prototype", async () => {
   assert.match(html, />Create/);
   assert.match(html, /href="\/create-room"/);
   assert.match(html, />Join/);
-  assert.match(html, /aria-disabled="true"/);
+  assert.match(html, /Your name/);
+  assert.doesNotMatch(html, /aria-disabled="true"/);
 });

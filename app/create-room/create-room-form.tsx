@@ -9,7 +9,13 @@ import {
   UploadIcon,
   XIcon,
 } from "lucide-react";
-import { useRef, useState, type ChangeEvent, type ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 
 import { SiteHeader } from "@/components/site-header";
 import {
@@ -32,6 +38,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  buildRoomHref,
+  createRoom,
+  uploadRoomAttachment,
+} from "@/lib/samepage/client";
+import { getErrorMessage } from "@/lib/samepage/errors";
+import { createRoomSchema, normalizeRoleNames } from "@/lib/samepage/validation";
 
 type YesNo = "no" | "yes";
 type ParticipantMode = "flexible" | "fixed";
@@ -152,6 +165,8 @@ export function CreateRoomForm() {
   const [roles, setRoles] = useState<RoleRow[]>([
     { id: 1, value: DEFAULT_ROLE, editing: false },
   ]);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   function handleAttachment(event: ChangeEvent<HTMLInputElement>) {
     setAttachment(event.target.files?.[0] ?? null);
@@ -194,6 +209,63 @@ export function CreateRoomForm() {
     setRoles((current) => current.filter((role) => role.id !== id));
   }
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitError(null);
+
+    const parsed = createRoomSchema.safeParse({
+      roomName,
+      topic,
+      notes,
+      participantMode,
+      participantCount,
+      useMemes,
+      useRoles,
+      separateAccess,
+      shareResponses,
+      anonymousNames,
+      roles: normalizeRoleNames(roles.map((role) => role.value)),
+    });
+
+    if (!parsed.success) {
+      setSubmitError(parsed.error.issues[0]?.message ?? "Check the room settings and try again.");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const created = await createRoom(parsed.data);
+      if (attachment) {
+        try {
+          await uploadRoomAttachment(created.room.id, attachment);
+        } catch (cause) {
+          const waitingUrl = new URL(
+            buildRoomHref("/waiting-room", created.room.code),
+            window.location.origin,
+          );
+          waitingUrl.searchParams.set("attachmentError", getErrorMessage(cause));
+          if (created.room.join_token) {
+            waitingUrl.searchParams.set("invite", created.room.join_token);
+          }
+          window.location.assign(`${waitingUrl.pathname}${waitingUrl.search}`);
+          return;
+        }
+      }
+
+      const waitingUrl = new URL(
+        buildRoomHref("/waiting-room", created.room.code),
+        window.location.origin,
+      );
+      if (created.room.join_token) {
+        waitingUrl.searchParams.set("invite", created.room.join_token);
+      }
+      window.location.assign(`${waitingUrl.pathname}${waitingUrl.search}`);
+    } catch (cause) {
+      setSubmitError(getErrorMessage(cause));
+      setSubmitting(false);
+    }
+  }
+
   return (
     <div className="create-room-shell">
       <SiteHeader />
@@ -209,7 +281,7 @@ export function CreateRoomForm() {
             <h1 id="create-room-title">Create room</h1>
           </div>
 
-          <div className="create-room-form">
+          <form className="create-room-form" onSubmit={(event) => void handleSubmit(event)}>
             <TextQuestion
               number="1."
               id="room-name"
@@ -240,6 +312,7 @@ export function CreateRoomForm() {
                 ref={fileInputRef}
                 className="sr-only"
                 type="file"
+                accept="application/pdf,text/plain,text/markdown,application/json,image/png,image/jpeg,image/webp"
                 onChange={handleAttachment}
                 aria-label="Choose attachment"
               />
@@ -247,6 +320,7 @@ export function CreateRoomForm() {
                 className="upload-button"
                 type="button"
                 variant="outline"
+                disabled={submitting}
                 onClick={() => fileInputRef.current?.click()}
               >
                 <UploadIcon aria-hidden="true" />
@@ -516,15 +590,14 @@ export function CreateRoomForm() {
               </Button>
               <Button
                 className="form-action-button"
-                type="button"
-                onClick={() => {
-                  window.location.href = "/waiting-room";
-                }}
+                type="submit"
+                disabled={submitting}
               >
-                Create
+                {submitting ? "Creating…" : "Create"}
               </Button>
             </div>
-          </div>
+            {submitError ? <p className="flow-inline-error" role="alert">{submitError}</p> : null}
+          </form>
         </section>
       </main>
     </div>

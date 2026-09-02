@@ -17,12 +17,6 @@ export function SiteHeader() {
         </div>
 
         <nav className="main-nav" aria-label="Primary navigation">
-          <button className="nav-link" type="button" aria-disabled="true">
-            Drafts
-          </button>
-          <button className="nav-link" type="button" aria-disabled="true">
-            History
-          </button>
           <Avatar className="profile-avatar" aria-label="User profile">
             <AvatarFallback aria-hidden="true" />
           </Avatar>

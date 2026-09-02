@@ -1,8 +1,46 @@
-# vinext-starter
+# SamePage
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+SamePage is a public, agent-started collaboration room built with
+[vinext](https://github.com/cloudflare/vinext), React, and Supabase. Participants
+join with a room code or invite link, answer together in realtime, and see a
+data-backed summary when the room is complete. Drafts and History are currently
+out of scope.
+
+## Production setup
+
+SamePage uses one Supabase project for Auth, Postgres, Realtime, and private
+Storage. Enable Anonymous Sign-Ins in Supabase Auth, then apply the migrations
+in `supabase/migrations/` in filename order. The migrations create the schema,
+RLS policies, RPC actions, realtime publication, and the private
+`room-attachments` bucket.
+
+Copy `.env.example` to `.env.local` for local development. Only the Supabase
+URL and publishable key belong in browser variables. Never put a service-role
+key in the client or Site environment.
+
+The Site runtime needs the same values as `SUPABASE_URL` and
+`SUPABASE_PUBLISHABLE_KEY`; the `VITE_` equivalents are used by the browser.
+The production Site is intentionally public so external participants can open
+room links. Room membership, access tokens, participant limits, and operator
+permissions are enforced by Supabase RLS and RPC validation.
+
+`start_room` is exposed only through WebMCP and is additionally checked by the
+server route and the database. A browser without WebMCP can still join and
+participate, but it cannot start a room. WebMCP support depends on the browser's
+origin trial or feature flag.
+
+## Development checks
+
+```bash
+npm test
+npm run lint
+npm run build
+```
+
+The test suite covers validation, summary calculations, WebMCP annotations,
+route protection, and rendered room-flow pages. Use the Supabase dashboard or
+the Supabase MCP skill to apply and verify migrations when the Supabase CLI is
+not available.
 
 ## Prerequisites
 
