@@ -1,4 +1,3 @@
-
 /* Mode Switcher: Write vs Preview */
 .editor-mode-toggle {
   display: inline-flex;
@@ -313,3 +312,4 @@
     justify-content: center;
   }
 }
+

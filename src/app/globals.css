@@ -1,26 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
-@import "../styles/01.css";
-@import "../styles/02.css";
-@import "../styles/03.css";
-@import "../styles/04.css";
-@import "../styles/05.css";
-@import "../styles/06.css";
-@import "../styles/07.css";
-@import "../styles/08.css";
-@import "../styles/09.css";
-@import "../styles/10.css";
-@import "../styles/11.css";
-@import "../styles/12.css";
-@import "../styles/13.css";
-@import "../styles/14.css";
-@import "../styles/15.css";
-@import "../styles/16.css";
-@import "../styles/17.css";
-@import "../styles/18.css";
-@import "../styles/19.css";
-@import "../styles/20.css";
-@import "../styles/21.css";
-@import "../styles/22.css";
+
+/* Core & Layout */
+@import "../styles/base.css";
+@import "../styles/header.css";
+@import "../styles/home.css";
+@import "../styles/footer.css";
+
+/* Create Room Flow */
+@import "../styles/create-form.css";
+@import "../styles/create-attachments.css";
+@import "../styles/create-modal-toggles.css";
+@import "../styles/create-roles.css";
+@import "../styles/create-settings.css";
+
+/* Waiting Room */
+@import "../styles/waiting-stage.css";
+@import "../styles/waiting-reactions.css";
+@import "../styles/waiting-share-modal.css";
+
+/* Session & Questions */
+@import "../styles/session-overlay.css";
+@import "../styles/session-editor.css";
+@import "../styles/session-preview.css";
+
+/* Comparison & Perspectives */
+@import "../styles/comparison-overview.css";
+@import "../styles/comparison-side-by-side.css";
+@import "../styles/comparison-toolbar.css";
+@import "../styles/comparison-cards.css";
+
+/* Meme Intermission */
+@import "../styles/meme.css";
+
+/* Analytics */
+@import "../styles/analytics-hero.css";
+@import "../styles/analytics-charts.css";
+@import "../styles/analytics-insights.css";
+
+/* Navigation & Profiles */
+@import "../styles/avatar-menu.css";
+@import "../styles/profile.css";
+@import "../styles/delete-modal.css";
+@import "../styles/join.css";
+@import "../styles/participants.css";
 
 /* Route modifiers intentionally win over the fixed session shell. */
 .page-root.viewport-fit-page.comparison-body,

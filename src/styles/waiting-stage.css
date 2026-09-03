@@ -1,3 +1,102 @@
+/* ==========================================================================
+   Waiting Room Styles (Live Bubbles, Reactions, Floating Dock)
+   ========================================================================== */
+
+/* Header Session Stats Badges (Participants & Duration) */
+.header-participants-badge,
+.header-duration-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-main);
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.header-participants-badge svg,
+.header-duration-badge svg {
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.header-participants-badge.header-participants-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.header-participants-badge.header-participants-link:hover {
+  border-color: #C7D2FE;
+  background: #F5F3FF;
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.08);
+}
+
+.header-duration-badge {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+/* Header Room Code Badge (Exclusive to Waiting Room) */
+.header-room-code-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.room-code-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.room-code-text {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--text-main);
+}
+
+.btn-copy-code-mini {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  transition: all 0.15s ease;
+}
+
+.btn-copy-code-mini:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+/* Waiting Canvas Wrapper */
 .waiting-canvas-wrapper {
   width: 100%;
   max-width: 920px;
@@ -276,43 +375,3 @@
   border-color: rgba(245, 158, 11, 0.3);
 }
 
-/* Add Participant Placeholder Bubble */
-.bubble-avatar-frame.is-add-slot {
-  border: 2px dashed var(--border-subtle);
-  background: #F8FAFC;
-  color: var(--text-muted);
-  cursor: pointer;
-  box-shadow: none;
-}
-
-.bubble-avatar-frame.is-add-slot:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-light);
-  transform: translateY(-2px);
-}
-
-/* Live Speech Balloon above Bubble */
-.bubble-speech-balloon {
-  position: absolute;
-  bottom: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) scale(0.85);
-  opacity: 0;
-  background: #0F172A;
-  color: #FFFFFF;
-  padding: 8px 14px;
-  border-radius: 16px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  white-space: normal;
-  width: max-content;
-  max-width: 340px;
-  text-align: center;
-  line-height: 1.35;
-  word-break: break-word;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
-  pointer-events: none;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  z-index: 40;
-}

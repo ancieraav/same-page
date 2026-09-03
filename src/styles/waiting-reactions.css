@@ -1,3 +1,43 @@
+/* Add Participant Placeholder Bubble */
+.bubble-avatar-frame.is-add-slot {
+  border: 2px dashed var(--border-subtle);
+  background: #F8FAFC;
+  color: var(--text-muted);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.bubble-avatar-frame.is-add-slot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Live Speech Balloon above Bubble */
+.bubble-speech-balloon {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  opacity: 0;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 8px 14px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: normal;
+  width: max-content;
+  max-width: 340px;
+  text-align: center;
+  line-height: 1.35;
+  word-break: break-word;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 40;
+}
 
 .bubble-speech-balloon::after {
   content: "";
@@ -251,52 +291,3 @@
   border-color: rgba(239, 68, 68, 0.25);
 }
 
-/* Share by Role / Access Codes Modal */
-.share-roles-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  animation: fadeIn 0.2s ease-out;
-}
-
-.share-roles-modal {
-  width: 100%;
-  max-width: 680px;
-  max-height: 85vh;
-  background: #FFFFFF;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.25);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.share-roles-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid var(--border-subtle);
-  background: #FFFFFF;
-}
-
-.share-modal-title {
-  font-family: var(--font-display);
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 4px;
-}
-
-.share-modal-sub {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}

@@ -1,30 +1,3 @@
-
-.card-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-title-sparkle {
-  color: var(--primary);
-  font-size: 0.9rem;
-}
-
-.card-title-text {
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: var(--text-main);
-}
-
-.card-badge-pill {
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  font-size: 0.74rem;
-  font-weight: 800;
-  white-space: nowrap;
-}
-
 /* 5. Custom Card Types */
 
 /* A. Two-Sided Comparison Card (Biggest Disagreement, Role Gap, Truth Gap) */
@@ -299,3 +272,35 @@
   font-weight: 700;
   color: var(--text-main);
 }
+
+.h-bar-pct {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.h-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #E2E8F0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.h-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.h-bar-fill.fill-indigo {
+  background: linear-gradient(90deg, #4F46E5, #6366F1);
+}
+
+.h-bar-fill.fill-amber {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+}
+
+.h-bar-fill.fill-rose {
+  background: linear-gradient(90deg, #EF4444, #F87171);
+}
+

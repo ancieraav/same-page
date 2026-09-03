@@ -1,3 +1,18 @@
+/* ==========================================================================
+   SESSION ANALYTICS & BREAKDOWN PAGE (8 ROOM COMBINATIONS)
+   ========================================================================== */
+.page-root.analytics-body {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  background: var(--bg-porcelain);
+  color: var(--text-main);
+  margin: 0;
+}
 
 /* 2. Main Canvas Wrapper */
 .analytics-canvas-wrapper {
@@ -299,3 +314,30 @@
   align-items: center;
   gap: 10px;
 }
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title-sparkle {
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.card-title-text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.card-badge-pill {
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
