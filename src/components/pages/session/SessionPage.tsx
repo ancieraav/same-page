@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { SessionPart1 } from './SessionPart1';
-import { SessionPart2 } from './SessionPart2';
-import { SessionPart3 } from './SessionPart3';
+import { SessionLaunchOverlay } from './SessionLaunchOverlay';
+import { SessionHeader } from './SessionHeader';
+import { SessionQuestionStage } from './SessionQuestionStage';
 
-const launchSentences = ["Hold on, I'm thinking...", "Hmmm, actually I'm writing now...", "Almost there, I'm evaluating...", 'Get ready 😈'];
+const launchSentences = [
+  "Hold on, I'm thinking...",
+  "Hmmm, actually I'm writing now...",
+  "Almost there, I'm evaluating...",
+  'Get ready 😈',
+];
 
 function pause(milliseconds: number) {
   return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds));
@@ -51,7 +56,9 @@ export function SessionPage() {
       if (!cancelled) setLaunchText('');
     };
     void run();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [review]);
 
   useEffect(() => {
@@ -60,5 +67,11 @@ export function SessionPage() {
   }, []);
 
   const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-  return <><SessionPart1 phase={phase} countdown={countdown} hidden={ready} text={launchText} /><SessionPart2 timer={timer} /><SessionPart3 ready={ready} /></>;
+  return (
+    <>
+      <SessionLaunchOverlay phase={phase} countdown={countdown} hidden={ready} text={launchText} />
+      <SessionHeader timer={timer} />
+      <SessionQuestionStage ready={ready} />
+    </>
+  );
 }

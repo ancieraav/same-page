@@ -1,11 +1,12 @@
- 'use client';
+'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { writeSession } from '@/lib/storage';
 import { useToast } from '@/components/ui/ToastProvider';
-import { JoinPart1 } from './JoinPart1';
-import { JoinPart2 } from './JoinPart2';
+import { AmbientBackground } from '@/components/layout/AmbientBackground';
+import { JoinHeader } from './JoinHeader';
+import { JoinIdentityForm } from './JoinIdentityForm';
 
 export function JoinPage() {
   const router = useRouter();
@@ -39,8 +40,9 @@ export function JoinPage() {
 
   return (
     <>
-      <JoinPart1 />
-      <JoinPart2
+      <AmbientBackground />
+      <JoinHeader />
+      <JoinIdentityForm
         name={name}
         avatarSrc={avatarSrc}
         busy={busy}

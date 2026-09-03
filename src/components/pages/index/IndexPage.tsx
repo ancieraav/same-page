@@ -1,11 +1,11 @@
- 'use client';
+'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cleanRoomCode, pasteText } from '@/lib/clipboard';
 import { useToast } from '@/components/ui/ToastProvider';
-import { IndexPart1 } from './IndexPart1';
-import { IndexPart2 } from './IndexPart2';
+import { AmbientBackground } from '@/components/layout/AmbientBackground';
+import { HomeStage } from './HomeStage';
 
 export function IndexPage() {
   const router = useRouter();
@@ -64,8 +64,8 @@ export function IndexPage() {
 
   return (
     <>
-      <IndexPart1 />
-      <IndexPart2
+      <AmbientBackground />
+      <HomeStage
         code={code}
         busy={busy}
         inputRefs={inputRefs}
