@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastProvider';
 import { ComparisonHeader } from './ComparisonHeader';
 import { ComparisonStage } from './ComparisonStage';
+import { PAIR_MODE } from '@/lib/pairMode';
 import type { Filter, Sort } from './ComparisonToolbar';
 
 export function ComparisonPage() {
@@ -22,13 +23,22 @@ export function ComparisonPage() {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
 
   const participants = useMemo(
-    () => [
+    () => {
+      // PAIR_MODE: 2-person, no roles. REVIVE: restore 5 with roles below.
+      if (PAIR_MODE) {
+        return [
+          { id: 'you', name: 'Anugrah (You)', role: '', score: 84 },
+          { id: 'alex', name: 'Alex Morgan', role: '', score: 88 },
+        ];
+      }
+      return [
       { id: 'you', name: 'Anugrah (You)', role: 'Lead Product Strategist', score: 84 },
       { id: 'raka', name: 'Raka Pratama', role: 'Engineering Lead', score: 78 },
       { id: 'elena', name: 'Elena Rostova', role: 'Design Lead', score: 88 },
       { id: 'david', name: 'David Chen', role: 'Ops · Finance', score: 73 },
       { id: 'sarah', name: 'Sarah Jenkins', role: 'Growth · Marketing', score: 69 },
-    ],
+      ];
+    },
     []
   );
 

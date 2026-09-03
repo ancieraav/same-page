@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastProvider';
 import { copyText } from '@/lib/clipboard';
+import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
 
 interface Group {
   id: number;
@@ -48,6 +49,29 @@ function getMockProfile(index: number): readonly [string, string, string] {
 const reactions = ['👋', '☕', '🚀', '💡', '🔥', '🎉', '❤️', '👏'];
 
 function makeParticipants(room: Room): Participant[] {
+  // PAIR_MODE: 2-person, no roles, no SOT, single code.
+  // REVIVE: multi-group/role/SOT logic below.
+  if (PAIR_MODE) {
+    return [
+      {
+        id: 'p1',
+        name: 'You',
+        initials: 'AR',
+        group: '',
+        role: '',
+        color: 'avatar-color-indigo',
+        operator: true,
+      },
+      {
+        id: 'p2',
+        name: 'Alex Morgan',
+        initials: 'AL',
+        group: '',
+        role: '',
+        color: 'avatar-color-cyan',
+      },
+    ];
+  }
   const defaultGroup: Group = { id: 1, name: 'General', isSourceOfTruth: true, roles: ['Participant'] };
   const groups = room.groups?.length ? room.groups : [defaultGroup];
   const source = groups.find((group) => group.isSourceOfTruth) ?? groups[0] ?? defaultGroup;
@@ -132,7 +156,9 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
   const [particles, setParticles] = useState<EmojiParticle[]>([]);
   const [launching, setLaunching] = useState(false);
 
-  const joinedLabel = room.participantMode === 'fixed'
+  const joinedLabel = PAIR_MODE
+    ? `${String(PAIR_SIZE)} of ${String(PAIR_SIZE)} joined`
+    : room.participantMode === 'fixed'
     ? `4 of ${String(room.participantCount ?? 10)} joined`
     : '4 joined (Open capacity)';
 
@@ -228,13 +254,14 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
                 {speech[participant.id]}
               </div>
               <div
-                className={`bubble-avatar-frame${participant.operator ? ' is-operator' : ''}${
-                  participant.sot ? ' is-sot' : ''
+                className={`bubble-avatar-frame${participant.operator && !PAIR_MODE ? ' is-operator' : ''}${
+                  participant.sot && !PAIR_MODE ? ' is-sot' : ''
                 }`}
               >
                 <div className={`bubble-avatar-inner ${participant.color}`}>{participant.initials}</div>
                 <span className="bubble-online-dot" title="Online now" />
-                {participant.sot && (
+                {/* REVIVE: SOT crown badge (hidden in PAIR_MODE) */}
+                {!PAIR_MODE && participant.sot && (
                   <div className="bubble-crown-badge" title="Source of Truth Benchmark Group">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
                       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
@@ -245,6 +272,8 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
               </div>
               <div className="bubble-info-block">
                 <div className="bubble-participant-name">{participant.name}</div>
+                {/* REVIVE: group • role pill (hidden in PAIR_MODE) */}
+                {!PAIR_MODE && (
                 <div
                   className={`bubble-tag-pill${
                     participant.sot ? ' sot-pill' : participant.operator ? ' operator-pill' : ''
@@ -252,9 +281,12 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
                 >
                   <span>{participant.group} • {participant.role}</span>
                 </div>
+                )}
               </div>
             </div>
           ))}
+          {/* REVIVE: Open Seat invite slot for +3 multi-user (hidden in PAIR_MODE, room is 2/2 full) */}
+          {!PAIR_MODE && (
           <button type="button" className="participant-bubble-card" onClick={onShare} title="Invite a teammate">
             <div className="bubble-avatar-frame is-add-slot">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
@@ -267,6 +299,7 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
               <div className="bubble-tag-pill" style={{ borderStyle: 'dashed' }}>+ Share Link</div>
             </div>
           </button>
+          )}
         </div>
       </section>
       <div className="waiting-dock-container">

@@ -46,7 +46,7 @@ export function ComparisonOverviewCards({
                 />
               </svg>
             </div>
-            <span className="metric-sub-detail">4 of 5 core assumptions shared across roles</span>
+            <span className="metric-sub-detail">Both perspectives share core assumptions</span>
           </div>
         </div>
       </div>
@@ -124,15 +124,15 @@ export function ComparisonOverviewCards({
         </div>
         <div className="summary-body-content">
           <p className="summary-preview-paragraph" id="summary-preview">
-            The room broadly agrees on prioritizing conversion retention and funnel latency over aesthetic revamps. While Elena (Design) leans heavily on refining input validation typography, Anugrah and David Chen align on hardening database connection pooling before launching new marketing initiatives.
+            The pair broadly agrees on prioritizing conversion retention and funnel latency over aesthetic revamps. While Alex leans on refining input validation, you both align on hardening the core checkout loop before launching new initiatives.
           </p>
           <div className={`summary-extended-drawer${summaryOpen ? ' is-open' : ''}`} id="summary-extended-drawer">
             <div className="summary-extended-inner" id="summary-extended-content">
               <p>
-                <strong>Shared North Star:</strong> 4 out of 5 participants directly identified database throughput and zero checkout regressions as non-negotiable for Q3 success.
+                <strong>Shared North Star:</strong> Both of you directly identified database throughput and zero checkout regressions as non-negotiable for success.
               </p>
               <p>
-                <strong>Divergence Point:</strong> Design favors shipping micro-interaction polish this sprint, whereas Product Strategist and Ops insist on freezing all cosmetic revisions until load testing passes 50k rpm.
+                <strong>Divergence Point:</strong> Alex favors shipping polish this sprint, whereas you insist on freezing cosmetic revisions until load testing passes.
               </p>
             </div>
           </div>

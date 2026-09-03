@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { PAIR_MODE } from '@/lib/pairMode';
 
 interface ResponseCardData {
   id: string;
@@ -35,6 +36,27 @@ const RESPONSES: ResponseCardData[] = [
       </p>
     ),
   },
+  {
+    id: 'alex',
+    name: 'Alex Morgan',
+    role: 'Design Partner',
+    initials: 'AL',
+    avatarColor: 'avatar-color-emerald',
+    scoreMatch: '88% Match',
+    scoreTone: 'tone-positive',
+    preview: (
+      <p>
+        Priority is <strong>streamlining the checkout input form validation</strong> so users don&apos;t abandon when card details error out.
+      </p>
+    ),
+    extended: (
+      <p>
+        Deprioritizing marketing landing page revamps and micro-interactions for now so the checkout funnel has zero visual distraction.
+      </p>
+    ),
+  },
+  // REVIVE: +3 multi-user responses (hidden in PAIR_MODE)
+  ...(!PAIR_MODE ? [
   {
     id: 'raka',
     name: 'Raka Pratama',
@@ -111,6 +133,7 @@ const RESPONSES: ResponseCardData[] = [
       </p>
     ),
   },
+  ] as ResponseCardData[] : []),
 ];
 
 function ResponseCardItem({
@@ -137,7 +160,8 @@ function ResponseCardItem({
         </div>
         <div className="team-member-info">
           <span className="team-member-name">{data.name}</span>
-          <span className="team-member-role">{data.role}</span>
+          {/* REVIVE: role line (hidden in PAIR_MODE) */}
+          {!PAIR_MODE && <span className="team-member-role">{data.role}</span>}
         </div>
         <div className={`team-card-score-pill ${data.scoreTone}`}>
           <span>{data.scoreMatch}</span>

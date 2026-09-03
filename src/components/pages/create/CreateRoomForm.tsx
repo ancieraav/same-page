@@ -5,16 +5,17 @@ import { CreateAttachmentsSection } from '@/components/pages/create/CreateAttach
 import { CreateGroupsSection } from '@/components/pages/create/CreateGroupsSection';
 import { CreateRoomSettingsSection } from '@/components/pages/create/CreateRoomSettingsSection';
 import { useCreateRoomState } from '@/components/pages/create/useCreateRoomState';
+import { PAIR_MODE } from '@/lib/pairMode';
 
 export function CreateRoomForm() {
   const formState = useCreateRoomState();
 
   return (
-    <main className="create-container" id="main-content">
+    <main className="create-clean-canvas" id="main-content">
       <div className="create-clean-wrapper">
         <div className="create-heading-block">
           <h1 className="create-headline">Create room</h1>
-          <p className="create-subheadline">Set up your private session details, rules, and participant roles.</p>
+          <p className="create-subheadline">Set up your private 1-on-1 session details and rules.</p>
         </div>
         <form
           id="create-room-form"
@@ -102,6 +103,8 @@ export function CreateRoomForm() {
             onAnonymousNamesChange={formState.setAnonymousNames}
           />
 
+          {/* REVIVE: groups & roles + SOT + separate links (hidden in PAIR_MODE) */}
+          {!PAIR_MODE && (
           <CreateGroupsSection
             useGroups={formState.useGroups}
             groups={formState.groups}
@@ -125,8 +128,9 @@ export function CreateRoomForm() {
             onAddGroup={formState.addGroup}
             onToggleSeparateRoleLinks={formState.setSeparateRoleLinks}
           />
+          )}
 
-          <div className="clean-bottom-bar">
+          <div className="clean-actions-footer">
             <Link href="/" className="btn-clean-cancel" id="btn-cancel">
               Cancel
             </Link>

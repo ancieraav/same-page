@@ -1,3 +1,6 @@
+import { useEffect } from 'react';
+import { PAIR_MODE } from '@/lib/pairMode';
+
 export interface SelectedParticipant {
   name: string;
   initials: string;
@@ -12,6 +15,14 @@ interface ParticipantDetailModalProps {
 }
 
 export function ParticipantDetailModal({ open, selected, onClose }: ParticipantDetailModalProps) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); };
+  }, [open, onClose]);
   return (
     <div
       className={`analytics-modal-backdrop${open ? ' is-active' : ''}`}
@@ -38,9 +49,12 @@ export function ParticipantDetailModal({ open, selected, onClose }: ParticipantD
                   {selected.score}% Match
                 </span>
               </div>
+              {/* REVIVE: role line (hidden in PAIR_MODE) */}
+              {!PAIR_MODE && (
               <span className="modal-participant-role" id="modal-participant-role">
                 {selected.role}
               </span>
+              )}
             </div>
           </div>
           <button

@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { writeStored } from '@/lib/storage';
+import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
 import { useToast } from '@/components/ui/ToastProvider';
 import { blobToDataUrl } from '@/lib/blob';
 import type { Attachment } from '@/components/pages/create/CreateAttachmentsSection';
@@ -38,10 +39,11 @@ export function useCreateRoomState() {
   const [name, setName] = useState('Design Alignment Sync');
   const [topic, setTopic] = useState('');
   const [notes, setNotes] = useState('');
-  const [participantMode, setParticipantMode] = useState<'flexible' | 'fixed'>('flexible');
-  const [participantCount, setParticipantCount] = useState(10);
+  const [participantMode, setParticipantMode] = useState<'flexible' | 'fixed'>(PAIR_MODE ? 'fixed' : 'flexible');
+  const [participantCount, setParticipantCount] = useState(PAIR_MODE ? PAIR_SIZE : 10);
   const [useMemes, setUseMemes] = useState(true);
-  const [useGroups, setUseGroups] = useState(true);
+  // REVIVE: set back to true to restore groups & roles UI.
+  const [useGroups, setUseGroups] = useState(PAIR_MODE ? false : true);
   const [viewResponses, setViewResponses] = useState(true);
   const [anonymousNames, setAnonymousNames] = useState(true);
   const [separateRoleLinks, setSeparateRoleLinks] = useState(false);
@@ -159,7 +161,8 @@ export function useCreateRoomState() {
       showToast('Please provide a room name.', 'error');
       return;
     }
-    if (useGroups) {
+    // REVIVE: group/role/SOT validation (hidden in PAIR_MODE).
+    if (useGroups && !PAIR_MODE) {
       if (groups.length === 0) {
         showToast('Please add at least one group or turn groups off.', 'error');
         return;
@@ -177,12 +180,16 @@ export function useCreateRoomState() {
 
     setBusy(true);
     const code = String(Math.floor(100000 + Math.random() * 900000));
+    const effectiveCount = PAIR_MODE ? PAIR_SIZE : participantCount;
+    const effectiveMode = PAIR_MODE ? 'fixed' as const : participantMode;
     writeStored('roomCode', code);
     writeStored('roomName', name.trim());
     writeStored('roomTopic', topic.trim() || 'No explicit topic set');
     writeStored('roomUseMemes', useMemes ? 'true' : 'false');
     writeStored('roomSeparateRoles', separateRoleLinks ? 'true' : 'false');
     writeStored('roomNotes', notes);
+    writeStored('roomParticipantCount', effectiveCount);
+    writeStored('roomParticipantMode', effectiveMode);
 
     const attachmentsMeta = attachments.map((item) => ({
       id: item.id,
@@ -194,7 +201,7 @@ export function useCreateRoomState() {
     }));
     writeStored('roomAttachments', JSON.stringify(attachmentsMeta));
 
-    if (useGroups) {
+    if (useGroups && !PAIR_MODE) {
       writeStored('roomGroups', JSON.stringify(groups));
       const roleCodes: Record<string, string> = {};
       groups.forEach((group, index) => {
@@ -205,6 +212,20 @@ export function useCreateRoomState() {
       writeStored('roomGroups', '[]');
       writeStored('roomRoleCodes', '{}');
     }
+
+    // PAIR_MODE: single-code room (no per-group/role codes). Also write the
+    // legacy aggregate key so /waiting picks up the fresh name/topic.
+    // REVIVE: remove this block when groups & roles return.
+    writeStored('samepage_active_room', {
+      code,
+      name: name.trim(),
+      topic: topic.trim() || 'No explicit topic set',
+      notes,
+      participantMode: effectiveMode,
+      participantCount: effectiveCount,
+      groups: [],
+      attachments: attachmentsMeta,
+    });
 
     showToast('Room initialized successfully!');
     router.push('/waiting');

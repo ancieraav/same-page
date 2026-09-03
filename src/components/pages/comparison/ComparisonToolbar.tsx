@@ -30,7 +30,7 @@ function SearchInputBox({ search, onSearch }: { search: string; onSearch: (val: 
         type="text"
         id="multi-search-input"
         className="multi-search-input"
-        placeholder="Search by name, role, or perspective..."
+        placeholder="Search by name or perspective..."
         aria-label="Search perspectives"
         value={search}
         onChange={(event) => { onSearch(event.target.value); }}

@@ -172,8 +172,8 @@ export function AnalyticsDashboard({ summaryOpen, onToggleSummary }: AnalyticsDa
         </div>
         <div className="summary-body-content">
           <p className="summary-preview-paragraph" id="analytics-summary-preview">
-            Across all completed questions, the room established a decisive{' '}
-            <strong>74% overall alignment</strong> on prioritizing platform reliability and shipping an MVP this month over secondary features. While you and Alex diverged on final design decision ownership (Product vs Design), both participants hold strong consensus on delivery timelines and technical prerequisites.
+            Across all completed questions, the pair established a decisive{' '}
+            <strong>74% overall alignment</strong> on prioritizing platform reliability and shipping an MVP this month over secondary features. While you and Alex diverged on final design decision ownership, both of you hold strong consensus on delivery timelines and technical prerequisites.
           </p>
           <div
             className={`summary-extended-drawer${summaryOpen ? ' is-open' : ''}`}
@@ -181,16 +181,17 @@ export function AnalyticsDashboard({ summaryOpen, onToggleSummary }: AnalyticsDa
           >
             <div className="summary-extended-inner" id="analytics-summary-extended">
               <p>
-                <strong>Core Unanimous Commitments:</strong> Both participants strictly committed to an MVP delivery window within this month, agreeing that database connection pooling and checkout table locking are the non-negotiable operational blockers that must be resolved prior to scaling marketing spend.
+                <strong>Core Unanimous Commitments:</strong> Both of you strictly committed to an MVP delivery window within this month, agreeing that database connection pooling and checkout table locking are the non-negotiable operational blockers that must be resolved prior to scaling marketing spend.
               </p>
               <p>
-                <strong>Primary Divergences &amp; Next Steps:</strong> The central friction lies in decision ownership for UX edge cases and sprint duration pacing (2 vs 3 weeks). The team is positioned to resolve these minor variances in a focused 5-minute sync without delaying the launch milestone.
+                <strong>Primary Divergences &amp; Next Steps:</strong> The central friction lies in decision ownership for UX edge cases and sprint duration pacing (2 vs 3 weeks). You are positioned to resolve these minor variances in a focused 5-minute sync without delaying the launch milestone.
               </p>
             </div>
           </div>
         </div>
       </section>
       <section className="dynamic-combo-container" id="dynamic-combo-container" aria-live="polite">
+        {/* PAIR_MODE: only pair combo (You vs Alex), no roles, no SOT. REVIVE: combo 2..8 switcher. */}
         <AnalyticsComboCards />
       </section>
       <footer className="analytics-bottom-dock">
@@ -231,8 +232,8 @@ export function AnalyticsDashboard({ summaryOpen, onToggleSummary }: AnalyticsDa
               <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
-            <span>View Other Participants</span>
-            <span className="dock-badge-count">4</span>
+            <span>View Other Participant</span>
+            <span className="dock-badge-count">1</span>
           </Link>
         </div>
         <div className="dock-right">

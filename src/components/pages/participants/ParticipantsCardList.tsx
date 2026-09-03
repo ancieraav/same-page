@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { PAIR_MODE } from '@/lib/pairMode';
 
 interface ParticipantCardData {
   id: string;
@@ -15,10 +16,10 @@ interface ParticipantCardData {
 
 const PARTICIPANTS: ParticipantCardData[] = [
   {
-    id: 'elena',
-    name: 'Elena Rostova',
-    role: 'Design Lead',
-    initials: 'ER',
+    id: 'alex',
+    name: 'Alex Morgan',
+    role: '',
+    initials: 'AL',
     avatarColor: 'avatar-color-emerald',
     scoreMatch: '88% Match',
     scoreTone: 'tone-positive',
@@ -36,7 +37,7 @@ const PARTICIPANTS: ParticipantCardData[] = [
   {
     id: 'you',
     name: 'Anugrah (You)',
-    role: 'Lead Product Strategist',
+    role: '',
     initials: 'A',
     avatarColor: 'avatar-color-indigo',
     scoreMatch: '84% Match',
@@ -53,6 +54,8 @@ const PARTICIPANTS: ParticipantCardData[] = [
       </p>
     ),
   },
+  // REVIVE: +3 multi-user cards (hidden in PAIR_MODE)
+  ...(!PAIR_MODE ? [
   {
     id: 'raka',
     name: 'Raka Pratama',
@@ -110,6 +113,7 @@ const PARTICIPANTS: ParticipantCardData[] = [
       </p>
     ),
   },
+  ] as ParticipantCardData[] : []),
 ];
 
 function ParticipantCardItem({
@@ -144,7 +148,8 @@ function ParticipantCardItem({
         </div>
         <div className="team-member-info">
           <span className="team-member-name">{data.name}</span>
-          <span className="team-member-role">{data.role}</span>
+          {/* REVIVE: role line (hidden in PAIR_MODE) */}
+          {!PAIR_MODE && <span className="team-member-role">{data.role}</span>}
         </div>
         <div className={`team-card-score-pill ${data.scoreTone}`}>
           <span>{data.scoreMatch}</span>

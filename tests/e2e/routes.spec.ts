@@ -37,7 +37,7 @@ test('session editor submits an answer to comparison', async ({ page }) => {
 
 test('participant cards open an accessible modal', async ({ page }) => {
   await page.goto('/participants');
-  await page.getByRole('button', { name: /View Elena Rostova analytics/ }).click();
+  await page.getByRole('button', { name: /View Alex Morgan analytics/ }).click();
   await expect(page.locator('.analytics-modal-backdrop.is-active')).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(page.locator('.analytics-modal-backdrop.is-active')).toHaveCount(0);

@@ -1,5 +1,7 @@
 'use client';
 
+import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
+
 interface CreateRoomSettingsSectionProps {
   participantMode: 'flexible' | 'fixed';
   participantCount: number;
@@ -27,6 +29,20 @@ export function CreateRoomSettingsSection({
 }: CreateRoomSettingsSectionProps) {
   return (
     <>
+      {/* REVIVE: flexible/fixed + stepper 2-200 (hidden in PAIR_MODE, fixed to 2) */}
+      {PAIR_MODE ? (
+      <div className="clean-form-row">
+        <div className="clean-label">
+          Number of participants <span className="clean-mandatory">*</span>
+        </div>
+        <p className="clean-hint">1-on-1 session — you plus one partner.</p>
+        <div className="clean-segmented-toggle">
+          <button type="button" className="seg-btn active" disabled>
+            {PAIR_SIZE} participants
+          </button>
+        </div>
+      </div>
+      ) : (
       <div className="clean-form-row">
         <div className="clean-label">
           Number of participants <span className="clean-mandatory">*</span>
@@ -82,6 +98,7 @@ export function CreateRoomSettingsSection({
           </div>
         )}
       </div>
+      )}
 
       <div className="clean-form-row">
         <div className="clean-label">
@@ -106,6 +123,8 @@ export function CreateRoomSettingsSection({
         </div>
       </div>
 
+      {/* REVIVE: view-responses + anonymous toggles (hidden in PAIR_MODE) */}
+      {!PAIR_MODE && (
       <div className="clean-switch-row">
         <div>
           <div className="clean-switch-label">
@@ -125,7 +144,9 @@ export function CreateRoomSettingsSection({
           <span className="toggle-slider" />
         </label>
       </div>
+      )}
 
+      {!PAIR_MODE && (
       <div className="clean-switch-row">
         <div>
           <div className="clean-switch-label">
@@ -145,6 +166,7 @@ export function CreateRoomSettingsSection({
           <span className="toggle-slider" />
         </label>
       </div>
+      )}
     </>
   );
 }

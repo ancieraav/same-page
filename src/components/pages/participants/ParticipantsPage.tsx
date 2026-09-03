@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/ToastProvider';
 import { ParticipantsHeader } from './ParticipantsHeader';
 import { ParticipantsStage } from './ParticipantsStage';
 import { ParticipantDetailModal, type SelectedParticipant } from './ParticipantDetailModal';
+import { PAIR_MODE } from '@/lib/pairMode';
 import type { Filter, Sort } from '../comparison/ComparisonToolbar';
 
 export function ParticipantsPage() {
@@ -15,20 +16,29 @@ export function ParticipantsPage() {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [selected, setSelected] = useState<SelectedParticipant>({
-    name: 'Elena Rostova',
-    initials: 'ER',
-    role: 'Design Lead',
+    name: 'Alex Morgan',
+    initials: 'AL',
+    role: '',
     score: 88,
   });
 
   const participants = useMemo(
-    () => [
+    () => {
+      // PAIR_MODE: 2-person, no roles. REVIVE: restore 5 with roles below.
+      if (PAIR_MODE) {
+        return [
+          { id: 'alex', name: 'Alex Morgan', role: '', score: 88, initials: 'AL' },
+          { id: 'you', name: 'Anugrah (You)', role: '', score: 84, initials: 'A' },
+        ];
+      }
+      return [
       { id: 'elena', name: 'Elena Rostova', role: 'Design Lead', score: 88, initials: 'ER' },
       { id: 'you', name: 'Anugrah (You)', role: 'Lead Product Strategist', score: 84, initials: 'A' },
       { id: 'raka', name: 'Raka Pratama', role: 'Engineering Lead', score: 78, initials: 'RP' },
       { id: 'david', name: 'David Chen', role: 'Ops · Finance', score: 73, initials: 'DC' },
       { id: 'sarah', name: 'Sarah Jenkins', role: 'Growth · Marketing', score: 69, initials: 'SJ' },
-    ],
+      ];
+    },
     []
   );
 

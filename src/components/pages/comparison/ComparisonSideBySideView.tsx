@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { PAIR_MODE } from '@/lib/pairMode';
 
 export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
@@ -21,7 +22,8 @@ export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
             </div>
             <div className="room-profile-meta">
               <span className="room-user-name">Anugrah (You)</span>
-              <span className="room-user-role-title">Lead Product Strategist</span>
+              {/* REVIVE: role title (hidden in PAIR_MODE) */}
+              {!PAIR_MODE && <span className="room-user-role-title">Lead Product Strategist</span>}
             </div>
             <div className="room-alignment-pill tone-indigo" title="Personal alignment">
               <span>84% Aligned</span>
@@ -72,11 +74,12 @@ export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
         <article className="perspective-room-card">
           <div className="room-card-profile-header">
             <div className="room-avatar-circle avatar-color-emerald">
-              <span>ER</span>
+              <span>AL</span>
             </div>
             <div className="room-profile-meta">
-              <span className="room-user-name">Elena Rostova</span>
-              <span className="room-user-role-title">Design Lead</span>
+              <span className="room-user-name">Alex Morgan</span>
+              {/* REVIVE: role title (hidden in PAIR_MODE) */}
+              {!PAIR_MODE && <span className="room-user-role-title">Design Lead</span>}
             </div>
             <div className="room-alignment-pill tone-positive" title="Consensus match">
               <span>88% Aligned</span>

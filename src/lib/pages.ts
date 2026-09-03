@@ -13,7 +13,7 @@ export const pages = {
   },
   create: {
     title: 'Same Page — Create Room',
-    description: 'Create a new private Same Page session with custom rules and roles.',
+    description: 'Create a new private Same Page 1-on-1 session with custom rules.',
     bodyClass: 'scrollable-page',
   },
   waiting: {

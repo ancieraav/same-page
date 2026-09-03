@@ -8,7 +8,9 @@ import { useToast } from '@/components/ui/ToastProvider';
 import { AmbientBackground } from '@/components/layout/AmbientBackground';
 import { WaitingHeader } from './WaitingHeader';
 import { WaitingStage } from './WaitingStage';
+import { ShareInviteModal } from './ShareInviteModal';
 import { ShareRolesModal } from './ShareRolesModal';
+import { PAIR_MODE } from '@/lib/pairMode';
 
 interface Room {
   code: string;
@@ -21,19 +23,15 @@ interface Room {
   attachments?: { name: string; size?: string; ext?: string; isImage?: boolean }[];
 }
 
+// REVIVE: full multi-group fallback with SOT + roles (hidden in PAIR_MODE).
 const fallbackRoom: Room = {
   code: 'SP-7942',
   name: 'Design Alignment Sync',
   topic: 'Product Strategy',
-  participantMode: 'flexible',
-  participantCount: 10,
+  participantMode: 'fixed',
+  participantCount: 2,
   notes: 'Please review the attached strategy brief before voting on upcoming questions.',
-  groups: [
-    { id: 1, name: 'Leadership', isSourceOfTruth: true, roles: ['Decision Maker', 'Facilitator'] },
-    { id: 2, name: 'Engineering', isSourceOfTruth: false, roles: ['Lead Architect', 'Reviewer'] },
-    { id: 3, name: 'Product', isSourceOfTruth: false, roles: ['Product Owner'] },
-    { id: 4, name: 'Design', isSourceOfTruth: false, roles: ['UI Designer'] },
-  ],
+  groups: [],
   attachments: [{ name: 'Q3_Product_Strategy_Deck.pdf', size: '2.4 MB', ext: 'PDF' }],
 };
 
@@ -82,7 +80,14 @@ export function WaitingPage() {
         onCopy={() => { void copyCode(); }}
       />
       <WaitingStage room={room} onShare={() => { setShareOpen(true); }} />
-      {shareOpen && (
+      {shareOpen && PAIR_MODE && (
+        <ShareInviteModal
+          roomCode={room.code}
+          onClose={() => { setShareOpen(false); }}
+          onCopy={(value, label) => { void copyRole(value, label); }}
+        />
+      )}
+      {shareOpen && !PAIR_MODE && (
         <ShareRolesModal
           roomCode={room.code}
           groups={room.groups ?? []}
