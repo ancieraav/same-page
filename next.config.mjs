@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   devIndicators: false,
+  agentRules: false,
   turbopack: { root: process.cwd() },
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'media.giphy.com' }],
