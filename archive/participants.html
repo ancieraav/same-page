@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Perspectives &amp; Individual Analytics | SamePage</title>
+  <meta name="description" content="Detailed participant perspectives and individual alignment analytics across the team session.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="samepage-body-theme">
+
+  <!-- ==========================================================================
+       1. GLOBAL TOP NAVIGATION
+       ========================================================================== -->
+  <header class="minimal-header">
+    <a href="index.html" class="brand-group" id="brand-logo-link">
+      <span class="brand-logo-frame">
+        <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true" width="36" height="36">
+      </span>
+      <span class="brand-name">Same Page</span>
+    </a>
+
+    <div class="header-nav">
+      <!-- Participant Count Badge -->
+      <div class="header-participants-badge" id="header-participants-badge" title="Active participants count">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span id="header-participants-count">5 Participants</span>
+      </div>
+
+      <!-- Duration Badge -->
+      <div class="header-duration-badge" id="header-duration-badge" title="Session duration">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span id="header-duration-text">08:42</span>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="nav-avatar-icon" title="Account profile">
+        <span>A</span>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ==========================================================================
+       2. MAIN CONTENT WRAPPER
+       ========================================================================== -->
+  <main class="analytics-canvas-wrapper" id="participants-canvas-wrapper">
+
+    <!-- Page Header -->
+    <header class="analytics-page-header">
+      <div class="analytics-meta-pill">
+        <span class="round-indicator-dot" aria-hidden="true"></span>
+        <span>Multi-Perspective Explorer</span>
+      </div>
+      <h1 class="analytics-main-title">
+        Team Perspectives &amp; Individual Analytics
+      </h1>
+      <p class="analytics-subtitle">
+        Review individual responses and alignment scores across the room. Click any participant to open their complete individual analytics popup without leaving the page.
+      </p>
+    </header>
+
+    <!-- Multi-Participant Interactive Toolbar (Search, Filter, Sort, Refresh, Count) -->
+    <div class="team-list-toolbar" id="team-list-toolbar">
+      <!-- Search Box -->
+      <div class="team-toolbar-search-box">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="multi-search-input" class="multi-search-input" placeholder="Search by name, role, or perspective..." aria-label="Search perspectives">
+        <button type="button" class="btn-clear-search" id="btn-clear-search" aria-label="Clear search" title="Clear search" style="display: none;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Controls: Filter, Sort, Refresh, Count -->
+      <div class="team-toolbar-actions">
+        <!-- Custom Filter Dropdown -->
+        <div class="custom-dropdown" id="dropdown-filter-wrap">
+          <button type="button" class="custom-dropdown-trigger" id="btn-filter-trigger" aria-haspopup="listbox" aria-expanded="false" title="Filter by alignment score">
+            <svg class="dropdown-trigger-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span class="custom-dropdown-label" id="filter-dropdown-label">All Match Levels</span>
+            <svg class="dropdown-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="custom-dropdown-menu" id="menu-filter-options" role="listbox">
+            <div class="custom-dropdown-item is-selected" role="option" data-value="all" aria-selected="true">
+              <span class="item-label">All Match Levels</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="high" aria-selected="false">
+              <span class="item-label">High Match (&ge; 80%)</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="moderate" aria-selected="false">
+              <span class="item-label">Moderate Match (70&ndash;79%)</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="low" aria-selected="false">
+              <span class="item-label">Divergent (&lt; 70%)</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Custom Sort Dropdown -->
+        <div class="custom-dropdown" id="dropdown-sort-wrap">
+          <button type="button" class="custom-dropdown-trigger" id="btn-sort-trigger" aria-haspopup="listbox" aria-expanded="false" title="Sort perspectives">
+            <svg class="dropdown-trigger-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <line x1="4" y1="12" x2="14" y2="12"></line>
+              <line x1="4" y1="18" x2="8" y2="18"></line>
+            </svg>
+            <span class="custom-dropdown-label" id="sort-dropdown-label">Highest Match</span>
+            <svg class="dropdown-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <div class="custom-dropdown-menu" id="menu-sort-options" role="listbox">
+            <div class="custom-dropdown-item is-selected" role="option" data-value="match-desc" aria-selected="true">
+              <span class="item-label">Highest Match</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="match-asc" aria-selected="false">
+              <span class="item-label">Lowest Match</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="name-asc" aria-selected="false">
+              <span class="item-label">Name (A&ndash;Z)</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="custom-dropdown-item" role="option" data-value="name-desc" aria-selected="false">
+              <span class="item-label">Name (Z&ndash;A)</span>
+              <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Refresh Button -->
+        <button type="button" class="btn-toolbar-refresh" id="btn-multi-refresh" title="Refresh perspectives list">
+          <svg class="refresh-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          <span>Refresh</span>
+        </button>
+
+        <!-- Count Indicator Badge -->
+        <div class="toolbar-count-badge" id="multi-count-badge" title="Active perspectives count">
+          <span class="count-number" id="multi-count-text">5 of 5</span>
+          <span class="count-label">perspectives</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State if search/filter produces 0 results -->
+    <div class="team-list-empty-state" id="team-list-empty" style="display: none;">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <p class="empty-title">No matching perspectives found</p>
+      <p class="empty-desc">Try modifying your search keywords or resetting your filter criteria.</p>
+      <button type="button" class="btn-reset-filters" id="btn-reset-filters">Clear Search &amp; Filters</button>
+    </div>
+
+    <!-- Team List Stack (Clickable to open Participant Analytics Popup) -->
+    <div class="team-list-stack" id="team-list-stack">
+
+      <!-- Participant 1: Elena Rostova -->
+      <article class="team-member-card is-clickable" data-participant-id="elena" tabindex="0" role="button" aria-label="View Elena Rostova analytics">
+        <div class="team-card-profile-col">
+          <div class="room-avatar-circle avatar-color-emerald">
+            <span>ER</span>
+          </div>
+          <div class="team-member-info">
+            <span class="team-member-name">Elena Rostova</span>
+            <span class="team-member-role">Design Lead</span>
+          </div>
+          <div class="team-card-score-pill tone-positive">
+            <span>88% Match</span>
+          </div>
+        </div>
+        <div class="team-card-statement-col">
+          <div class="statement-expandable-wrap">
+            <div class="statement-preview-text">
+              <p>Priority is <strong>eliminating micro-friction in checkout typography</strong>, input masking, and form error validation states.</p>
+            </div>
+            <div class="statement-extended-text">
+              <p>Deprioritizing marketing landing page revamps and micro-interactions for now so the checkout funnel has zero visual distraction.</p>
+            </div>
+            <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+              <span>Read more</span>
+              <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Participant 2: Anugrah (You) -->
+      <article class="team-member-card is-self is-clickable" data-participant-id="you" tabindex="0" role="button" aria-label="View your analytics">
+        <div class="team-card-profile-col">
+          <div class="room-avatar-circle avatar-color-indigo">
+            <span>A</span>
+          </div>
+          <div class="team-member-info">
+            <span class="team-member-name">Anugrah (You)</span>
+            <span class="team-member-role">Lead Product Strategist</span>
+          </div>
+          <div class="team-card-score-pill tone-indigo">
+            <span>84% Match</span>
+          </div>
+        </div>
+        <div class="team-card-statement-col">
+          <div class="statement-expandable-wrap">
+            <div class="statement-preview-text">
+              <p>Our single highest-leverage priority must be <strong>locking the core checkout retention loop</strong> before scaling ad spend.</p>
+            </div>
+            <div class="statement-extended-text">
+              <p>Explicitly deprioritizing ancillary redesign features, custom analytics dashboards, and non-essential UI churn until database latency stabilizes below 120ms.</p>
+            </div>
+            <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+              <span>Read more</span>
+              <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Participant 3: Raka Pratama -->
+      <article class="team-member-card is-clickable" data-participant-id="raka" tabindex="0" role="button" aria-label="View Raka Pratama analytics">
+        <div class="team-card-profile-col">
+          <div class="room-avatar-circle avatar-color-amber">
+            <span>RP</span>
+          </div>
+          <div class="team-member-info">
+            <span class="team-member-name">Raka Pratama</span>
+            <span class="team-member-role">Engineering Lead</span>
+          </div>
+          <div class="team-card-score-pill tone-positive">
+            <span>78% Match</span>
+          </div>
+        </div>
+        <div class="team-card-statement-col">
+          <div class="statement-expandable-wrap">
+            <div class="statement-preview-text">
+              <p>I agree that <strong>checkout reliability and database indexing</strong> take 100% precedence for our upcoming production release.</p>
+            </div>
+            <div class="statement-extended-text">
+              <p>Completely deprioritizing new third-party marketing integrations and localized payment gateways until infrastructure stress tests pass under 5,000 req/sec.</p>
+            </div>
+            <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+              <span>Read more</span>
+              <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Participant 4: David Chen -->
+      <article class="team-member-card is-clickable" data-participant-id="david" tabindex="0" role="button" aria-label="View David Chen analytics">
+        <div class="team-card-profile-col">
+          <div class="room-avatar-circle avatar-color-rose">
+            <span>DC</span>
+          </div>
+          <div class="team-member-info">
+            <span class="team-member-name">David Chen</span>
+            <span class="team-member-role">Ops &bull; Finance</span>
+          </div>
+          <div class="team-card-score-pill tone-neutral">
+            <span>73% Match</span>
+          </div>
+        </div>
+        <div class="team-card-statement-col">
+          <div class="statement-expandable-wrap">
+            <div class="statement-preview-text">
+              <p>Protecting <strong>unit margin and refund reconciliation</strong> is top operational priority for financial health.</p>
+            </div>
+            <div class="statement-extended-text">
+              <p>Agreeing to deprioritize custom enterprise invoicing and multi-currency billing until checkout payment webhooks achieve 99.99% automated reconciliation.</p>
+            </div>
+            <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+              <span>Read more</span>
+              <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+      <!-- Participant 5: Sarah Jenkins -->
+      <article class="team-member-card is-clickable" data-participant-id="sarah" tabindex="0" role="button" aria-label="View Sarah Jenkins analytics">
+        <div class="team-card-profile-col">
+          <div class="room-avatar-circle avatar-color-cyan">
+            <span>SJ</span>
+          </div>
+          <div class="team-member-info">
+            <span class="team-member-name">Sarah Jenkins</span>
+            <span class="team-member-role">Growth &bull; Marketing</span>
+          </div>
+          <div class="team-card-score-pill tone-neutral">
+            <span>69% Match</span>
+          </div>
+        </div>
+        <div class="team-card-statement-col">
+          <div class="statement-expandable-wrap">
+            <div class="statement-preview-text">
+              <p>We need <strong>frictionless conversion from paid campaigns</strong> to ensure our acquisition budget is not leaking users.</p>
+            </div>
+            <div class="statement-extended-text">
+              <p>Pausing viral referral invite popups to ensure core checkout payment conversion rates stay robust.</p>
+            </div>
+            <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+              <span>Read more</span>
+              <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- ==========================================================================
+         3. BOTTOM ACTION DOCK
+         ========================================================================== -->
+    <footer class="analytics-bottom-dock">
+      <div class="dock-left">
+        <a href="analytics.html" class="dock-btn-secondary" id="btn-back-analytics">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Back to Session Analytics</span>
+        </a>
+      </div>
+
+      <div class="dock-right">
+        <a href="index.html" class="dock-btn-primary" id="btn-finish-session">
+          <span>Complete Room Session</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ==========================================================================
+       4. PARTICIPANT DETAILED ANALYTICS POPUP MODAL (100% Identical to analytics.html)
+       ========================================================================== -->
+  <div class="analytics-modal-backdrop" id="participant-analytics-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="participant-modal-card" id="participant-modal-card">
+      
+      <!-- Modal Header Banner -->
+      <div class="modal-header-banner">
+        <div class="modal-profile-group">
+          <div class="room-avatar-circle" id="modal-participant-avatar">
+            <span id="modal-participant-initials">ER</span>
+          </div>
+          <div class="modal-profile-text">
+            <div class="modal-profile-name-row">
+              <h2 class="modal-participant-name" id="modal-participant-name">Elena Rostova</h2>
+              <span class="hero-status-pill tone-positive" id="modal-participant-badge">88% Match</span>
+            </div>
+            <span class="modal-participant-role" id="modal-participant-role">Design Lead</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn-modal-close" id="btn-close-participant-modal" aria-label="Close analytics popup" title="Close (Esc)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Body (100% Identical to analytics.html) -->
+      <div class="modal-body-scrollable" id="modal-body-scrollable">
+        
+        <!-- Context Header (Identical to analytics.html) -->
+        <header class="analytics-page-header">
+          <div class="analytics-meta-pill">
+            <span class="round-indicator-dot" aria-hidden="true"></span>
+            <span>Complete</span>
+          </div>
+          <h1 class="analytics-main-title" id="modal-analytics-main-title">
+            Session Alignment &amp; Perspective Analytics
+          </h1>
+          <p class="analytics-subtitle" id="modal-analytics-subtitle">
+            Aggregated consensus, cognitive divergence, and unstated assumptions across all completed questions.
+          </p>
+        </header>
+
+        <!-- 1. SHARED HERO ANALYTICS (OVERALL & PARTICIPANT ALIGNMENT) -->
+        <section class="shared-hero-analytics-grid modal-hero-grid" id="modal-shared-hero-analytics">
+          
+          <!-- Hero Metric 1: Overall Alignment -->
+          <div class="hero-metric-card" id="modal-card-hero-overall">
+            <div class="hero-card-header">
+              <div class="hero-metric-title-group">
+                <span class="hero-metric-label">Overall Alignment</span>
+                <span class="hero-metric-sublabel">Cross-participant consensus across all questions</span>
+              </div>
+              <span class="hero-status-pill tone-positive">Mostly aligned</span>
+            </div>
+
+            <div class="hero-metric-value-row">
+              <div class="hero-score-giant-wrap">
+                <span class="hero-score-giant" id="modal-overall-score-num">74</span>
+                <span class="hero-score-percent">%</span>
+              </div>
+              <div class="hero-progress-group">
+                <div class="curved-progress-container">
+                  <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="gradient-analytics-overall-popup" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#4F46E5" />
+                        <stop offset="100%" stop-color="#6366F1" />
+                      </linearGradient>
+                    </defs>
+                    <path class="curved-track-bg"
+                          d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                          stroke="#E2E8F0"
+                          stroke-width="7"
+                          stroke-linecap="round" />
+                    <path class="curved-track-fill"
+                          id="modal-overall-scurve-fill"
+                          d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                          stroke="url(#gradient-analytics-overall-popup)"
+                          stroke-width="7"
+                          stroke-linecap="round"
+                          pathLength="100"
+                          stroke-dasharray="100"
+                          stroke-dashoffset="26" />
+                  </svg>
+                </div>
+                <div class="hero-mini-breakdown" id="modal-overall-mini-breakdown">
+                  <span class="breakdown-tag tone-aligned">8 aligned</span>
+                  <span class="breakdown-dot">&bull;</span>
+                  <span class="breakdown-tag tone-mixed">3 mixed</span>
+                  <span class="breakdown-dot">&bull;</span>
+                  <span class="breakdown-tag tone-divided">2 divided</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Metric 2: Participant Alignment -->
+          <div class="hero-metric-card" id="modal-card-hero-participant">
+            <div class="hero-card-header">
+              <div class="hero-metric-title-group">
+                <span class="hero-metric-label" id="modal-participant-metric-label">Elena's Alignment</span>
+                <span class="hero-metric-sublabel">Proximity to the collective room perspective</span>
+              </div>
+              <span class="hero-status-pill tone-indigo" id="modal-participant-status-pill">+14% Above Room Avg</span>
+            </div>
+
+            <div class="hero-metric-value-row">
+              <div class="hero-score-giant-wrap">
+                <span class="hero-score-giant text-indigo" id="modal-participant-score-num">88</span>
+                <span class="hero-score-percent text-indigo">%</span>
+              </div>
+              <div class="hero-progress-group">
+                <div class="curved-progress-container">
+                  <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="gradient-analytics-participant-popup" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stop-color="#4F46E5" />
+                        <stop offset="100%" stop-color="#8B5CF6" />
+                      </linearGradient>
+                    </defs>
+                    <path class="curved-track-bg"
+                          d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                          stroke="#E2E8F0"
+                          stroke-width="7"
+                          stroke-linecap="round" />
+                    <path class="curved-track-fill"
+                          id="modal-participant-scurve-fill"
+                          d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                          stroke="url(#gradient-analytics-participant-popup)"
+                          stroke-width="7"
+                          stroke-linecap="round"
+                          pathLength="100"
+                          stroke-dasharray="100"
+                          stroke-dashoffset="12" />
+                  </svg>
+                </div>
+                <div class="hero-bench-note" id="modal-participant-bench-note">
+                  <span>Elena aligns <strong>88%</strong> with the room across all evaluated trade-offs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- 2. FULL SESSION AI SUMMARY CARD (Identical to analytics.html) -->
+        <section class="ai-summary-card" id="modal-ai-summary-card">
+          <div class="summary-card-header">
+            <div class="summary-badge">
+              <span class="summary-sparkle">✦</span>
+              <span>Summary</span>
+            </div>
+
+            <!-- Expand / Collapse Full Summary Button with Chevron -->
+            <button type="button" class="btn-toggle-summary" id="btn-toggle-modal-summary" aria-expanded="false" title="Toggle full summary">
+              <span id="toggle-modal-summary-label">Read Full Summary</span>
+              <svg class="summary-chevron-icon" id="modal-summary-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+          </div>
+
+          <div class="summary-body-content">
+            <p class="summary-preview-paragraph" id="modal-summary-preview">
+              <!-- Dynamically populated -->
+            </p>
+
+            <div class="summary-extended-drawer" id="modal-summary-drawer">
+              <div class="summary-extended-inner" id="modal-summary-extended">
+                <!-- Dynamically populated -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. DYNAMIC COMBINATION ANALYTICS SECTION / PEER BREAKDOWN (Identical to analytics.html) -->
+        <section class="dynamic-combo-container" id="modal-dynamic-combo-container" aria-live="polite">
+          <!-- Dynamically populated with Strongest Agreement, Biggest Disagreement, Shared Assumptions, Hidden Mismatch, Near Agreement -->
+        </section>
+
+      </div>
+
+      <!-- Modal Footer Bar -->
+      <div class="modal-footer-bar">
+        <span class="modal-esc-hint">Press Esc or click outside to dismiss</span>
+        <button type="button" class="dock-btn-secondary" id="btn-footer-close-modal">
+          Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

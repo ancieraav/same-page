@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Comparison &amp; Alignment Breakdown - Same Page</title>
+  <meta name="description" content="Perspective comparison and team alignment insights on Same Page.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="viewport-fit-page comparison-body">
+
+  <!-- ==========================================================================
+       1. TOP SITE HEADER
+       ========================================================================== -->
+  <header class="minimal-header">
+    <a href="index.html" class="brand-group" id="brand-logo-link">
+      <span class="brand-logo-frame">
+        <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true" width="36" height="36">
+      </span>
+      <span class="brand-name">Same Page</span>
+    </a>
+
+    <div class="header-nav">
+      <!-- Participant Count Badge -->
+      <div class="header-participants-badge" id="header-participants-badge" title="Session participants">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span id="header-participants-count">2 Participants</span>
+      </div>
+
+      <!-- Duration Badge -->
+      <div class="header-duration-badge" id="header-duration-badge" title="Session duration">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span id="header-duration-text">03:45</span>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="nav-avatar-icon" title="Account profile">
+        <span>A</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. COMPARISON & ALIGNMENT STAGE
+       ========================================================================== -->
+  <main class="comparison-canvas-wrapper" id="comparison-canvas-wrapper">
+
+    <!-- Question Context Banner -->
+    <section class="comparison-question-header">
+      <div class="comparison-headline-row">
+        <div class="question-round-indicator" id="comparison-round-indicator">
+          <span class="round-indicator-dot" aria-hidden="true"></span>
+          <span>Question 1 of 2 &bull; Completed</span>
+        </div>
+      </div>
+
+      <h1 class="comparison-question-title" id="comparison-question-title">
+        Based on our strategic goals in Design Alignment Sync, what is the single highest-leverage priority our team must commit to, and what are we explicitly deprioritizing?
+      </h1>
+    </section>
+
+    <!-- Metrics & AI Nuance Overview -->
+    <section class="alignment-overview-grid">
+      
+      <!-- Metric Card 1: Overall Team Alignment -->
+      <div class="alignment-metric-card">
+        <div class="metric-card-header">
+          <span class="metric-label">Overall Alignment</span>
+          <span class="metric-badge-pill tone-positive">Strong Consensus</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-score-giant">78<span class="metric-score-percent">%</span></span>
+          <div class="metric-progress-wrapper">
+            <div class="curved-progress-container" title="78% Team Alignment">
+              <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradient-scurve-team" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4F46E5" />
+                    <stop offset="100%" stop-color="#6366F1" />
+                  </linearGradient>
+                </defs>
+                <!-- Serpentine S-Curve Track Background -->
+                <path class="curved-track-bg"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="#E2E8F0"
+                      stroke-width="7"
+                      stroke-linecap="round" />
+                <!-- Serpentine S-Curve Track Progress Fill (78%) -->
+                <path class="curved-track-fill"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="url(#gradient-scurve-team)"
+                      stroke-width="7"
+                      stroke-linecap="round"
+                      pathLength="100"
+                      stroke-dasharray="100"
+                      stroke-dashoffset="22" />
+              </svg>
+            </div>
+            <span class="metric-sub-detail">4 of 5 core assumptions shared across roles</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Card 2: Your Alignment Score -->
+      <div class="alignment-metric-card">
+        <div class="metric-card-header">
+          <span class="metric-label">Your Alignment Score</span>
+          <span class="metric-badge-pill tone-indigo">Above Average</span>
+        </div>
+        <div class="metric-value-row">
+          <span class="metric-score-giant text-indigo">84<span class="metric-score-percent">%</span></span>
+          <div class="metric-progress-wrapper">
+            <div class="curved-progress-container" title="84% Personal Alignment">
+              <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradient-scurve-self" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4F46E5" />
+                    <stop offset="100%" stop-color="#8B5CF6" />
+                  </linearGradient>
+                </defs>
+                <!-- Serpentine S-Curve Track Background -->
+                <path class="curved-track-bg"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="#E2E8F0"
+                      stroke-width="7"
+                      stroke-linecap="round" />
+                <!-- Serpentine S-Curve Track Progress Fill (84%) -->
+                <path class="curved-track-fill"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="url(#gradient-scurve-self)"
+                      stroke-width="7"
+                      stroke-linecap="round"
+                      pathLength="100"
+                      stroke-dasharray="100"
+                      stroke-dashoffset="16" />
+              </svg>
+            </div>
+            <span class="metric-sub-detail">Ranked #1 closest match with benchmark scope</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Card 3: Unified AI Summary with Collapsible Full Summary -->
+      <div class="ai-summary-card" id="ai-summary-card">
+        <div class="summary-card-header">
+          <div class="summary-badge">
+            <span class="summary-sparkle">✦</span>
+            <span>Summary</span>
+          </div>
+
+          <!-- Expand / Collapse Full Summary Button with Chevron -->
+          <button type="button" class="btn-toggle-summary" id="btn-toggle-summary" aria-expanded="false" title="Toggle full summary">
+            <span id="toggle-summary-label">Read Full Summary</span>
+            <svg class="summary-chevron-icon" id="summary-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Single Column Unified Summary Body -->
+        <div class="summary-body-content">
+          <!-- Concise Core Summary (Always visible) -->
+          <p class="summary-preview-paragraph">
+            The room achieved a strong <strong>78% alignment</strong> on locking checkout reliability and database latency before scaling acquisition campaigns. While you uniquely surfaced technical debt bottlenecks as a hard prerequisite, the team universally agreed to deprioritize ancillary cosmetic redesigns and referral features to focus engineering capacity on conversion stability.
+          </p>
+
+          <!-- Extended Full Summary Drawer (Collapsible) -->
+          <div class="summary-extended-drawer" id="summary-extended-drawer">
+            <div class="summary-extended-inner">
+              <p>
+                <strong>Cross-Role Consensus:</strong> Engineering (Raka) and Design (Elena) aligned closely with Product (You) on eliminating conversion drop-off points. Both agreed that checkout friction directly degrades refund reconciliation (David) and paid campaign ROI (Sarah).
+              </p>
+              <p>
+                <strong>Explicit Deprioritizations:</strong> Non-essential homepage revamps, custom enterprise invoice tooling, and new marketing referral widgets were unanimously deferred to subsequent sprints.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================================================
+         VIEW MODE 1: TWO PARTICIPANTS (SIDE-BY-SIDE / DUAL ROOMS)
+         ========================================================================== -->
+    <section class="comparison-stage-mode" id="stage-mode-two">
+      <div class="side-by-side-grid">
+
+        <!-- Column Left: Participant 1 (You) -->
+        <article class="perspective-room-card is-self">
+          <div class="room-card-profile-header">
+            <div class="room-avatar-circle avatar-color-indigo">
+              <span>A</span>
+            </div>
+            <div class="room-profile-meta">
+              <span class="room-user-name">Anugrah (You)</span>
+              <span class="room-user-role-title">Lead Product Strategist</span>
+            </div>
+            <div class="room-alignment-pill tone-indigo" title="Personal alignment">
+              <span>84% Aligned</span>
+            </div>
+          </div>
+
+          <div class="room-statement-surface">
+            <div class="statement-rendered-content statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>Our single highest-leverage priority must be <strong>locking the core checkout retention loop</strong> before launching widespread user acquisition.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>We are explicitly deprioritizing <em>ancillary redesign features</em> and custom team dashboards until database latency stabilizes below 120ms.</p>
+                <ul class="rendered-list">
+                  <li>Zero regressions on core funnel conversion</li>
+                  <li>Halt cosmetic UI churn on non-critical screens</li>
+                </ul>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Center Divider with Mutual Fit Pill -->
+        <div class="dual-room-center-spine" aria-hidden="true">
+          <div class="spine-line"></div>
+          <div class="spine-badge" title="Mutual perspective match">
+            <span class="spine-badge-val">81%</span>
+            <span class="spine-badge-lbl">Fit</span>
+          </div>
+          <div class="spine-line"></div>
+        </div>
+
+        <!-- Column Right: Participant 2 -->
+        <article class="perspective-room-card">
+          <div class="room-card-profile-header">
+            <div class="room-avatar-circle avatar-color-amber">
+              <span>RP</span>
+            </div>
+            <div class="room-profile-meta">
+              <span class="room-user-name">Raka Pratama</span>
+              <span class="room-user-role-title">Engineering Lead</span>
+            </div>
+            <div class="room-alignment-pill tone-positive" title="Alignment with benchmark">
+              <span>78% Aligned</span>
+            </div>
+          </div>
+
+          <div class="room-statement-surface">
+            <div class="statement-rendered-content statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>I agree that <strong>checkout reliability and database indexing</strong> take 100% precedence for the upcoming sprint.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>We should completely deprioritize new marketing integrations and localized payment gateways until infrastructure stress tests pass.</p>
+                <ul class="rendered-list">
+                  <li>Refactor Postgres transaction bottlenecks</li>
+                  <li>Freeze front-end cosmetic PRs until latency stabilizes</li>
+                </ul>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="comparison-stage-mode is-hidden" id="stage-mode-multi">
+      <!-- Multi-Participant Interactive Toolbar (Search, Filter, Sort, Refresh, Count) -->
+      <div class="team-list-toolbar" id="team-list-toolbar">
+        <!-- Search Box -->
+        <div class="team-toolbar-search-box">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="multi-search-input" class="multi-search-input" placeholder="Search by name, role, or perspective..." aria-label="Search perspectives">
+          <button type="button" class="btn-clear-search" id="btn-clear-search" aria-label="Clear search" title="Clear search" style="display: none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Controls: Filter, Sort, Refresh, Count -->
+        <div class="team-toolbar-actions">
+          <!-- Custom Filter Dropdown -->
+          <div class="custom-dropdown" id="dropdown-filter-wrap">
+            <button type="button" class="custom-dropdown-trigger" id="btn-filter-trigger" aria-haspopup="listbox" aria-expanded="false" title="Filter by alignment score">
+              <svg class="dropdown-trigger-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              <span class="custom-dropdown-label" id="filter-dropdown-label">All Match Levels</span>
+              <svg class="dropdown-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="custom-dropdown-menu" id="menu-filter-options" role="listbox">
+              <div class="custom-dropdown-item is-selected" role="option" data-value="all" aria-selected="true">
+                <span class="item-label">All Match Levels</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="high" aria-selected="false">
+                <span class="item-label">High Match (&ge; 80%)</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="moderate" aria-selected="false">
+                <span class="item-label">Moderate Match (70&ndash;79%)</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="low" aria-selected="false">
+                <span class="item-label">Divergent (&lt; 70%)</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom Sort Dropdown -->
+          <div class="custom-dropdown" id="dropdown-sort-wrap">
+            <button type="button" class="custom-dropdown-trigger" id="btn-sort-trigger" aria-haspopup="listbox" aria-expanded="false" title="Sort perspectives">
+              <svg class="dropdown-trigger-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="6" x2="20" y2="6"></line>
+                <line x1="4" y1="12" x2="14" y2="12"></line>
+                <line x1="4" y1="18" x2="8" y2="18"></line>
+              </svg>
+              <span class="custom-dropdown-label" id="sort-dropdown-label">Highest Match</span>
+              <svg class="dropdown-chevron-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="custom-dropdown-menu" id="menu-sort-options" role="listbox">
+              <div class="custom-dropdown-item is-selected" role="option" data-value="match-desc" aria-selected="true">
+                <span class="item-label">Highest Match</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="match-asc" aria-selected="false">
+                <span class="item-label">Lowest Match</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="name-asc" aria-selected="false">
+                <span class="item-label">Name (A&ndash;Z)</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <div class="custom-dropdown-item" role="option" data-value="name-desc" aria-selected="false">
+                <span class="item-label">Name (Z&ndash;A)</span>
+                <svg class="item-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Refresh Button -->
+          <button type="button" class="btn-toolbar-refresh" id="btn-multi-refresh" title="Refresh perspectives list">
+            <svg class="refresh-icon-svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>Refresh</span>
+          </button>
+
+          <!-- Count Indicator Badge -->
+          <div class="toolbar-count-badge" id="multi-count-badge" title="Active perspectives count">
+            <span class="count-number" id="multi-count-text">5 of 5</span>
+            <span class="count-label">perspectives</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State if search/filter produces 0 results -->
+      <div class="team-list-empty-state" id="team-list-empty" style="display: none;">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <p class="empty-title">No matching perspectives found</p>
+        <p class="empty-desc">Try modifying your search keywords or resetting your filter criteria.</p>
+        <button type="button" class="btn-reset-filters" id="btn-reset-filters">Clear Search &amp; Filters</button>
+      </div>
+
+      <div class="team-list-stack" id="team-list-stack">
+
+        <!-- Participant Row 1 (You) -->
+        <article class="team-member-card is-self">
+          <div class="team-card-profile-col">
+            <div class="room-avatar-circle avatar-color-indigo">
+              <span>A</span>
+            </div>
+            <div class="team-member-info">
+              <span class="team-member-name">Anugrah (You)</span>
+              <span class="team-member-role">Lead Product Strategist</span>
+            </div>
+            <div class="team-card-score-pill tone-indigo">
+              <span>84% Match</span>
+            </div>
+          </div>
+          <div class="team-card-statement-col">
+            <div class="statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>Our single highest-leverage priority must be <strong>locking the core checkout retention loop</strong> before scaling ad spend.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>We are explicitly deprioritizing ancillary redesign features, custom analytics dashboards, and non-essential UI churn until database latency stabilizes below 120ms.</p>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Participant Row 2 -->
+        <article class="team-member-card">
+          <div class="team-card-profile-col">
+            <div class="room-avatar-circle avatar-color-amber">
+              <span>RP</span>
+            </div>
+            <div class="team-member-info">
+              <span class="team-member-name">Raka Pratama</span>
+              <span class="team-member-role">Engineering Lead</span>
+            </div>
+            <div class="team-card-score-pill tone-positive">
+              <span>78% Match</span>
+            </div>
+          </div>
+          <div class="team-card-statement-col">
+            <div class="statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>I agree that <strong>checkout reliability and database indexing</strong> take 100% precedence for our upcoming production release.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>We should completely deprioritize new third-party marketing integrations and localized payment gateways until infrastructure stress tests pass under 5,000 req/sec.</p>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Participant Row 3 -->
+        <article class="team-member-card">
+          <div class="team-card-profile-col">
+            <div class="room-avatar-circle avatar-color-emerald">
+              <span>ER</span>
+            </div>
+            <div class="team-member-info">
+              <span class="team-member-name">Elena Rostova</span>
+              <span class="team-member-role">Design Lead</span>
+            </div>
+            <div class="team-card-score-pill tone-positive">
+              <span>88% Match</span>
+            </div>
+          </div>
+          <div class="team-card-statement-col">
+            <div class="statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>Priority is <strong>eliminating micro-friction in checkout typography</strong>, input masking, and form error validation states.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>Deprioritizing marketing landing page revamps, micro-interactions, and heavy animated transitions for now so the checkout funnel has zero visual distraction.</p>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Participant Row 4 -->
+        <article class="team-member-card">
+          <div class="team-card-profile-col">
+            <div class="room-avatar-circle avatar-color-cyan">
+              <span>SJ</span>
+            </div>
+            <div class="team-member-info">
+              <span class="team-member-name">Sarah Jenkins</span>
+              <span class="team-member-role">Growth &bull; Marketing</span>
+            </div>
+            <div class="team-card-score-pill tone-neutral">
+              <span>69% Match</span>
+            </div>
+          </div>
+          <div class="team-card-statement-col">
+            <div class="statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>We need <strong>frictionless conversion from paid campaigns</strong> to ensure our acquisition budget is not leaking users.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>I was originally advocating for viral referral invite popups, but I am fully aligned with pausing that to ensure core payment conversion rates stay robust.</p>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- Participant Row 5 -->
+        <article class="team-member-card">
+          <div class="team-card-profile-col">
+            <div class="room-avatar-circle avatar-color-rose">
+              <span>DC</span>
+            </div>
+            <div class="team-member-info">
+              <span class="team-member-name">David Chen</span>
+              <span class="team-member-role">Ops &bull; Finance</span>
+            </div>
+            <div class="team-card-score-pill tone-neutral">
+              <span>73% Match</span>
+            </div>
+          </div>
+          <div class="team-card-statement-col">
+            <div class="statement-expandable-wrap">
+              <div class="statement-preview-text">
+                <p>Protecting <strong>unit margin and refund reconciliation</strong> is top operational priority for financial health.</p>
+              </div>
+              <div class="statement-extended-text">
+                <p>Agreeing to deprioritize custom enterprise invoicing and multi-currency billing until checkout payment webhooks achieve 99.99% automated reconciliation.</p>
+              </div>
+              <button type="button" class="btn-read-more-statement" aria-expanded="false" title="Toggle full response">
+                <span>Read more</span>
+                <svg class="chevron-mini" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Bottom Action Dock -->
+    <footer class="comparison-bottom-dock">
+      <div class="dock-left">
+        <a href="session.html?q=1&review=1" class="dock-btn-secondary" id="btn-back-question">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span>Review Question 1</span>
+        </a>
+      </div>
+
+      <div class="dock-right">
+        <button type="button" class="dock-btn-primary" id="btn-next-question">
+          <span>Continue to Question 2 of 2</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

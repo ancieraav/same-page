@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Session Analytics &amp; Alignment Breakdown — Same Page</title>
+  <meta name="description" content="Comprehensive multi-perspective analytics and consensus report across all session questions.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="viewport-fit-page analytics-body">
+
+  <!-- ==========================================================================
+       1. TOP SITE HEADER
+       ========================================================================== -->
+  <header class="minimal-header">
+    <a href="index.html" class="brand-group" id="brand-logo-link">
+      <span class="brand-logo-frame">
+        <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true" width="36" height="36">
+      </span>
+      <span class="brand-name">Same Page</span>
+    </a>
+
+    <div class="header-nav">
+      <!-- Participant Count Badge -->
+      <a href="participants.html" class="header-participants-badge header-participants-link" id="header-participants-badge" title="View all participants">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span id="header-participants-count">2 Participants</span>
+      </a>
+
+      <!-- Duration Badge (Total Session Duration) -->
+      <div class="header-duration-badge" id="header-duration-badge" title="Total session duration">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span id="header-duration-text">05:24</span>
+      </div>
+
+      <!-- User Avatar -->
+      <div class="nav-avatar-icon" title="Account profile">
+        <span>A</span>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ==========================================================================
+       3. MAIN ANALYTICS WRAPPER
+       ========================================================================== -->
+  <main class="analytics-canvas-wrapper" id="analytics-canvas-wrapper">
+
+    <!-- Page Header & Context Banner -->
+    <header class="analytics-page-header">
+      <div class="analytics-meta-pill">
+        <span class="round-indicator-dot" aria-hidden="true"></span>
+        <span id="analytics-mode-indicator">Complete</span>
+      </div>
+      <h1 class="analytics-main-title" id="analytics-main-title">
+        Session Alignment &amp; Perspective Analytics
+      </h1>
+      <p class="analytics-subtitle" id="analytics-subtitle">
+        Aggregated consensus, cognitive divergence, and unstated assumptions across all completed questions.
+      </p>
+    </header>
+
+    <!-- ==========================================================================
+         4. SHARED HERO ANALYTICS (OVERALL & YOUR ALIGNMENT)
+         ========================================================================== -->
+    <section class="shared-hero-analytics-grid" id="shared-hero-analytics">
+      
+      <!-- Hero Metric 1: Overall Alignment -->
+      <div class="hero-metric-card" id="card-hero-overall">
+        <div class="hero-card-header">
+          <div class="hero-metric-title-group">
+            <span class="hero-metric-label">Overall Alignment</span>
+            <span class="hero-metric-sublabel">Cross-participant consensus across all questions</span>
+          </div>
+          <span class="hero-status-pill tone-positive" id="overall-status-pill">Mostly aligned</span>
+        </div>
+
+        <div class="hero-metric-value-row">
+          <div class="hero-score-giant-wrap">
+            <span class="hero-score-giant" id="overall-score-num">74</span>
+            <span class="hero-score-percent">%</span>
+          </div>
+          <div class="hero-progress-group">
+            <!-- Curving S-wave progress track -->
+            <div class="curved-progress-container">
+              <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradient-analytics-overall" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4F46E5" />
+                    <stop offset="100%" stop-color="#6366F1" />
+                  </linearGradient>
+                </defs>
+                <path class="curved-track-bg"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="#E2E8F0"
+                      stroke-width="7"
+                      stroke-linecap="round" />
+                <path class="curved-track-fill"
+                      id="overall-scurve-fill"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="url(#gradient-analytics-overall)"
+                      stroke-width="7"
+                      stroke-linecap="round"
+                      pathLength="100"
+                      stroke-dasharray="100"
+                      stroke-dashoffset="26" />
+              </svg>
+            </div>
+            <!-- Mini Breakdown Pill -->
+            <div class="hero-mini-breakdown" id="overall-mini-breakdown">
+              <span class="breakdown-tag tone-aligned">8 aligned</span>
+              <span class="breakdown-dot">&bull;</span>
+              <span class="breakdown-tag tone-mixed">3 mixed</span>
+              <span class="breakdown-dot">&bull;</span>
+              <span class="breakdown-tag tone-divided">2 divided</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Metric 2: Your Alignment -->
+      <div class="hero-metric-card" id="card-hero-your">
+        <div class="hero-card-header">
+          <div class="hero-metric-title-group">
+            <span class="hero-metric-label">Your Alignment</span>
+            <span class="hero-metric-sublabel">Your proximity to the collective room perspective</span>
+          </div>
+          <span class="hero-status-pill tone-indigo" id="your-status-pill">+7% Above Room Avg</span>
+        </div>
+
+        <div class="hero-metric-value-row">
+          <div class="hero-score-giant-wrap">
+            <span class="hero-score-giant text-indigo" id="your-score-num">81</span>
+            <span class="hero-score-percent text-indigo">%</span>
+          </div>
+          <div class="hero-progress-group">
+            <!-- Curving S-wave progress track -->
+            <div class="curved-progress-container">
+              <svg class="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="gradient-analytics-your" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4F46E5" />
+                    <stop offset="100%" stop-color="#8B5CF6" />
+                  </linearGradient>
+                </defs>
+                <path class="curved-track-bg"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="#E2E8F0"
+                      stroke-width="7"
+                      stroke-linecap="round" />
+                <path class="curved-track-fill"
+                      id="your-scurve-fill"
+                      d="M 10,15 C 28,4 42,4 60,15 C 78,26 92,26 110,15 C 128,4 142,4 160,15 C 178,26 192,26 210,15"
+                      stroke="url(#gradient-analytics-your)"
+                      stroke-width="7"
+                      stroke-linecap="round"
+                      pathLength="100"
+                      stroke-dasharray="100"
+                      stroke-dashoffset="19" />
+              </svg>
+            </div>
+            <div class="hero-bench-note" id="your-bench-note">
+              <span>You align <strong>81%</strong> with the room across all evaluated trade-offs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================================================
+         4b. FULL SESSION SUMMARY CARD (Like Question Completion Summary)
+         ========================================================================== -->
+    <section class="ai-summary-card" id="analytics-ai-summary-card">
+      <div class="summary-card-header">
+        <div class="summary-badge">
+          <span class="summary-sparkle">✦</span>
+          <span>Summary</span>
+        </div>
+
+        <!-- Expand / Collapse Full Summary Button with Chevron -->
+        <button type="button" class="btn-toggle-summary" id="btn-toggle-analytics-summary" aria-expanded="false" title="Toggle full summary">
+          <span id="toggle-analytics-summary-label">Read Full Summary</span>
+          <svg class="summary-chevron-icon" id="analytics-summary-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Single Column Unified Summary Body -->
+      <div class="summary-body-content">
+        <!-- Concise Core Summary (Always visible) -->
+        <p class="summary-preview-paragraph" id="analytics-summary-preview">
+          Across all completed questions, the room established a decisive <strong>74% overall alignment</strong> on prioritizing platform reliability and shipping an MVP this month over secondary features. While you and Alex diverged on final design decision ownership (Product vs Design), both participants hold strong consensus on delivery timelines and technical prerequisites.
+        </p>
+
+        <!-- Extended Full Summary Drawer (Collapsible) -->
+        <div class="summary-extended-drawer" id="analytics-summary-drawer">
+          <div class="summary-extended-inner" id="analytics-summary-extended">
+            <p>
+              <strong>Core Unanimous Commitments:</strong> Both participants strictly committed to an MVP delivery window within this month, agreeing that database connection pooling and checkout table locking are the non-negotiable operational blockers that must be resolved prior to scaling marketing spend.
+            </p>
+            <p>
+              <strong>Primary Divergences &amp; Next Steps:</strong> The central friction lies in decision ownership for UX edge cases and sprint duration pacing (2 vs 3 weeks). The team is positioned to resolve these minor variances in a focused 5-minute sync without delaying the launch milestone.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         5. DYNAMIC COMBINATION ANALYTICS SECTION
+         (Injected dynamically by JavaScript based on active combo)
+         ========================================================================== -->
+    <section class="dynamic-combo-container" id="dynamic-combo-container" aria-live="polite">
+      <!-- Injected by initAnalyticsPage() -->
+    </section>
+
+    <!-- ==========================================================================
+         6. BOTTOM ACTION DOCK
+         ========================================================================== -->
+    <footer class="analytics-bottom-dock">
+      <div class="dock-left">
+        <a href="comparison.html?q=2&review=1" class="dock-btn-secondary" id="btn-review-answers">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Review Question Answers</span>
+        </a>
+
+        <a href="participants.html" class="dock-btn-secondary" id="btn-view-participants" title="View other participants">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span>View Other Participants</span>
+          <span class="dock-badge-count">4</span>
+        </a>
+      </div>
+
+      <div class="dock-right">
+        <a href="index.html" class="dock-btn-primary" id="btn-finish-session">
+          <span>Complete Room Session</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Same Page — Waiting Room</title>
+  <meta name="description" content="Wait for participants to join your private Same Page session. Send live emoji reactions and chat.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%234F46E5%22 stroke-width=%222.5%22><rect x=%223%22 y=%224%22 width=%2218%22 height=%2216%22 rx=%223%22></rect><line x1=%227%22 y1=%229%22 x2=%2217%22 y2=%229%22></line><line x1=%227%22 y1=%2213%22 x2=%2213%22 y2=%2213%22></line></svg>">
+</head>
+<body class="scrollable-page waiting-page-body">
+
+  <!-- Ambient Grid Background -->
+  <div class="bg-ambient-grid" aria-hidden="true"></div>
+
+  <!-- Top Site Header (100% Consistent Across All Pages) -->
+  <header class="minimal-header">
+    <a href="index.html" class="brand-group" id="brand-logo-link">
+      <span class="brand-logo-frame">
+        <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true">
+      </span>
+      <span class="brand-name">Same Page</span>
+    </a>
+
+    <div class="header-nav">
+      <!-- Room Code Badge with Copy Action (Exclusive to Waiting Room) -->
+      <div class="header-room-code-badge" id="header-code-box" title="Click to copy room code">
+        <span class="room-code-label">ROOM</span>
+        <span class="room-code-text" id="header-room-code">SYNC-9021</span>
+        <button type="button" class="btn-copy-code-mini" id="btn-copy-header-code" aria-label="Copy room code">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Participant Count Badge -->
+      <div class="header-participants-badge" id="header-participants-badge" title="Connected participants">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span id="header-participants-count">2/2 Ready</span>
+      </div>
+
+      <!-- Duration Badge (Waiting Room Live Timer) -->
+      <div class="header-duration-badge" id="header-duration-badge" title="Waiting room duration">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span id="header-duration-time">00:45</span>
+      </div>
+
+      <!-- Profile Avatar -->
+      <div class="nav-avatar-icon" title="Account profile">
+        <span>A</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Waiting Canvas -->
+  <main class="waiting-canvas-wrapper">
+
+    <!-- Hero Session Header -->
+    <div class="waiting-hero-block">
+      <div class="waiting-status-pill">
+        <span class="pulsing-live-dot" aria-hidden="true"></span>
+        <span id="waiting-status-text">Waiting for participants to get ready</span>
+      </div>
+
+      <h1 class="waiting-room-title" id="room-display-name">Design Alignment Sync</h1>
+
+      <div class="waiting-meta-bar">
+        <span class="waiting-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span id="participants-count-label">4 of 10 joined</span>
+        </span>
+        <span class="meta-dot">•</span>
+        <span class="waiting-meta-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span id="room-topic-label">Product Strategy</span>
+        </span>
+        <span class="meta-dot">•</span>
+        <!-- Review Attachments Pill -->
+        <button type="button" class="btn-meta-pill" id="btn-open-attachments" title="View attached documents">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+          </svg>
+          <span>Attachments (2)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Participant Bubbles Stage -->
+    <section class="participant-bubble-stage" id="bubble-stage" aria-label="Participants in waiting room">
+      
+      <!-- Container where bubbles float with physics and reactions -->
+      <div class="bubbles-flex-grid" id="bubbles-container">
+        <!-- Bubbles injected dynamically via app.js -->
+      </div>
+    </section>
+
+    <!-- Floating Live Interaction Dock -->
+    <div class="waiting-dock-container">
+      <div class="waiting-dock-card">
+
+        <!-- 1. Emoji Reaction Bar -->
+        <div class="emoji-reaction-bar" aria-label="Send live emoji reaction">
+          <span class="dock-label-tiny">React:</span>
+          <div class="emoji-buttons-row">
+            <button type="button" class="btn-emoji-react" data-emoji="👋" title="Wave">👋</button>
+            <button type="button" class="btn-emoji-react" data-emoji="☕" title="Coffee">☕</button>
+            <button type="button" class="btn-emoji-react" data-emoji="🚀" title="Rocket">🚀</button>
+            <button type="button" class="btn-emoji-react" data-emoji="💡" title="Idea">💡</button>
+            <button type="button" class="btn-emoji-react" data-emoji="🔥" title="Fire">🔥</button>
+            <button type="button" class="btn-emoji-react" data-emoji="🎉" title="Party">🎉</button>
+            <button type="button" class="btn-emoji-react" data-emoji="❤️" title="Love">❤️</button>
+            <button type="button" class="btn-emoji-react" data-emoji="👏" title="Clap">👏</button>
+          </div>
+        </div>
+
+        <div class="dock-divider-v" aria-hidden="true"></div>
+
+        <!-- 2. Live Comment Input -->
+        <form class="waiting-comment-form" id="comment-form">
+          <input 
+            type="text" 
+            id="comment-input" 
+            class="waiting-comment-input" 
+            placeholder="Say something while waiting..." 
+            maxlength="100"
+            autocomplete="off"
+          >
+          <button type="submit" class="btn-send-comment" id="btn-send-comment" title="Send message">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+
+        <div class="dock-divider-v" aria-hidden="true"></div>
+
+        <!-- 3. Operator Launch / Participant Status -->
+        <div class="waiting-launch-area">
+          <button type="button" class="btn-launch-session" id="btn-launch-session">
+            <span>Launch Session</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Secondary Sub Actions (Copy Link & Leave Room) -->
+      <div class="waiting-sub-actions">
+        <button type="button" class="btn-sub-action" id="btn-copy-invite-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span>Copy Invite Link</span>
+        </button>
+
+        <a href="index.html" class="btn-sub-action leave-link" id="btn-leave-room">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          <span>Leave Room</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Document Lightbox Modal (For Reading Attachments) -->
+  <div class="doc-lightbox-overlay" id="doc-lightbox-overlay" style="display: none;" aria-hidden="true">
+    <div class="doc-lightbox-modal">
+      <div class="doc-lightbox-header">
+        <div class="doc-lightbox-meta">
+          <span class="doc-lightbox-pill" id="lightbox-file-ext">PDF</span>
+          <span class="doc-lightbox-title" id="lightbox-file-name">Q3_Product_Strategy.pdf</span>
+          <span class="doc-lightbox-size" id="lightbox-file-size">2.4 MB</span>
+        </div>
+        <div class="doc-lightbox-actions">
+          <a href="#" target="_blank" class="btn-lightbox-pill" id="lightbox-open-external" title="Open full file in new tab">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span>Open in tab</span>
+          </a>
+          <button type="button" class="btn-lightbox-close" id="lightbox-close-btn" aria-label="Close preview">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="doc-lightbox-body" id="lightbox-body">
+        <!-- Injected dynamically via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Share by Role / Access Codes Modal -->
+  <div class="share-roles-overlay" id="share-roles-overlay" style="display: none;" aria-hidden="true">
+    <div class="share-roles-modal">
+      <div class="share-roles-header">
+        <div>
+          <h3 class="share-modal-title">Invite &amp; Role Access Codes</h3>
+          <p class="share-modal-sub">Participants who join using a role code or link will be automatically assigned to that role without manual selection.</p>
+        </div>
+        <button type="button" class="btn-lightbox-close" id="btn-close-share-modal" aria-label="Close modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="share-roles-body" id="share-roles-body">
+        <!-- Dynamically rendered via app.js based on create room groups/roles -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Viewport Emoji Fountain Layer (Floats all the way through the header) -->
+  <div class="emoji-fountain-layer" id="emoji-fountain" aria-hidden="true"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

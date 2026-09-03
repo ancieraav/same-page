@@ -1,0 +1,303 @@
+
+/* ==========================================================================
+   COMPARISON & ALIGNMENT BREAKDOWN VIEW
+   ========================================================================== */
+.page-root.comparison-body {
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  box-sizing: border-box;
+  background: var(--bg-porcelain);
+  margin: 0;
+}
+
+.comparison-canvas-wrapper {
+  max-width: 1040px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 36px 24px 64px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  animation: fadeIn 0.35s ease-out;
+}
+
+.comparison-question-header {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.comparison-headline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.comparison-view-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: #E2E8F0;
+  padding: 3px;
+  border-radius: var(--radius-full);
+  gap: 3px;
+  user-select: none;
+}
+
+.view-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-switch-btn:hover {
+  color: var(--text-main);
+}
+
+.view-switch-btn.is-active {
+  background: #FFFFFF;
+  color: var(--primary);
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+}
+
+.comparison-question-title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  margin: 10px 0 0 0;
+}
+
+/* Alignment Metrics & AI Summary Callout Grid */
+.alignment-overview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.alignment-metric-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.metric-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-label {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.metric-badge-pill {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.metric-badge-pill.tone-positive {
+  background: #EEF2FF;
+  color: #4F46E5;
+}
+
+.metric-badge-pill.tone-indigo {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+
+.metric-badge-pill.tone-neutral {
+  background: #F1F5F9;
+  color: var(--text-secondary);
+}
+
+.metric-value-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.metric-score-giant {
+  font-family: var(--font-display);
+  font-size: 2.75rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-main);
+}
+
+.metric-score-giant.text-indigo {
+  color: var(--primary);
+}
+
+.metric-score-percent {
+  font-size: 1.4rem;
+  font-weight: 800;
+  opacity: 0.85;
+  margin-left: 2px;
+}
+
+.metric-progress-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Serpentine S-Curve Alignment Progress Ribbon */
+.curved-progress-container {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: visible;
+}
+
+.curved-progress-svg {
+  width: 100%;
+  height: 30px;
+  display: block;
+  overflow: visible;
+}
+
+.curved-track-bg {
+  stroke: #E2E8F0;
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke 0.3s ease;
+}
+
+.curved-track-fill {
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: drop-shadow(0 2px 5px rgba(79, 70, 229, 0.28));
+}
+
+.metric-sub-detail {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Single-Column AI Summary Card with Expandable Drawer */
+.ai-summary-card {
+  grid-column: 1 / -1;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.summary-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.summary-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.summary-sparkle {
+  font-size: 0.85rem;
+}
+
+.btn-toggle-summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  transition: all 0.18s ease;
+}
+
+.btn-toggle-summary:hover {
+  background: var(--primary-light);
+}
+
+.summary-chevron-icon {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-toggle-summary.is-expanded .summary-chevron-icon {
+  transform: rotate(180deg);
+}
+
+.summary-body-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.summary-preview-paragraph {
+  font-size: 0.94rem;
+  line-height: 1.68;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.summary-extended-drawer {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, margin 0.2s ease;
+}
+
+.summary-extended-drawer.is-open {
+  max-height: 320px;
+  opacity: 1;
+  margin-top: 14px;
+}

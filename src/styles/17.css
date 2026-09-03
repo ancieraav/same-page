@@ -1,0 +1,301 @@
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title-sparkle {
+  color: var(--primary);
+  font-size: 0.9rem;
+}
+
+.card-title-text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.card-badge-pill {
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* 5. Custom Card Types */
+
+/* A. Two-Sided Comparison Card (Biggest Disagreement, Role Gap, Truth Gap) */
+.card-two-sided .dual-side-comparison {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  background: #F8FAFC;
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+}
+
+.party-statement-box {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.party-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.party-avatar-mini {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.party-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.party-quote {
+  font-size: 0.88rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+.party-vs-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.party-vs-badge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.party-vs-badge.tone-divergent {
+  background: #FEF2F2;
+  border-color: #FECACA;
+  color: #DC2626;
+}
+
+/* B. Negotiation Zone (Overlapping Range Slider) */
+.card-negotiation-zone .negotiation-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #F8FAFC;
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.range-track-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.range-label-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.range-bar-track {
+  width: 100%;
+  height: 14px;
+  background: #E2E8F0;
+  border-radius: var(--radius-full);
+  position: relative;
+  overflow: hidden;
+}
+
+.range-bar-span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--radius-full);
+}
+
+.range-bar-span.span-client {
+  background: rgba(79, 70, 229, 0.75);
+}
+
+.range-bar-span.span-freelancer {
+  background: rgba(14, 165, 233, 0.75);
+}
+
+.negotiation-overlap-highlight {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #065F46;
+}
+
+.overlap-pill-badge {
+  background: #10B981;
+  color: #FFFFFF;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 800;
+  font-size: 0.76rem;
+}
+
+/* C. Segmented Bar (Biggest Split) */
+.segmented-track-bar {
+  width: 100%;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  overflow: hidden;
+  background: #E2E8F0;
+}
+
+.seg-part {
+  height: 100%;
+  transition: width 0.6s ease;
+}
+
+.seg-part.tone-launch {
+  background: var(--primary);
+}
+
+.seg-part.tone-delay {
+  background: #F59E0B;
+}
+
+.seg-part.tone-unsure {
+  background: #94A3B8;
+}
+
+.segmented-legend-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.seg-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.seg-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* D. Inter-Role Matrix (Inter-Role Alignment) */
+.role-matrix-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 6px;
+  font-size: 0.85rem;
+}
+
+.role-matrix-table th {
+  padding: 8px 12px;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.role-matrix-table th:first-child {
+  text-align: left;
+}
+
+.matrix-cell {
+  background: #F8FAFC;
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  text-align: center;
+  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  transition: all 0.15s ease;
+}
+
+.matrix-cell:hover {
+  background: #EEF2FF;
+  transform: scale(1.02);
+}
+
+.matrix-cell.high-match {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.matrix-cell.med-match {
+  background: #FEF3C7;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.matrix-cell.low-match {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.matrix-cell.self-cell {
+  background: #F1F5F9;
+  color: #94A3B8;
+  font-size: 0.8rem;
+}
+
+/* E. Horizontal Bar Chart (Role Cohesion / Role vs Truth) */
+.horizontal-bars-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.h-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.h-bar-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-main);
+}

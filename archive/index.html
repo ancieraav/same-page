@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Same Page — Join or Create Room</title>
+  <meta name="description" content="Collaborate and align your team in seconds with Same Page.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%234F46E5%22 stroke-width=%222.5%22><rect x=%223%22 y=%224%22 width=%2218%22 height=%2216%22 rx=%223%22></rect><line x1=%227%22 y1=%229%22 x2=%2217%22 y2=%229%22></line><line x1=%227%22 y1=%2213%22 x2=%2213%22 y2=%2213%22></line></svg>">
+</head>
+<body class="no-scroll">
+
+  <!-- Subtle Ambient Background Texture -->
+  <div class="bg-ambient-grid" aria-hidden="true"></div>
+
+  <!-- Viewport Shell (Strict 100vh, Zero Scroll, Eye-Level Focus) -->
+  <div class="viewport-shell">
+
+    <!-- Top Site Header -->
+    <header class="minimal-header">
+      <a href="index.html" class="brand-group" id="brand-logo-link">
+        <span class="brand-logo-frame">
+          <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true">
+        </span>
+        <span class="brand-name">Same Page</span>
+      </a>
+
+      <div class="header-nav">
+        <div class="live-activity-badge" title="142 private rooms active right now">
+          <div class="activity-signal" aria-hidden="true">
+            <span class="signal-bar bar-1"></span>
+            <span class="signal-bar bar-2"></span>
+            <span class="signal-bar bar-3"></span>
+          </div>
+          <div class="activity-text">
+            <span class="activity-number">142</span>
+            <span class="activity-label">rooms active</span>
+          </div>
+        </div>
+        <a href="create.html" class="nav-link-btn" id="nav-create-link">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Create Room</span>
+        </a>
+        <div class="nav-avatar-icon" title="Account profile" aria-label="Profile">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <!-- Center Eye-Level Stage (Expansive Whitespace, Clean & Focused) -->
+    <main class="center-eye-stage">
+      <div class="eye-level-card">
+
+        <!-- Title & Subtitle -->
+        <div class="hero-heading-group">
+          <h1 class="hero-title">Join or create room</h1>
+          <p class="hero-subtitle">Enter your 7-character room code to jump straight into the session.</p>
+        </div>
+
+        <!-- 7-Character OTP Code Entry (Eye Level Centerpiece) -->
+        <div class="code-entry-section">
+          <div class="code-inputs-row" role="group" aria-label="Enter 7 character room code">
+            <input type="text" id="code-box-1" class="code-box" maxlength="1" autocomplete="off" inputmode="text" autofocus aria-label="Character 1">
+            <input type="text" id="code-box-2" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 2">
+            <input type="text" id="code-box-3" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 3">
+            <input type="text" id="code-box-4" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 4">
+            <input type="text" id="code-box-5" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 5">
+            <input type="text" id="code-box-6" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 6">
+            <input type="text" id="code-box-7" class="code-box" maxlength="1" autocomplete="off" inputmode="text" aria-label="Character 7">
+          </div>
+
+          <!-- Helper Utilities (Paste from clipboard) -->
+          <div class="code-utilities-row">
+            <button type="button" class="util-action-btn" id="btn-paste-code" title="Paste from clipboard">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+              <span>Paste from clipboard</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary Action Buttons: Create & Join -->
+        <div class="primary-actions-row">
+          <a href="create.html" class="btn-action-create" id="btn-create-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Create</span>
+          </a>
+
+          <button type="button" class="btn-action-join" id="btn-join-room">
+            <span>Join Room</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

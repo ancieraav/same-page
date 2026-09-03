@@ -1,0 +1,318 @@
+.waiting-canvas-wrapper {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 44px 20px 160px;
+  box-sizing: border-box;
+}
+
+/* Hero Section */
+.waiting-hero-block {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.waiting-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: var(--radius-full);
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.pulsing-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+  animation: liveDotPulse 2s infinite;
+}
+
+@keyframes liveDotPulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 7px rgba(79, 70, 229, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+  }
+}
+
+.waiting-room-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 2.7rem);
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+
+.waiting-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.waiting-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.waiting-meta-item svg {
+  color: var(--primary);
+}
+
+.meta-dot {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.btn-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-meta-pill:hover {
+  background: #E0E7FF;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+/* Participant Bubbles Stage */
+.participant-bubble-stage {
+  position: relative;
+  min-height: 360px;
+  margin-bottom: 24px;
+}
+
+.bubbles-flex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 40px 32px;
+  padding: 24px 0 60px;
+}
+
+/* Individual Bubble Card */
+.participant-bubble-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  animation: gentleBob 4.2s ease-in-out infinite;
+  transition: transform 0.25s ease;
+}
+
+.participant-bubble-card:hover {
+  transform: scale(1.08) !important;
+}
+
+.participant-bubble-card:nth-child(2) { animation-delay: 0.7s; }
+.participant-bubble-card:nth-child(3) { animation-delay: 1.4s; }
+.participant-bubble-card:nth-child(4) { animation-delay: 2.1s; }
+.participant-bubble-card:nth-child(5) { animation-delay: 2.8s; }
+.participant-bubble-card:nth-child(6) { animation-delay: 3.5s; }
+
+@keyframes gentleBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-7px);
+  }
+}
+
+.bubble-avatar-frame {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  border-radius: var(--radius-full);
+  background: #FFFFFF;
+  border: 2.5px solid var(--border-subtle);
+  box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.bubble-avatar-frame.is-operator {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow), 0 8px 24px -4px rgba(79, 70, 229, 0.2);
+}
+
+.bubble-avatar-frame.is-sot {
+  border-color: #F59E0B;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2), 0 8px 24px -4px rgba(245, 158, 11, 0.15);
+}
+
+.bubble-avatar-inner {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.avatar-color-indigo { background: linear-gradient(135deg, #4F46E5, #6366F1); }
+.avatar-color-amber { background: linear-gradient(135deg, #F59E0B, #D97706); }
+.avatar-color-rose { background: linear-gradient(135deg, #EC4899, #DB2777); }
+.avatar-color-cyan { background: linear-gradient(135deg, #06B6D4, #0891B2); }
+.avatar-color-purple { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+
+/* Online Badge on Avatar */
+.bubble-online-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: #10B981;
+  border: 2px solid #FFFFFF;
+}
+
+/* SOT Star Crown */
+.bubble-crown-badge {
+  position: absolute;
+  top: -9px;
+  right: -6px;
+  padding: 3px 7px;
+  border-radius: var(--radius-full);
+  background: #F59E0B;
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+  letter-spacing: 0.02em;
+}
+
+.bubble-crown-badge svg {
+  width: 10px;
+  height: 10px;
+  fill: #FFFFFF;
+}
+
+.bubble-info-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.bubble-participant-name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.bubble-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 700;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}
+
+.bubble-tag-pill.operator-pill {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-color: rgba(79, 70, 229, 0.25);
+}
+
+.bubble-tag-pill.sot-pill {
+  background: #FFFBEB;
+  color: #B45309;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* Add Participant Placeholder Bubble */
+.bubble-avatar-frame.is-add-slot {
+  border: 2px dashed var(--border-subtle);
+  background: #F8FAFC;
+  color: var(--text-muted);
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.bubble-avatar-frame.is-add-slot:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+/* Live Speech Balloon above Bubble */
+.bubble-speech-balloon {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.85);
+  opacity: 0;
+  background: #0F172A;
+  color: #FFFFFF;
+  padding: 8px 14px;
+  border-radius: 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: normal;
+  width: max-content;
+  max-width: 340px;
+  text-align: center;
+  line-height: 1.35;
+  word-break: break-word;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 40;
+}

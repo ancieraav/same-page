@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Your Room Identity - Same Page</title>
+  <meta name="description" content="Set your display name and profile photo before joining the session.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="join-body">
+
+  <!-- ==========================================================================
+       1. TOP SITE HEADER
+       ========================================================================== -->
+  <header class="minimal-header">
+    <a href="index.html" class="brand-group" id="brand-logo-link">
+      <span class="brand-logo-frame">
+        <img class="brand-logo" src="samepage-logo.svg" alt="" aria-hidden="true" width="36" height="36">
+      </span>
+      <span class="brand-name">Same Page</span>
+    </a>
+
+    <div class="header-nav">
+      <!-- Live Activity Badge -->
+      <div class="live-activity-badge" title="142 private rooms active right now">
+        <div class="activity-signal" aria-hidden="true">
+          <span class="signal-bar bar-1"></span>
+          <span class="signal-bar bar-2"></span>
+          <span class="signal-bar bar-3"></span>
+        </div>
+        <div class="activity-text">
+          <span class="activity-number">142</span>
+          <span class="activity-label">rooms active</span>
+        </div>
+      </div>
+
+      <!-- User Avatar with Dropdown -->
+      <div class="nav-avatar-icon" title="Account profile" aria-label="Profile">
+        <span>A</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       2. MAIN JOIN IDENTITY STAGE
+       ========================================================================== -->
+  <main class="join-identity-stage">
+    <div class="join-identity-card">
+
+      <!-- Hero Header (No Room Code Pill) -->
+      <div class="join-hero-header">
+        <h1 class="join-main-title">Set Your Room Identity</h1>
+        <p class="join-subtitle">
+          Customize your display name and photo specifically for this session.
+        </p>
+      </div>
+
+      <!-- Side-by-Side Avatar & Name Row (Responsive: stacks on mobile) -->
+      <div class="join-profile-side-row">
+        <!-- Photo Avatar Column -->
+        <div class="join-avatar-col">
+          <input type="file" id="join-avatar-file-input" accept="image/*" style="display: none;">
+          <button type="button" class="join-avatar-btn" id="btn-join-avatar-trigger" title="Click to choose profile photo">
+            <span class="profile-avatar-giant-text" id="join-avatar-giant-text">A</span>
+            <img class="profile-avatar-img" id="join-avatar-giant-img" src="" alt="Room Avatar Photo">
+            <div class="avatar-camera-hover-badge" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            </div>
+          </button>
+          <span class="join-avatar-hint">Click to change</span>
+        </div>
+
+        <!-- Display Name Field Column -->
+        <div class="join-name-col">
+          <label for="join-input-name" class="profile-field-label">Display Name in Room</label>
+          <input type="text" id="join-input-name" class="profile-field-input" placeholder="e.g. Alex Morgan" value="Alex Morgan" autocomplete="name">
+          <p class="profile-field-hint">This name will appear on your opinion bubble and comparison cards.</p>
+        </div>
+      </div>
+
+      <!-- Form Actions Stack -->
+      <div class="join-form-stack">
+        <!-- Submit Button -->
+        <button type="button" class="btn-continue-join" id="btn-enter-room">
+          <span>Enter Waiting Room</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+
+        <!-- Back Link -->
+        <a href="index.html" class="btn-back-code-link" id="btn-back-code-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span>Enter a different code</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

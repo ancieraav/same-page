@@ -1,0 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import "../styles/01.css";
+@import "../styles/02.css";
+@import "../styles/03.css";
+@import "../styles/04.css";
+@import "../styles/05.css";
+@import "../styles/06.css";
+@import "../styles/07.css";
+@import "../styles/08.css";
+@import "../styles/09.css";
+@import "../styles/10.css";
+@import "../styles/11.css";
+@import "../styles/12.css";
+@import "../styles/13.css";
+@import "../styles/14.css";
+@import "../styles/15.css";
+@import "../styles/16.css";
+@import "../styles/17.css";
+@import "../styles/18.css";
+@import "../styles/19.css";
+@import "../styles/20.css";
+@import "../styles/21.css";
+@import "../styles/22.css";
+
+/* Route modifiers intentionally win over the fixed session shell. */
+.page-root.viewport-fit-page.comparison-body,
+.page-root.viewport-fit-page.analytics-body,
+.page-root.viewport-fit-page.meme-body {
+  height: auto;
+  max-height: none;
+  overflow-y: auto;
+}
+
+/* The archived mobile page scrolls on the body, so its fixed dock sits above
+   the 15px scrollbar gutter. Keep the rendered dock at the same visual edge
+   while the Next route scrolls inside its page root. */
+@media (max-width: 640px) {
+  .page-root.waiting-page-body .waiting-dock-container {
+    bottom: 39px;
+  }
+}
+
+/* Desktop prototype pages scroll from the body box. The route root keeps the
+   same full viewport width so centered canvases do not shift when a scrollbar
+   is present in the Next shell. */
+@media (min-width: 641px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .page-root {
+    width: 100vw;
+  }
+}

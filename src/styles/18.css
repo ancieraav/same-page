@@ -1,0 +1,306 @@
+
+.h-bar-pct {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+.h-bar-track {
+  width: 100%;
+  height: 8px;
+  background: #E2E8F0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.h-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+}
+
+.h-bar-fill.fill-indigo {
+  background: linear-gradient(90deg, #4F46E5, #6366F1);
+}
+
+.h-bar-fill.fill-amber {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+}
+
+.h-bar-fill.fill-rose {
+  background: linear-gradient(90deg, #EF4444, #F87171);
+}
+
+/* F. Opinion Clusters (Visual Perspective Groups) */
+.opinion-clusters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.cluster-bubble-card {
+  background: #F8FAFC;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cluster-tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+  width: fit-content;
+}
+
+.cluster-tag-pill.tone-fast {
+  background: #EEF2FF;
+  color: var(--primary);
+}
+
+.cluster-tag-pill.tone-safe {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.cluster-tag-pill.tone-middle {
+  background: #F1F5F9;
+  color: #475569;
+}
+
+.cluster-count-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.cluster-avatars-row {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.cluster-avatar-mini {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  margin-left: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.cluster-avatar-mini:first-child {
+  margin-left: 0;
+}
+
+/* G. People / Avatar Cards (Closest Match & Unique Perspective) */
+.people-card-layout {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.people-avatar-large {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.people-info-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.people-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.people-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.people-stat-pill {
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.people-bio-note {
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* H. Insight Text Cards (Hidden Mismatch, Shared Assumptions, Blind Spot) */
+.insight-contrast-card {
+  background: #FAF5FF;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-left: 4px solid #A855F7;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.insight-contrast-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #7E22CE;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.insight-contrast-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #3B0764;
+  margin: 0;
+}
+
+.insight-contrast-body em {
+  font-weight: 700;
+  color: #6B21A8;
+}
+
+/* Verified Common Ground (Green check) */
+.verified-ground-card {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-left: 4px solid #10B981;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.verified-ground-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #047857;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.verified-ground-body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #064E3B;
+  margin: 0;
+}
+
+/* 6. Bottom Action Dock */
+.analytics-bottom-dock {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 10px;
+}
+
+@media (max-width: 860px) {
+  .shared-hero-analytics-grid {
+    grid-template-columns: 1fr;
+  }
+  .analytics-grid-row-2 {
+    grid-template-columns: 1fr;
+  }
+  .analytics-grid-row-3 {
+    grid-template-columns: 1fr;
+  }
+  .card-two-sided .dual-side-comparison {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   AVATAR DROPDOWN MENU & USER PROFILE SYSTEM
+   ========================================================================== */
+
+.nav-avatar-dropdown-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-avatar-btn {
+  background: var(--subtle-bg, #EEF2FF);
+  border: 1.5px solid #E2E8F0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  outline: none;
+  overflow: hidden;
+}
+
+.nav-avatar-btn:focus-visible {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+  border-color: var(--primary);
+}
+
+.avatar-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 220px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle, #E2E8F0);
+  border-radius: var(--radius-md, 14px);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.08);
+  padding: 8px;
+  box-sizing: border-box;
+  z-index: 1000;
+  display: none;
+  animation: dropdownPop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: top right;
+}
+
+.avatar-dropdown-menu.is-open {
+  display: block;
+}
+
+@keyframes dropdownPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.94) translateY(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
