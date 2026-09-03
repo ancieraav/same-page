@@ -77,12 +77,12 @@
 
 .comparison-question-title {
   font-family: var(--font-display);
-  font-size: 1.35rem;
+  font-size: 2.1rem;
   font-weight: 800;
   color: var(--text-main);
-  line-height: 1.35;
-  letter-spacing: -0.015em;
-  margin: 10px 0 0 0;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  margin: 4px 0 0 0;
 }
 
 /* Alignment Metrics & AI Summary Callout Grid */
@@ -97,24 +97,32 @@
   background: #FFFFFF;
   border: 1px solid rgba(226, 232, 240, 0.9);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+  padding: 24px 28px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
   box-sizing: border-box;
+  transition: transform 0.2s ease;
+}
+
+.alignment-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
 }
 
 .metric-card-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .metric-label {
-  font-size: 0.84rem;
-  font-weight: 700;
-  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--text-main);
 }
 
 .metric-badge-pill {
@@ -147,11 +155,12 @@
 
 .metric-score-giant {
   font-family: var(--font-display);
-  font-size: 2.75rem;
+  font-size: 3.4rem;
   font-weight: 900;
   line-height: 1;
   letter-spacing: -0.04em;
   color: var(--text-main);
+  flex-shrink: 0;
 }
 
 .metric-score-giant.text-indigo {
@@ -204,9 +213,10 @@
 }
 
 .metric-sub-detail {
-  font-size: 0.78rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
   font-weight: 500;
+  line-height: 1.4;
 }
 
 /* Single-Column AI Summary Card with Expandable Drawer */

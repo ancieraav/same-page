@@ -157,7 +157,7 @@ export function SessionQuestionStage({ questionId, ready, review }: QuestionStag
           <div className="avatar-stack-container">
             <SessionAvatarStack />
             <span className="avatar-stack-label">
-              <strong>2 of 5 participants</strong> have answered
+              <strong>2 of 2 participants</strong> have answered
             </span>
           </div>
           {review && (

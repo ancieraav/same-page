@@ -29,7 +29,8 @@ test('create room stores the demo room and opens waiting room', async ({ page })
 
 test('session editor submits an answer to comparison', async ({ page }) => {
   await page.goto('/session');
-  await page.waitForTimeout(1900);
+  // Launch overlay runs the slow typewriter + countdown (~11s); wait for it to clear.
+  await expect(page.locator('#launch-transition-overlay')).toBeHidden({ timeout: 20000 });
   await page.locator('#participant-answer-input').fill('Ship the reliable checkout loop first.');
   await page.getByRole('button', { name: 'Submit Response' }).click();
   await expect(page).toHaveURL(/\/comparison\?q=1&review=1/);

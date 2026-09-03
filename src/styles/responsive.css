@@ -1,0 +1,278 @@
+/* ==========================================================================
+   Global responsive pass — phone (<=640px), tablet (<=900px)
+   Keep desktop untouched. No resize/emulate assumptions, pure CSS.
+   ========================================================================== */
+
+/* ---------- Header (all pages) ---------- */
+@media (max-width: 640px) {
+  .minimal-header {
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    row-gap: 10px;
+  }
+
+  .brand-group {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .brand-logo-frame {
+    width: 30px;
+    height: 30px;
+  }
+
+  .header-nav {
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+
+  .live-activity-badge,
+  .nav-link-btn {
+    height: 34px;
+    padding: 0 12px;
+    font-size: 0.78rem;
+  }
+
+  .activity-label {
+    display: none;
+  }
+
+  .header-participants-badge,
+  .header-duration-badge,
+  .header-room-code-badge,
+  .session-timer-pill {
+    height: 34px;
+    padding: 0 10px;
+    font-size: 0.76rem;
+  }
+
+  .room-code-label {
+    display: none;
+  }
+
+  .nav-avatar-icon {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ---------- Page shell padding ---------- */
+@media (max-width: 640px) {
+  .page-root.scrollable-page,
+  .page-root.viewport-fit-page,
+  .viewport-shell {
+    padding: 16px;
+  }
+
+  .comparison-canvas-wrapper,
+  .analytics-canvas-wrapper {
+    padding: 24px 0 64px;
+    gap: 20px;
+  }
+
+  .waiting-canvas-wrapper {
+    padding: 28px 4px 200px;
+  }
+
+  .create-clean-canvas {
+    padding: 32px 4px 100px;
+  }
+
+  .session-canvas-wrapper {
+    padding: 0;
+    justify-content: flex-start;
+    padding-top: 12px;
+  }
+}
+
+/* ---------- Home (join code) ---------- */
+@media (max-width: 520px) {
+  .code-inputs-row {
+    gap: 6px;
+  }
+
+  .code-box {
+    width: 40px;
+    height: 50px;
+    font-size: 1.35rem;
+    border-radius: 10px;
+  }
+
+  .primary-actions-row {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .eye-level-card {
+    max-width: 100%;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+}
+
+/* ---------- Comparison / analytics grids ---------- */
+@media (max-width: 860px) {
+  .side-by-side-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .alignment-overview-grid,
+  .shared-hero-analytics-grid,
+  .analytics-grid-row-2 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .team-member-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 1020px) {
+  .analytics-grid-row-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Metric rows wrap instead of squeezing */
+@media (max-width: 640px) {
+  .metric-value-row,
+  .hero-metric-value-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .metric-score-giant,
+  .hero-score-giant {
+    font-size: 2.4rem;
+  }
+
+  .analytics-main-title,
+  .comparison-question-title {
+    font-size: 1.6rem;
+  }
+
+  .waiting-room-title {
+    font-size: 1.7rem;
+  }
+
+  .room-card-profile-header {
+    align-items: flex-start;
+  }
+
+  .room-alignment-pill {
+    margin-left: auto;
+  }
+
+  .card-two-sided .dual-side-comparison {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .party-vs-spine {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+/* ---------- Waiting dock ---------- */
+@media (max-width: 640px) {
+  .waiting-dock-card {
+    flex-wrap: wrap;
+    border-radius: 20px;
+    justify-content: center;
+    row-gap: 10px;
+  }
+
+  .dock-divider-v {
+    display: none;
+  }
+
+  .emoji-reaction-bar {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .emoji-buttons-row {
+    overflow-x: auto;
+    max-width: 100%;
+    padding-bottom: 2px;
+  }
+
+  .waiting-comment-form {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .waiting-launch-area,
+  .btn-launch-session {
+    width: 100%;
+  }
+
+  .btn-launch-session {
+    justify-content: center;
+  }
+
+  .waiting-sub-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .bubble-speech-balloon {
+    max-width: min(70vw, 300px);
+  }
+}
+
+/* ---------- Toolbars / dropdowns ---------- */
+@media (max-width: 640px) {
+  .team-toolbar-search-box {
+    min-width: 0;
+    flex-basis: 100%;
+  }
+
+  .team-toolbar-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .custom-dropdown,
+  .custom-dropdown-trigger {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .custom-dropdown-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .btn-toolbar-refresh {
+    flex-shrink: 0;
+    grid-column: 1 / -1;
+    justify-content: center;
+  }
+}
+
+/* ---------- Alignment in progress: hide header profile photo ---------- */
+.page-root.session-body .nav-avatar-dropdown-wrap,
+.page-root.comparison-body .nav-avatar-dropdown-wrap,
+.page-root.analytics-body .nav-avatar-dropdown-wrap,
+.page-root.waiting-page-body .nav-avatar-dropdown-wrap,
+.page-root.session-body .nav-avatar-icon,
+.page-root.comparison-body .nav-avatar-icon,
+.page-root.analytics-body .nav-avatar-icon,
+.page-root.waiting-page-body .nav-avatar-icon {
+  display: none !important;
+}

@@ -33,7 +33,7 @@ export function SessionLaunchOverlay({ phase, countdown, hidden, text }: Session
           style={{ display: phase === 'countdown' ? 'flex' : 'none' }}
         >
           <div className="countdown-number-box">
-            <div className="countdown-number-val" id="countdown-number-val">
+            <div className="countdown-number-val" id="countdown-number-val" key={countdown}>
               {countdown}
             </div>
           </div>

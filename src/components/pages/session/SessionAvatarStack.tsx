@@ -1,9 +1,7 @@
+// PAIR_MODE: 2 avatars. REVIVE: restore 5 below.
 const teammates = [
   { name: 'You', initials: 'AR', color: 'avatar-color-indigo', done: false },
-  { name: 'Elena', initials: 'ER', color: 'avatar-color-cyan', done: true },
-  { name: 'Marcus', initials: 'MV', color: 'avatar-color-amber', done: true },
-  { name: 'Siti', initials: 'SS', color: 'avatar-color-rose', done: false },
-  { name: 'David', initials: 'DC', color: 'avatar-color-purple', done: false },
+  { name: 'Alex', initials: 'AL', color: 'avatar-color-cyan', done: true },
 ];
 
 export function SessionAvatarStack() {

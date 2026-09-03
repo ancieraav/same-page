@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function ParticipantsRoute() {
-  return <PageRoot bodyClass="samepage-body-theme"><ParticipantsPage /></PageRoot>;
+  return <PageRoot bodyClass="viewport-fit-page analytics-body"><ParticipantsPage /></PageRoot>;
 }

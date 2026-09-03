@@ -146,6 +146,12 @@
   background: #F8FAFC;
   border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   user-select: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.editor-toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 .toolbar-left-tools {
@@ -153,6 +159,7 @@
   align-items: center;
   gap: 6px;
   transition: opacity 0.2s ease;
+  flex-shrink: 0;
 }
 
 .toolbar-left-tools.is-disabled {

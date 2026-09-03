@@ -43,6 +43,7 @@
 @import "../styles/delete-modal.css";
 @import "../styles/join.css";
 @import "../styles/participants.css";
+@import "../styles/responsive.css";
 
 /* Route modifiers intentionally win over the fixed session shell. */
 .page-root.viewport-fit-page.comparison-body,
