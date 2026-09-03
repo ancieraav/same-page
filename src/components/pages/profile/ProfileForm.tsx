@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element -- avatar data URLs are local browser state. */
+import Image from 'next/image';
 
-type ProfileFormProps = {
+interface ProfileFormProps {
   name: string;
   age: number;
   avatarSrc: string;
@@ -11,7 +11,7 @@ type ProfileFormProps = {
   onAgeChange: (value: number) => void;
   onSave: () => void;
   onDelete: () => void;
-};
+}
 
 export function ProfileForm({
   name,
@@ -52,7 +52,15 @@ export function ProfileForm({
               onClick={onAvatarTrigger}
             >
               {avatarSrc ? (
-                <img className="profile-avatar-img" id="profile-avatar-giant-img" src={avatarSrc} alt="User Profile Photo" />
+                <Image
+                  className="profile-avatar-img"
+                  id="profile-avatar-giant-img"
+                  src={avatarSrc}
+                  alt={name}
+                  width={100}
+                  height={100}
+                  unoptimized
+                />
               ) : (
                 <span className="profile-avatar-giant-text" id="profile-avatar-giant-text">
                   {name.charAt(0).toUpperCase() || 'A'}
@@ -88,7 +96,7 @@ export function ProfileForm({
                 placeholder="Enter your full name"
                 value={name}
                 autoComplete="name"
-                onChange={(event) => onNameChange(event.target.value)}
+                onChange={(event) => { onNameChange(event.target.value); }}
               />
               <p className="profile-field-hint">
                 This name will be displayed to other participants in active sessions.
@@ -106,7 +114,7 @@ export function ProfileForm({
                 value={age}
                 min="10"
                 max="120"
-                onChange={(event) => onAgeChange(Number(event.target.value) || 10)}
+                onChange={(event) => { onAgeChange(Number(event.target.value) || 10); }}
               />
               <p className="profile-field-hint">
                 Used anonymously for group perspective and demographic insights.

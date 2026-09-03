@@ -8,7 +8,7 @@ import { ProfileHeader } from './ProfileHeader';
 import { ProfileForm } from './ProfileForm';
 import { DeleteAccountModal } from './DeleteAccountModal';
 
-type Profile = { name: string; age: number; photo: string };
+interface Profile { name: string; age: number; photo: string }
 const defaultProfile: Profile = { name: 'Alex Morgan', age: 28, photo: '' };
 
 export function ProfilePage() {
@@ -21,7 +21,7 @@ export function ProfilePage() {
 
   useEffect(() => {
     const stored = readStored('samepage_user_profile', defaultProfile);
-    window.queueMicrotask(() => setProfile(stored));
+    window.queueMicrotask(() => { setProfile(stored); });
   }, []);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function ProfilePage() {
       }
     };
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    return () => { document.removeEventListener('keydown', onKeyDown); };
   }, []);
 
   const onAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,12 +43,14 @@ export function ProfilePage() {
       return;
     }
     const reader = new FileReader();
-    reader.addEventListener('load', () =>
+    const onLoad = () => {
       setProfile((current) => ({
         ...current,
         photo: typeof reader.result === 'string' ? reader.result : '',
-      }))
-    );
+      }));
+      reader.removeEventListener('load', onLoad);
+    };
+    reader.addEventListener('load', onLoad);
     reader.readAsDataURL(file);
   };
 
@@ -72,7 +74,7 @@ export function ProfilePage() {
     removeStored('samepage_user_answer_q2');
     setDeleteOpen(false);
     showToast('Account data removed');
-    window.setTimeout(() => router.push('/'), 450);
+    window.setTimeout(() => { router.push('/'); }, 450);
   };
 
   return (
@@ -82,7 +84,7 @@ export function ProfilePage() {
         age={profile.age}
         avatarSrc={profile.photo}
         dropdownOpen={dropdownOpen}
-        onToggle={() => setDropdownOpen((value) => !value)}
+        onToggle={() => { setDropdownOpen((value) => !value); }}
         onLogout={() => {
           setDropdownOpen(false);
           showToast('Logged out');
@@ -96,14 +98,14 @@ export function ProfilePage() {
         fileInputRef={fileInputRef}
         onAvatarTrigger={() => fileInputRef.current?.click()}
         onAvatarChange={onAvatarChange}
-        onNameChange={(name) => setProfile((current) => ({ ...current, name }))}
-        onAgeChange={(age) => setProfile((current) => ({ ...current, age }))}
+        onNameChange={(name) => { setProfile((current) => ({ ...current, name })); }}
+        onAgeChange={(age) => { setProfile((current) => ({ ...current, age })); }}
         onSave={save}
-        onDelete={() => setDeleteOpen(true)}
+        onDelete={() => { setDeleteOpen(true); }}
       />
       <DeleteAccountModal
         open={deleteOpen}
-        onClose={() => setDeleteOpen(false)}
+        onClose={() => { setDeleteOpen(false); }}
         onConfirm={confirmDelete}
       />
     </>

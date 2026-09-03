@@ -4,13 +4,12 @@ import { useState } from 'react';
 
 export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
-  const toggle = (index: number) =>
-    setExpanded((current) => {
+  const toggle = (index: number) => { setExpanded((current) => {
       const next = new Set(current);
       if (next.has(index)) next.delete(index);
       else next.add(index);
       return next;
-    });
+    }); };
 
   return (
     <section className={`comparison-stage-mode${multi ? ' is-hidden' : ''}`} id="stage-mode-two">
@@ -50,7 +49,7 @@ export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
                 className={`btn-read-more-statement${expanded.has(0) ? ' is-expanded' : ''}`}
                 aria-expanded={expanded.has(0)}
                 title="Toggle full response"
-                onClick={() => toggle(0)}
+                onClick={() => { toggle(0); }}
               >
                 <span>{expanded.has(0) ? 'Show less' : 'Read more'}</span>
                 <svg
@@ -104,7 +103,7 @@ export function ComparisonSideBySideView({ multi }: { multi: boolean }) {
                 className={`btn-read-more-statement${expanded.has(1) ? ' is-expanded' : ''}`}
                 aria-expanded={expanded.has(1)}
                 title="Toggle full response"
-                onClick={() => toggle(1)}
+                onClick={() => { toggle(1); }}
               >
                 <span>{expanded.has(1) ? 'Show less' : 'Read more'}</span>
                 <svg

@@ -11,7 +11,7 @@ export function AnalyticsPage() {
       <AnalyticsHeader />
       <AnalyticsDashboard
         summaryOpen={summaryOpen}
-        onToggleSummary={() => setSummaryOpen((value) => !value)}
+        onToggleSummary={() => { setSummaryOpen((value) => !value); }}
       />
     </>
   );

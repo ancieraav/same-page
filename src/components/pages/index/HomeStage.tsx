@@ -1,17 +1,20 @@
 import Link from 'next/link';
 import { AvatarMenu } from '@/components/layout/AvatarMenu';
 import { BrandLogo } from '@/components/brand/BrandLogo';
+import { LiveActivityBadge } from '@/components/layout/LiveActivityBadge';
 
-type HomeStageProps = {
+interface HomeStageProps {
   code: string[];
   busy: boolean;
-  inputRefs: React.MutableRefObject<Array<HTMLInputElement | null>>;
+  inputRefs: React.RefObject<(HTMLInputElement | null)[]>;
   onCodeChange: (index: number, value: string) => void;
   onCodeKeyDown: (index: number, event: React.KeyboardEvent<HTMLInputElement>) => void;
   onPaste: (event: React.ClipboardEvent<HTMLInputElement>) => void;
   onPasteButton: () => void;
   onJoin: () => void;
-};
+}
+
+const CODE_SLOT_KEYS = ['slot_c1', 'slot_c2', 'slot_c3', 'slot_c4', 'slot_c5', 'slot_c6', 'slot_c7'] as const;
 
 export function HomeStage({
   code,
@@ -33,17 +36,7 @@ export function HomeStage({
           <span className="brand-name">Same Page</span>
         </Link>
         <div className="header-nav">
-          <div className="live-activity-badge" title="142 private rooms active right now">
-            <div className="activity-signal" aria-hidden="true">
-              <span className="signal-bar bar-1" />
-              <span className="signal-bar bar-2" />
-              <span className="signal-bar bar-3" />
-            </div>
-            <div className="activity-text">
-              <span className="activity-number">142</span>
-              <span className="activity-label">rooms active</span>
-            </div>
-          </div>
+          <LiveActivityBadge />
           <Link href="/create" className="nav-link-btn" id="nav-create-link">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19" />
@@ -64,26 +57,29 @@ export function HomeStage({
           </div>
           <div className="code-entry-section">
             <div className="code-inputs-row" role="group" aria-label="Enter 7 character room code">
-              {code.map((character, index) => (
-                <input
-                  key={`code-${index + 1}`}
-                  ref={(element) => {
-                    inputRefs.current[index] = element;
-                  }}
-                  type="text"
-                  id={`code-box-${index + 1}`}
-                  className={`code-box${character ? ' filled' : ''}`}
-                  maxLength={1}
-                  autoComplete="off"
-                  inputMode="text"
-                  autoFocus={index === 0}
-                  aria-label={`Character ${index + 1}`}
-                  value={character}
-                  onChange={(event) => onCodeChange(index, event.target.value)}
-                  onKeyDown={(event) => onCodeKeyDown(index, event)}
-                  onPaste={onPaste}
-                />
-              ))}
+              {CODE_SLOT_KEYS.map((slotKey, index) => {
+                const character = code[index] ?? '';
+                return (
+                  <input
+                    key={slotKey}
+                    ref={(element) => {
+                      inputRefs.current[index] = element;
+                    }}
+                    type="text"
+                    id={`code-box-${String(index + 1)}`}
+                    className={`code-box${character ? ' filled' : ''}`}
+                    maxLength={1}
+                    autoComplete="off"
+                    inputMode="text"
+                    autoFocus={index === 0}
+                    aria-label={`Character ${String(index + 1)}`}
+                    value={character}
+                    onChange={(event) => { onCodeChange(index, event.target.value); }}
+                    onKeyDown={(event) => { onCodeKeyDown(index, event); }}
+                    onPaste={onPaste}
+                  />
+                );
+              })}
             </div>
             <div className="code-utilities-row">
               <button

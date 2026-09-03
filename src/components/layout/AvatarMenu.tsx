@@ -7,7 +7,7 @@ export function AvatarMenu({ initial = 'A' }: { initial?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="nav-avatar-dropdown-wrap">
-      <button type="button" className="nav-avatar-icon nav-avatar-btn" aria-haspopup="menu" aria-expanded={open} aria-label="Account menu" onClick={() => setOpen((value) => !value)}>
+      <button type="button" className="nav-avatar-icon nav-avatar-btn" aria-haspopup="menu" aria-expanded={open} aria-label="Account menu" onClick={() => { setOpen((value) => !value); }}>
         <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 700 }}>{initial}</span>
       </button>
       <div className={`avatar-dropdown-menu${open ? ' is-open' : ''}`} role="menu">

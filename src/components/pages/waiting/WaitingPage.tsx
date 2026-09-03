@@ -10,16 +10,16 @@ import { WaitingHeader } from './WaitingHeader';
 import { WaitingStage } from './WaitingStage';
 import { ShareRolesModal } from './ShareRolesModal';
 
-type Room = {
+interface Room {
   code: string;
   name: string;
   topic: string;
   notes?: string;
-  participantMode?: string;
+  participantMode?: 'flexible' | 'fixed';
   participantCount?: number;
-  groups?: Array<{ id: number; name: string; isSourceOfTruth: boolean; roles: string[] }>;
-  attachments?: Array<{ name: string; size?: string; ext?: string; isImage?: boolean }>;
-};
+  groups?: { id: number; name: string; isSourceOfTruth: boolean; roles: string[] }[];
+  attachments?: { name: string; size?: string; ext?: string; isImage?: boolean }[];
+}
 
 const fallbackRoom: Room = {
   code: 'SP-7942',
@@ -47,19 +47,17 @@ export function WaitingPage() {
   useEffect(() => {
     const stored = readStored<Partial<Room> | null>('samepage_active_room', null);
     if (stored) {
-      window.queueMicrotask(() =>
-        setRoom((current) => ({ ...current, ...stored, code: stored.code || current.code }))
-      );
+      window.queueMicrotask(() => { setRoom((current) => ({ ...current, ...stored, code: stored.code ?? current.code })); });
     }
     const queryCode = params.get('code');
     if (queryCode) {
-      window.queueMicrotask(() => setRoom((current) => ({ ...current, code: queryCode })));
+      window.queueMicrotask(() => { setRoom((current) => ({ ...current, code: queryCode })); });
     }
   }, [params]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setElapsed((value) => value + 1), 1000);
-    return () => window.clearInterval(timer);
+    const timer = window.setInterval(() => { setElapsed((value) => value + 1); }, 1000);
+    return () => { window.clearInterval(timer); };
   }, []);
 
   const duration = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
@@ -80,16 +78,16 @@ export function WaitingPage() {
       <WaitingHeader
         roomCode={room.code}
         duration={duration}
-        onShare={() => setShareOpen(true)}
-        onCopy={copyCode}
+        onShare={() => { setShareOpen(true); }}
+        onCopy={() => { void copyCode(); }}
       />
-      <WaitingStage room={room} onShare={() => setShareOpen(true)} />
+      <WaitingStage room={room} onShare={() => { setShareOpen(true); }} />
       {shareOpen && (
         <ShareRolesModal
           roomCode={room.code}
-          groups={room.groups}
-          onClose={() => setShareOpen(false)}
-          onCopyRole={copyRole}
+          groups={room.groups ?? []}
+          onClose={() => { setShareOpen(false); }}
+          onCopyRole={(value, label) => { void copyRole(value, label); }}
         />
       )}
     </>

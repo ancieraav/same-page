@@ -6,17 +6,6 @@ import { SessionLaunchOverlay } from './SessionLaunchOverlay';
 import { SessionHeader } from './SessionHeader';
 import { SessionQuestionStage } from './SessionQuestionStage';
 
-const launchSentences = [
-  "Hold on, I'm thinking...",
-  "Hmmm, actually I'm writing now...",
-  "Almost there, I'm evaluating...",
-  'Get ready 😈',
-];
-
-function pause(milliseconds: number) {
-  return new Promise<void>((resolve) => window.setTimeout(resolve, milliseconds));
-}
-
 export function SessionPage() {
   const params = useSearchParams();
   const review = params.get('review') === '1' || params.get('mode') === 'review';
@@ -28,50 +17,44 @@ export function SessionPage() {
 
   useEffect(() => {
     if (review) return;
-    let cancelled = false;
-    const run = async () => {
-      for (const sentence of launchSentences) {
-        setLaunchText('');
-        for (let index = 1; index <= sentence.length; index += 1) {
-          await pause(sentence === launchSentences[3] ? 42 : 36);
-          if (cancelled) return;
-          setLaunchText(sentence.slice(0, index));
-        }
-        await pause(sentence === launchSentences[3] ? 850 : 650);
-        for (let index = sentence.length - 1; index >= 0; index -= 1) {
-          await pause(16);
-          if (cancelled) return;
-          setLaunchText(sentence.slice(0, index));
-        }
-        await pause(150);
-      }
-      setPhase('countdown');
-      for (const value of [3, 2, 1]) {
-        setCountdown(value);
-        await pause(1000);
-        if (cancelled) return;
-      }
-      setReady(true);
-      await pause(500);
-      if (!cancelled) setLaunchText('');
+    const timeouts: number[] = [];
+    const schedule = (callback: () => void, delayMs: number) => {
+      timeouts.push(window.setTimeout(callback, delayMs));
     };
-    void run();
+
+    schedule(() => { setLaunchText("Hold on, I'm thinking..."); }, 50);
+    schedule(() => { setLaunchText("Almost there, evaluating..."); }, 500);
+    schedule(() => { setLaunchText('Get ready 😈'); }, 950);
+    schedule(() => { setPhase('countdown'); setCountdown(3); }, 1250);
+    schedule(() => { setCountdown(2); }, 1450);
+    schedule(() => { setCountdown(1); }, 1650);
+    schedule(() => { setReady(true); setLaunchText(''); }, 1800);
+
     return () => {
-      cancelled = true;
+      timeouts.forEach((id) => { window.clearTimeout(id); });
     };
   }, [review]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => setSeconds((value) => Math.max(0, value - 1)), 1000);
-    return () => window.clearInterval(timer);
+    const timer = window.setInterval(() => { setSeconds((value) => Math.max(0, value - 1)); }, 1000);
+    return () => { window.clearInterval(timer); };
   }, []);
 
-  const timer = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  const duration = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  const questionId: 1 | 2 = params.get('q') === '2' ? 2 : 1;
+
   return (
-    <>
-      <SessionLaunchOverlay phase={phase} countdown={countdown} hidden={ready} text={launchText} />
-      <SessionHeader timer={timer} />
-      <SessionQuestionStage ready={ready} />
-    </>
+    <div className="session-page-viewport">
+      {!ready && (
+        <SessionLaunchOverlay
+          phase={phase}
+          text={launchText}
+          countdown={countdown}
+          hidden={ready}
+        />
+      )}
+      <SessionHeader timer={duration} />
+      <SessionQuestionStage questionId={questionId} ready={ready} review={review} />
+    </div>
   );
 }

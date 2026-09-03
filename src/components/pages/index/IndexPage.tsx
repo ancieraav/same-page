@@ -10,9 +10,9 @@ import { HomeStage } from './HomeStage';
 export function IndexPage() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [code, setCode] = useState<string[]>(Array.from({ length: 7 }, () => ''));
+  const [code, setCode] = useState<string[]>(() => Array.from({ length: 7 }, () => ''));
   const [busy, setBusy] = useState(false);
-  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const updateCode = (index: number, value: string) => {
     const nextValue = cleanRoomCode(value).slice(-1);
@@ -59,7 +59,7 @@ export function IndexPage() {
     }
     setBusy(true);
     showToast(`Joining room ${roomCode}…`);
-    window.setTimeout(() => router.push(`/join?code=${encodeURIComponent(roomCode)}`), 450);
+    window.setTimeout(() => { router.push(`/join?code=${encodeURIComponent(roomCode)}`); }, 450);
   };
 
   return (
@@ -72,7 +72,7 @@ export function IndexPage() {
         onCodeChange={updateCode}
         onCodeKeyDown={onCodeKeyDown}
         onPaste={onPaste}
-        onPasteButton={onPasteButton}
+        onPasteButton={() => { void onPasteButton(); }}
         onJoin={onJoin}
       />
     </>

@@ -57,13 +57,12 @@ export function ParticipantsPage() {
       .map((participant) => participant.id);
   }, [filter, participants, search, sort]);
 
-  const toggleStatement = (index: number) =>
-    setExpanded((current) => {
+  const toggleStatement = (index: number) => { setExpanded((current) => {
       const next = new Set(current);
       if (next.has(index)) next.delete(index);
       else next.add(index);
       return next;
-    });
+    }); };
 
   const openParticipantModal = (id: string) => {
     const item = participants.find((p) => p.id === id);
@@ -86,7 +85,7 @@ export function ParticipantsPage() {
         onSearch={setSearch}
         onFilterChange={setFilter}
         onSortChange={setSort}
-        onRefresh={() => showToast('Team perspectives updated')}
+        onRefresh={() => { showToast('Team perspectives updated'); }}
         onReset={() => {
           setSearch('');
           setFilter('all');
@@ -95,7 +94,7 @@ export function ParticipantsPage() {
       <ParticipantDetailModal
         open={modalOpen}
         selected={selected}
-        onClose={() => setModalOpen(false)}
+        onClose={() => { setModalOpen(false); }}
       />
     </>
   );

@@ -11,7 +11,10 @@ test('all clean Next routes render', async ({ page }) => {
 
 test('join code flow uses the Next route', async ({ page }) => {
   await page.goto('/');
-  for (const [index, character] of [...'ABC1234'].entries()) await page.locator(`#code-box-${index + 1}`).fill(character);
+  const code = 'ABC1234';
+  for (let index = 0; index < code.length; index += 1) {
+    await page.locator(`#code-box-${String(index + 1)}`).fill(code.charAt(index));
+  }
   await page.getByRole('button', { name: 'Join Room' }).click();
   await expect(page).toHaveURL(/\/join\?code=ABC1234/);
 });

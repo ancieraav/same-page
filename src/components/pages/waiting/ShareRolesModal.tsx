@@ -1,18 +1,18 @@
 'use client';
 
-type Group = {
+interface Group {
   id: number;
   name: string;
   isSourceOfTruth: boolean;
   roles: string[];
-};
+}
 
-type ShareRolesModalProps = {
+interface ShareRolesModalProps {
   roomCode: string;
   groups?: Group[];
   onClose: () => void;
   onCopyRole: (value: string, label: string) => void;
-};
+}
 
 export function ShareRolesModal({ roomCode, groups, onClose, onCopyRole }: ShareRolesModalProps) {
   const activeGroups = groups?.length
@@ -23,15 +23,24 @@ export function ShareRolesModal({ roomCode, groups, onClose, onCopyRole }: Share
     <div
       className="share-roles-overlay"
       role="presentation"
-      onMouseDown={(event) => event.currentTarget === event.target && onClose()}
+      onMouseDown={(event) => {
+        if (event.currentTarget === event.target) {
+          onClose();
+        }
+      }}
     >
-      <div className="share-roles-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+      <dialog
+        open
+        className="share-roles-modal"
+        aria-labelledby="share-modal-title"
+        style={{ padding: 0, border: 'none', margin: 'auto', color: 'inherit' }}
+      >
         <div className="share-roles-header">
           <div>
             <h3 className="share-modal-title" id="share-modal-title">Role Access Codes &amp; Dedicated Links</h3>
             <p className="share-modal-sub">Send each team or participant their dedicated code below.</p>
           </div>
-          <button type="button" className="btn-lightbox-close" onClick={onClose} aria-label="Close modal">
+          <button type="button" className="btn-lightbox-close" onClick={() => { onClose(); }} aria-label="Close modal">
             ×
           </button>
         </div>
@@ -59,13 +68,13 @@ export function ShareRolesModal({ roomCode, groups, onClose, onCopyRole }: Share
                   </div>
                 </div>
                 <div className="share-role-actions">
-                  <button type="button" className="btn-share-copy" onClick={() => onCopyRole(code, `${group.name} code`)}>
+                  <button type="button" className="btn-share-copy" onClick={() => { onCopyRole(code, `${group.name} code`); }}>
                     Copy Code
                   </button>
                   <button
                     type="button"
                     className="btn-share-copy primary"
-                    onClick={() => onCopyRole(link, `${group.name} link`)}
+                    onClick={() => { onCopyRole(link, `${group.name} link`); }}
                   >
                     Copy Link
                   </button>
@@ -74,7 +83,7 @@ export function ShareRolesModal({ roomCode, groups, onClose, onCopyRole }: Share
             );
           })}
         </div>
-      </div>
+      </dialog>
     </div>
   );
 }

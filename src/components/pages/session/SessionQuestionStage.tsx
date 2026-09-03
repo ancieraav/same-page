@@ -1,75 +1,71 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { readStored, writeStored } from '@/lib/storage';
 import { useToast } from '@/components/ui/ToastProvider';
 import { SessionToolbar } from './SessionToolbar';
 import { SessionAvatarStack } from './SessionAvatarStack';
 
-const questions = {
-  1: {
-    title:
-      'Based on our strategic goals in Design Alignment Sync, what is the single highest-leverage priority our team must commit to, and what are we explicitly deprioritizing?',
-    sub: 'Write what you believe independently before the room unlocks and compares perspectives against the benchmark.',
-  },
-  2: {
-    title:
-      'What is the single biggest architectural or operational bottleneck that could prevent our team from hitting our Q3 North Star metrics, and who owns the fix?',
-    sub: 'Identify the critical cross-team dependency and specify the exact trade-off needed to unblock delivery.',
-  },
-} as const;
-
-function inlineMarkdown(value: string): ReactNode[] {
-  const tokens = value.split(/(\*\*[^*]+\*\*|__[^_]+__|~~[^~]+~~|`[^`]+`|\*[^*]+\*)/g);
-  return tokens.map((token, index) => {
-    if (token.startsWith('**') || token.startsWith('__')) return <strong key={index}>{token.slice(2, -2)}</strong>;
-    if (token.startsWith('~~')) return <del key={index}>{token.slice(2, -2)}</del>;
-    if (token.startsWith('`')) return <code className="rendered-code" key={index}>{token.slice(1, -1)}</code>;
-    if (token.startsWith('*')) return <em key={index}>{token.slice(1, -1)}</em>;
-    return <span key={index}>{token}</span>;
-  });
+interface QuestionStageProps {
+  questionId: 1 | 2;
+  ready: boolean;
+  review: boolean;
 }
 
+const questions = {
+  1: {
+    title: 'Which feature should take priority for next quarter’s roadmap?',
+    sub: 'Choose between shipping the core checkout loop or the customer feedback portal first. Explain your trade-offs.',
+  },
+  2: {
+    title: 'How should we price our upcoming enterprise tier?',
+    sub: 'Evaluate usage-based seat pricing against fixed platform tiers and provide your risk tolerance.',
+  },
+};
+
 function MarkdownPreview({ value }: { value: string }) {
-  if (!value.trim()) {
-    return (
-      <div className="preview-empty-state">
-        Nothing to preview yet. Switch to Write mode to draft your thoughts.
-      </div>
-    );
-  }
+  const items = value.split('\n').map((line, position) => ({
+    key: `md_line_${String(position + 1)}_${line.slice(0, 8)}`,
+    line,
+  }));
   return (
-    <div>
-      {value.split('\n').map((line, index) =>
-        line.trim() ? (
-          <p className="rendered-p" key={index}>
-            {inlineMarkdown(line)}
-          </p>
-        ) : (
-          <div className="rendered-spacer" key={index} />
-        )
-      )}
+    <div className="rendered-markdown-content">
+      {items.map((item) => {
+        if (!item.line.trim()) return <p key={item.key} className="md-blank-line">&nbsp;</p>;
+        if (item.line.startsWith('- ')) {
+          return (
+            <ul key={item.key} className="md-list">
+              <li>{item.line.slice(2)}</li>
+            </ul>
+          );
+        }
+        if (item.line.startsWith('> ')) {
+          return (
+            <blockquote key={item.key} className="md-quote">
+              {item.line.slice(2)}
+            </blockquote>
+          );
+        }
+        return <p key={item.key}>{item.line}</p>;
+      })}
     </div>
   );
 }
 
-export function SessionQuestionStage({ ready }: { ready: boolean }) {
+export function SessionQuestionStage({ questionId, ready, review }: QuestionStageProps) {
   const router = useRouter();
-  const params = useSearchParams();
   const { showToast } = useToast();
   const answerRef = useRef<HTMLTextAreaElement>(null);
-  const questionId = params.get('q') === '2' ? 2 : 1;
-  const review = params.get('review') === '1';
   const question = questions[questionId];
   const [answer, setAnswer] = useState('');
   const [mode, setMode] = useState<'write' | 'preview'>('write');
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    const stored = readStored(`samepage_user_answer_q${questionId}`, '');
-    window.queueMicrotask(() => setAnswer(stored));
+    const stored = readStored(`samepage_user_answer_q${String(questionId)}`, '');
+    window.queueMicrotask(() => { setAnswer(stored); });
   }, [questionId]);
 
   useEffect(() => {
@@ -107,10 +103,12 @@ export function SessionQuestionStage({ ready }: { ready: boolean }) {
       return;
     }
     setBusy(true);
-    writeStored(`samepage_user_answer_q${questionId}`, answer);
+    writeStored(`samepage_user_answer_q${String(questionId)}`, answer);
     writeStored('samepage_user_answer', answer);
     showToast('Response saved');
-    window.setTimeout(() => router.push(`/comparison?q=${questionId}&review=1`), 500);
+    window.setTimeout(() => {
+      router.push(`/comparison?q=${String(questionId)}&review=1`);
+    }, 500);
   };
 
   return (
@@ -137,12 +135,13 @@ export function SessionQuestionStage({ ready }: { ready: boolean }) {
                 id="participant-answer-input"
                 className="answer-textarea"
                 placeholder="Write your honest perspective here..."
+                aria-label="Write your honest perspective here"
                 rows={4}
                 value={answer}
-                onChange={(event) => setAnswer(event.target.value)}
+                onChange={(event) => { setAnswer(event.target.value); }}
               />
             ) : (
-              <div className="answer-preview-pane" tabIndex={0}>
+              <div className="answer-preview-pane">
                 <MarkdownPreview value={answer} />
               </div>
             )}
@@ -162,7 +161,7 @@ export function SessionQuestionStage({ ready }: { ready: boolean }) {
             </span>
           </div>
           {review && (
-            <Link href={`/comparison?q=${questionId}&review=1`} className="dock-btn-secondary btn-session-review-back">
+            <Link href={`/comparison?q=${String(questionId)}&review=1`} className="dock-btn-secondary btn-session-review-back">
               ← <span>Review Question {questionId} Comparison</span>
             </Link>
           )}

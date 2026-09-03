@@ -2,7 +2,7 @@ import { ComparisonToolbar, type Filter, type Sort } from './ComparisonToolbar';
 import { ComparisonEmptyState } from './ComparisonEmptyState';
 import { ComparisonResponsesList } from './ComparisonResponsesList';
 
-type ComparisonMultiGridViewProps = {
+interface ComparisonMultiGridViewProps {
   multi: boolean;
   visibleIds: string[];
   expanded: Set<number>;
@@ -14,7 +14,7 @@ type ComparisonMultiGridViewProps = {
   onFilterChange: (value: Filter) => void;
   onSortChange: (value: Sort) => void;
   onRefresh: () => void;
-};
+}
 
 export function ComparisonMultiGridView({
   multi,

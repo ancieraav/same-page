@@ -1,10 +1,10 @@
 import Image from 'next/image';
 
-type MemeStageProps = {
+interface MemeStageProps {
   countdown: number;
   onNext: () => void;
   busy: boolean;
-};
+}
 
 export function MemeStage({ countdown, onNext, busy }: MemeStageProps) {
   return (

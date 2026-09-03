@@ -5,7 +5,7 @@ import { ComparisonMultiGridView } from './ComparisonMultiGridView';
 import { ComparisonBottomDock } from './ComparisonBottomDock';
 import type { Filter, Sort } from './ComparisonToolbar';
 
-type ComparisonStageProps = {
+interface ComparisonStageProps {
   questionId: 1 | 2;
   summaryOpen: boolean;
   onToggleSummary: () => void;
@@ -22,7 +22,7 @@ type ComparisonStageProps = {
   onFilterChange: (value: Filter) => void;
   onSortChange: (value: Sort) => void;
   onRefresh: () => void;
-};
+}
 
 export function ComparisonStage({
   questionId,

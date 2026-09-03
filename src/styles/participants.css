@@ -296,5 +296,15 @@
   color: var(--text-muted);
 }
 
+button.team-card-profile-col {
+  background: transparent;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
 
 

@@ -9,7 +9,7 @@ export function readStored<T>(key: string, fallback: T): T {
   }
 }
 
-export function writeStored<T>(key: string, value: T) {
+export function writeStored(key: string, value: unknown) {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
   } catch {
@@ -36,7 +36,7 @@ export function readSession<T>(key: string, fallback: T): T {
   }
 }
 
-export function writeSession<T>(key: string, value: T) {
+export function writeSession(key: string, value: unknown) {
   try {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   } catch {

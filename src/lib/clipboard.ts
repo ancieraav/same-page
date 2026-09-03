@@ -1,5 +1,5 @@
 export async function copyText(value: string): Promise<boolean> {
-  if (typeof navigator === 'undefined' || !navigator.clipboard) return false;
+  if (typeof navigator === 'undefined' || !('clipboard' in navigator)) return false;
 
   try {
     await navigator.clipboard.writeText(value);
@@ -10,7 +10,7 @@ export async function copyText(value: string): Promise<boolean> {
 }
 
 export async function pasteText(): Promise<string | null> {
-  if (typeof navigator === 'undefined' || !navigator.clipboard) return null;
+  if (typeof navigator === 'undefined' || !('clipboard' in navigator)) return null;
 
   try {
     return await navigator.clipboard.readText();

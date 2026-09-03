@@ -78,6 +78,18 @@
   color: var(--text-main);
 }
 
+.room-code-share-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+}
+
 .btn-copy-code-mini {
   background: none;
   border: none;

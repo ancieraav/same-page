@@ -1,0 +1,32 @@
+{
+  "$schema": "https://react.doctor/schema/config.json",
+  "lint": true,
+  "warnings": true,
+  "scope": "full",
+  "blocking": "warning",
+  "share": false,
+  "noScore": true,
+  "supplyChain": {
+    "enabled": false
+  },
+  "ignore": {
+    "files": ["archive/**"]
+  },
+  "respectInlineDisables": false,
+  "adoptExistingLintConfig": false,
+  "categories": {
+    "Security": "error",
+    "Bugs": "error",
+    "Performance": "error",
+    "Accessibility": "error",
+    "Maintainability": "error"
+  },
+  "rules": {
+    "react-doctor/unused-file": "error",
+    "react-doctor/unused-export": "error",
+    "react-doctor/unused-type": "error",
+    "react-doctor/unused-dependency": "error",
+    "react-doctor/unused-dev-dependency": "error",
+    "react-doctor/circular-dependency": "error"
+  }
+}

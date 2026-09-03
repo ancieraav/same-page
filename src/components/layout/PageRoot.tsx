@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 
-type PageRootProps = {
+interface PageRootProps {
   bodyClass?: string;
   children: ReactNode;
-};
+}
 
 /**
  * Route-level visual context. The class is rendered in the tree so styling is

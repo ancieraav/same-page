@@ -7,8 +7,23 @@
       "esnext"
     ],
     "allowJs": false,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "strict": true,
+    "useUnknownInCatchVariables": true,
+    "strictBuiltinIteratorReturn": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedSideEffectImports": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -30,12 +45,13 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
     ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    ".next/dev/**"
   ]
 }

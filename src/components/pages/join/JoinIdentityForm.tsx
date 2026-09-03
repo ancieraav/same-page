@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element -- browser object URLs are created for local uploads. */
 import Link from 'next/link';
+import Image from 'next/image';
 
-type JoinIdentityFormProps = {
+interface JoinIdentityFormProps {
   name: string;
   avatarSrc: string;
   busy: boolean;
@@ -10,7 +10,7 @@ type JoinIdentityFormProps = {
   onAvatarChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onNameChange: (value: string) => void;
   onEnter: () => void;
-};
+}
 
 export function JoinIdentityForm({
   name,
@@ -56,11 +56,14 @@ export function JoinIdentityForm({
                 {name.charAt(0).toUpperCase() || 'A'}
               </span>
               {avatarSrc ? (
-                <img
+                <Image
                   className="profile-avatar-img"
                   id="join-avatar-giant-img"
                   src={avatarSrc}
-                  alt="Room Avatar Photo"
+                  alt={name}
+                  width={100}
+                  height={100}
+                  unoptimized
                 />
               ) : null}
               <div className="avatar-camera-hover-badge" aria-hidden="true">
@@ -92,7 +95,7 @@ export function JoinIdentityForm({
               placeholder="e.g. Alex Morgan"
               value={name}
               autoComplete="name"
-              onChange={(event) => onNameChange(event.target.value)}
+              onChange={(event) => { onNameChange(event.target.value); }}
             />
             <p className="profile-field-hint">
               This name will appear on your opinion bubble and comparison cards.

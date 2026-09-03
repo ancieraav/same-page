@@ -1,9 +1,9 @@
-type SessionLaunchOverlayProps = {
+interface SessionLaunchOverlayProps {
   phase: 'ai' | 'countdown';
   countdown: number;
   hidden: boolean;
   text: string;
-};
+}
 
 export function SessionLaunchOverlay({ phase, countdown, hidden, text }: SessionLaunchOverlayProps) {
   return (

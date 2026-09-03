@@ -11,9 +11,9 @@ export function ComparisonPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showToast } = useToast();
-  const questionParam = Number(searchParams?.get('q') || '1');
+  const questionParam = Number(searchParams.get('q') ?? '1');
   const questionId = questionParam === 2 ? 2 : 1;
-  const multi = searchParams?.get('multi') === '1';
+  const multi = searchParams.get('multi') === '1';
 
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [search, setSearch] = useState('');
@@ -57,13 +57,12 @@ export function ComparisonPage() {
       .map((participant) => participant.id);
   }, [filter, participants, search, sort]);
 
-  const toggleStatement = (index: number) =>
-    setExpanded((current) => {
+  const toggleStatement = (index: number) => { setExpanded((current) => {
       const next = new Set(current);
       if (next.has(index)) next.delete(index);
       else next.add(index);
       return next;
-    });
+    }); };
 
   const nextQuestion = () => {
     if (questionId === 1) router.push('/meme');
@@ -74,9 +73,9 @@ export function ComparisonPage() {
     <>
       <ComparisonHeader />
       <ComparisonStage
-        questionId={questionId as 1 | 2}
+        questionId={questionId}
         summaryOpen={summaryOpen}
-        onToggleSummary={() => setSummaryOpen((value) => !value)}
+        onToggleSummary={() => { setSummaryOpen((value) => !value); }}
         onNext={nextQuestion}
         busy={false}
         multi={multi}
@@ -89,7 +88,7 @@ export function ComparisonPage() {
         onSearch={setSearch}
         onFilterChange={setFilter}
         onSortChange={setSort}
-        onRefresh={() => showToast('Perspectives refreshed')}
+        onRefresh={() => { showToast('Perspectives refreshed'); }}
       />
     </>
   );

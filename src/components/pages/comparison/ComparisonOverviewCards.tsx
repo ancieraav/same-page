@@ -1,7 +1,7 @@
-type ComparisonOverviewCardsProps = {
+interface ComparisonOverviewCardsProps {
   summaryOpen: boolean;
   onToggleSummary: () => void;
-};
+}
 
 export function ComparisonOverviewCards({
   summaryOpen,

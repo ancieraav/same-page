@@ -4,7 +4,7 @@ import { ParticipantsEmptyState } from './ParticipantsEmptyState';
 import { ParticipantsCardList } from './ParticipantsCardList';
 import { ParticipantsBottomDock } from './ParticipantsBottomDock';
 
-type ParticipantsStageProps = {
+interface ParticipantsStageProps {
   visibleIds: string[];
   empty: boolean;
   expanded: Set<number>;
@@ -18,7 +18,7 @@ type ParticipantsStageProps = {
   onSortChange: (value: Sort) => void;
   onRefresh: () => void;
   onReset: () => void;
-};
+}
 
 export function ParticipantsStage({
   visibleIds,

@@ -4,15 +4,15 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 
 type ToastTone = 'success' | 'error';
 
-type Toast = {
+interface Toast {
   id: number;
   message: string;
   tone: ToastTone;
-};
+}
 
-type ToastContextValue = {
+interface ToastContextValue {
   showToast: (message: string, tone?: ToastTone) => void;
-};
+}
 
 const ToastContext = createContext<ToastContextValue | null>(null);
 
@@ -22,7 +22,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const showToast = useCallback((message: string, tone: ToastTone = 'success') => {
     const id = Date.now() + Math.random();
     setToasts((current) => [...current, { id, message, tone }]);
-    window.setTimeout(() => setToasts((current) => current.filter((toast) => toast.id !== id)), 3000);
+    window.setTimeout(() => { setToasts((current) => current.filter((toast) => toast.id !== id)); }, 3000);
   }, []);
 
   const value = useMemo(() => ({ showToast }), [showToast]);

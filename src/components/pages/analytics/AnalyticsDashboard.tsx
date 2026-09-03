@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { AnalyticsComboCards } from './AnalyticsComboCards';
 
-type AnalyticsDashboardProps = {
+interface AnalyticsDashboardProps {
   summaryOpen: boolean;
   onToggleSummary: () => void;
-};
+}
 
 export function AnalyticsDashboard({ summaryOpen, onToggleSummary }: AnalyticsDashboardProps) {
   return (

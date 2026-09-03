@@ -1,8 +1,8 @@
-type DeleteAccountModalProps = {
+interface DeleteAccountModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-};
+}
 
 export function DeleteAccountModal({ open, onClose, onConfirm }: DeleteAccountModalProps) {
   return (
@@ -11,7 +11,11 @@ export function DeleteAccountModal({ open, onClose, onConfirm }: DeleteAccountMo
       id="delete-modal-overlay"
       role="presentation"
       aria-hidden={!open}
-      onMouseDown={(event) => event.currentTarget === event.target && onClose()}
+      onMouseDown={(event) => {
+        if (event.currentTarget === event.target) {
+          onClose();
+        }
+      }}
     >
       <div className="delete-modal-card">
         <div className="modal-icon-badge">

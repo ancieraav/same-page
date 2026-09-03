@@ -12,8 +12,8 @@ export function MemePage() {
   const [duration, setDuration] = useState(255);
 
   useEffect(() => {
-    const tick = window.setInterval(() => setCountdown((value) => Math.max(0, value - 1)), 1000);
-    const elapsed = window.setInterval(() => setDuration((value) => value + 1), 1000);
+    const tick = window.setInterval(() => { setCountdown((value) => Math.max(0, value - 1)); }, 1000);
+    const elapsed = window.setInterval(() => { setDuration((value) => value + 1); }, 1000);
     return () => {
       window.clearInterval(tick);
       window.clearInterval(elapsed);
@@ -23,7 +23,7 @@ export function MemePage() {
   const goNext = useCallback(() => {
     if (busy) return;
     setBusy(true);
-    window.setTimeout(() => router.push('/session?q=2'), 250);
+    window.setTimeout(() => { router.push('/session?q=2'); }, 250);
   }, [busy, router]);
 
   useEffect(() => {

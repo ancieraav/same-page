@@ -1,15 +1,15 @@
-export type SelectedParticipant = {
+export interface SelectedParticipant {
   name: string;
   initials: string;
   role: string;
   score: number;
-};
+}
 
-type ParticipantDetailModalProps = {
+interface ParticipantDetailModalProps {
   open: boolean;
   selected: SelectedParticipant;
   onClose: () => void;
-};
+}
 
 export function ParticipantDetailModal({ open, selected, onClose }: ParticipantDetailModalProps) {
   return (
@@ -17,8 +17,11 @@ export function ParticipantDetailModal({ open, selected, onClose }: ParticipantD
       className={`analytics-modal-backdrop${open ? ' is-active' : ''}`}
       id="participant-analytics-modal"
       role="presentation"
-      aria-hidden={!open}
-      onMouseDown={(event) => event.currentTarget === event.target && onClose()}
+      onMouseDown={(event) => {
+        if (event.currentTarget === event.target) {
+          onClose();
+        }
+      }}
     >
       <div className="participant-modal-card" id="participant-modal-card">
         <div className="modal-header-banner">

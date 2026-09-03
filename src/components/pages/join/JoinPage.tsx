@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { writeSession } from '@/lib/storage';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -16,7 +16,17 @@ export function JoinPage() {
   const [avatarSrc, setAvatarSrc] = useState('');
   const [busy, setBusy] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const roomCode = params.get('code')?.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 24) || 'SYNC-9021';
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const roomCode = params.get('code')?.replace(/[^a-zA-Z0-9-]/g, '').slice(0, 24) ?? 'SYNC-9021';
 
   const onAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -26,16 +36,22 @@ export function JoinPage() {
       return;
     }
     const reader = new FileReader();
-    reader.addEventListener('load', () => setAvatarSrc(typeof reader.result === 'string' ? reader.result : ''));
+    const onLoad = () => {
+      setAvatarSrc(typeof reader.result === 'string' ? reader.result : '');
+      reader.removeEventListener('load', onLoad);
+    };
+    reader.addEventListener('load', onLoad);
     reader.readAsDataURL(file);
   };
 
   const onEnter = () => {
-    const finalName = name.trim() || 'Alex Morgan';
+    const finalName = name.trim() ? name.trim() : 'Alex Morgan';
     writeSession('samepage_room_identity', { name: finalName, photo: avatarSrc, roomCode });
     setBusy(true);
     showToast(`Welcome, ${finalName}!`);
-    window.setTimeout(() => router.push(`/waiting?code=${encodeURIComponent(roomCode)}`), 450);
+    timeoutRef.current = window.setTimeout(() => {
+      router.push(`/waiting?code=${encodeURIComponent(roomCode)}`);
+    }, 450);
   };
 
   return (
@@ -47,9 +63,9 @@ export function JoinPage() {
         avatarSrc={avatarSrc}
         busy={busy}
         fileInputRef={fileInputRef}
-        onAvatarTrigger={() => fileInputRef.current?.click()}
-        onAvatarChange={onAvatarChange}
+        onAvatarTrigger={() => { fileInputRef.current?.click(); }}
         onNameChange={setName}
+        onAvatarChange={onAvatarChange}
         onEnter={onEnter}
       />
     </>
