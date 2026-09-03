@@ -1,13 +1,13 @@
-import { CreatePart1 } from './CreatePart1';
-import { CreatePart2 } from './CreatePart2';
-import { CreatePart3 } from './CreatePart3';
+import { AmbientBackground } from '@/components/layout/AmbientBackground';
+import { CreateHeader } from './CreateHeader';
+import { CreateRoomForm } from './CreateRoomForm';
 
 export function CreatePage() {
   return (
     <>
-      <CreatePart1 />
-      <CreatePart2 />
-      <CreatePart3 />
+      <AmbientBackground />
+      <CreateHeader />
+      <CreateRoomForm />
     </>
   );
 }

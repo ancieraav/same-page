@@ -26,7 +26,7 @@ function extension(name: string) {
   return (name.split('.').pop() || 'FILE').toUpperCase();
 }
 
-export function CreatePart3() {
+export function CreateRoomForm() {
   const router = useRouter();
   const { showToast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);

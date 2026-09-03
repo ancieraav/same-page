@@ -61,7 +61,7 @@ type EmojiParticle = {
   duration: string;
 };
 
-export function WaitingPart3({ room, onShare }: { room: Room; onShare: () => void }) {
+export function WaitingStage({ room, onShare }: { room: Room; onShare: () => void }) {
   const router = useRouter();
   const { showToast } = useToast();
   const operatorCardRef = useRef<HTMLDivElement>(null);
