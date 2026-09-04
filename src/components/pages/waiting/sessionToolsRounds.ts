@@ -7,6 +7,7 @@ import {
   readRequiredInt,
   type WebMCPTool,
 } from '@/lib/webmcp';
+import { questionSummaryTemplate } from '@/lib/session';
 import {
   guard,
   readIntList,
@@ -118,7 +119,7 @@ export function sessionToolsRounds(bindings: () => SessionToolsBindings): WebMCP
     },
     {
       name: 'send_question_summary',
-      description: 'Send the summary and analysis for one completed question.',
+      description: `Send the summary and analysis for one completed question. Required template: ${JSON.stringify(questionSummaryTemplate())}`,
       inputSchema: objectSchema({
         number: { type: 'integer', description: 'Completed question number.', minimum: 1 },
         summaries: {

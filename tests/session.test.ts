@@ -5,9 +5,12 @@ import {
   SESSION_STATUS,
   assembleFinalReport,
   buildWorkflow,
+  durationLabel,
   goalsWorkflow,
+  questionSummaryTemplate,
   roomSummaryTemplate,
   roundDeadlineFrom,
+  secondsElapsed,
   secondsLeft,
   stringArrayOf,
   validateRoomSummary,
@@ -30,6 +33,16 @@ describe('session helpers', () => {
     expect(secondsLeft(new Date(now + 90_000).toISOString(), now)).toBe(90);
     expect(secondsLeft(new Date(now - 1000).toISOString(), now)).toBe(0);
     expect(secondsLeft('not-a-date', now)).toBe(0);
+  });
+
+  it('computes and formats an elapsed room timer with an optional end time', () => {
+    const start = new Date('2026-01-01T00:00:00Z').getTime();
+    expect(secondsElapsed(new Date(start).toISOString(), null, start + 65_000)).toBe(65);
+    expect(secondsElapsed(new Date(start).toISOString(), new Date(start + 3_661_000).toISOString(), start + 9_999_999)).toBe(3661);
+    expect(secondsElapsed('not-a-date', null, start)).toBe(null);
+    expect(durationLabel(65)).toBe('01:05');
+    expect(durationLabel(3661)).toBe('01:01:01');
+    expect(durationLabel(null)).toBe('--:--');
   });
 
   it('stamps deadlines ROUND_SECONDS ahead', () => {
@@ -99,6 +112,22 @@ describe('session helpers', () => {
     expect(validateRoomSummary({ ...valid, agreements: 'x' }).ok).toBe(false);
     expect(validateRoomSummary({ ...valid, room: { code: 'X' } }).ok).toBe(false);
     expect(roomSummaryTemplate()['questions_completed']).toBe('integer');
+  });
+
+  it('describes the question summary template used by the analysis card', () => {
+    const template = questionSummaryTemplate();
+    expect(template).toMatchObject({
+      number: 'integer',
+      alignment: 'integer 0..100 | null',
+      agreed: 'string[]',
+      disagreed: 'string[]',
+      hidden_mismatches: 'string[]',
+      assumptions: 'string[]',
+      flags: 'string[]',
+      confidence: 'string',
+    });
+    expect(typeof template['summaries']).toBe('string');
+    if (typeof template['summaries'] === 'string') expect(template['summaries']).toContain('one per player');
   });
 });
 

@@ -75,14 +75,16 @@ export function SessionToolbar({
   mode,
   onFormat,
   onMode,
+  disabled = false,
 }: {
   mode: 'write' | 'preview';
   onFormat: (action: string) => void;
   onMode: (value: 'write' | 'preview') => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="editor-toolbar" role="toolbar" aria-label="Text formatting tools">
-      <div className="toolbar-left-tools">
+      <div className={`toolbar-left-tools${disabled ? ' is-disabled' : ''}`}>
         <div className="toolbar-btn-group">
           {['bold', 'italic', 'underline', 'strike'].map((action) => (
             <button
@@ -92,6 +94,7 @@ export function SessionToolbar({
               data-action={action}
               title={labels[action]}
               aria-label={labels[action]}
+              disabled={disabled}
               onClick={() => { onFormat(action); }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
@@ -110,6 +113,7 @@ export function SessionToolbar({
               data-action={action}
               title={labels[action]}
               aria-label={labels[action]}
+              disabled={disabled}
               onClick={() => { onFormat(action); }}
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
@@ -123,6 +127,7 @@ export function SessionToolbar({
         <button
           type="button"
           className={`mode-toggle-btn${mode === 'write' ? ' is-active' : ''}`}
+          disabled={disabled}
           onClick={() => { onMode('write'); }}
           title="Write mode"
         >
@@ -135,6 +140,7 @@ export function SessionToolbar({
         <button
           type="button"
           className={`mode-toggle-btn${mode === 'preview' ? ' is-active' : ''}`}
+          disabled={disabled}
           onClick={() => { onMode('preview'); }}
           title="Preview rendered format"
         >

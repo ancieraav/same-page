@@ -10,6 +10,7 @@ export interface RoomRow {
   topic: string;
   notes: string;
   status: string;
+  created_at: string;
   creator_guest_id: string | null;
   attachments?: RoomAttachment[] | null;
 }
@@ -57,7 +58,7 @@ export async function findRoomByCode(code: string): Promise<RoomRow | null> {
   const supabase = getServiceSupabase();
   const { data, error } = await supabase
     .from('rooms')
-    .select('id, code, name, topic, notes, status, creator_guest_id, attachments')
+    .select('id, code, name, topic, notes, status, created_at, creator_guest_id, attachments')
     .eq('code', normalizeRoomCode(code))
     .maybeSingle();
   if (error || !data) return null;

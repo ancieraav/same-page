@@ -1,80 +1,63 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { readStored, writeStored } from '@/lib/storage';
-import { useToast } from '@/components/ui/ToastProvider';
 import { SessionToolbar } from './SessionToolbar';
-import { SessionAvatarStack } from './SessionAvatarStack';
 
-interface QuestionStageProps {
-  questionId: 1 | 2;
-  ready: boolean;
-  review: boolean;
+export interface SessionQuestionStageProps {
+  questionNumber: number;
+  questionText: string;
+  answer: string;
+  operator: boolean;
+  disabled: boolean;
+  busy: boolean;
+  submittedCount: number;
+  participantCount: number;
+  onAnswerChange: (value: string) => void;
+  onSubmit: () => Promise<void>;
 }
 
-const questions = {
-  1: {
-    title: 'Which feature should take priority for next quarter’s roadmap?',
-    sub: 'Choose between shipping the core checkout loop or the customer feedback portal first. Explain your trade-offs.',
-  },
-  2: {
-    title: 'How should we price our upcoming enterprise tier?',
-    sub: 'Evaluate usage-based seat pricing against fixed platform tiers and provide your risk tolerance.',
-  },
-};
-
 function MarkdownPreview({ value }: { value: string }) {
-  const items = value.split('\n').map((line, position) => ({
-    key: `md_line_${String(position + 1)}_${line.slice(0, 8)}`,
-    line,
-  }));
+  const lines = value.split('\n');
+  if (!value.trim()) return <p className="preview-empty-state">Nothing to preview yet.</p>;
   return (
     <div className="rendered-markdown-content">
-      {items.map((item) => {
-        if (!item.line.trim()) return <p key={item.key} className="md-blank-line">&nbsp;</p>;
-        if (item.line.startsWith('- ')) {
-          return (
-            <ul key={item.key} className="md-list">
-              <li>{item.line.slice(2)}</li>
-            </ul>
-          );
-        }
-        if (item.line.startsWith('> ')) {
-          return (
-            <blockquote key={item.key} className="md-quote">
-              {item.line.slice(2)}
-            </blockquote>
-          );
-        }
-        return <p key={item.key}>{item.line}</p>;
+      {lines.map((line, index) => {
+        const key = `line-${String(index)}-${line.slice(0, 8)}`;
+        if (!line.trim()) return <div className="rendered-spacer" key={key} />;
+        if (line.startsWith('- ')) return <ul className="rendered-list" key={key}><li>{line.slice(2)}</li></ul>;
+        if (line.startsWith('> ')) return <blockquote className="rendered-quote" key={key}><p>{line.slice(2)}</p></blockquote>;
+        return <p className="rendered-p" key={key}>{line}</p>;
       })}
     </div>
   );
 }
 
-export function SessionQuestionStage({ questionId, ready, review }: QuestionStageProps) {
-  const router = useRouter();
-  const { showToast } = useToast();
+/** Shared live question UI for both operator and participant roles. */
+export function SessionQuestionStage({
+  questionNumber,
+  questionText,
+  answer,
+  operator,
+  disabled,
+  busy,
+  submittedCount,
+  participantCount,
+  onAnswerChange,
+  onSubmit,
+}: SessionQuestionStageProps) {
   const answerRef = useRef<HTMLTextAreaElement>(null);
-  const question = questions[questionId];
-  const [answer, setAnswer] = useState('');
   const [mode, setMode] = useState<'write' | 'preview'>('write');
-  const [busy, setBusy] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const editable = !disabled && !busy && !submitting;
+  const responseClosed = disabled && !operator && !busy && !submitting;
 
   useEffect(() => {
-    const stored = readStored(`samepage_user_answer_q${String(questionId)}`, '');
-    window.queueMicrotask(() => { setAnswer(stored); });
-  }, [questionId]);
-
-  useEffect(() => {
-    if (ready) answerRef.current?.focus();
-  }, [ready]);
+    if (editable) answerRef.current?.focus();
+  }, [editable, questionNumber]);
 
   const applyFormat = (format: string) => {
     const element = answerRef.current;
-    if (!element) return;
+    if (!element || !editable) return;
     const start = element.selectionStart;
     const end = element.selectionEnd;
     const selected = answer.slice(start, end) || 'text';
@@ -89,88 +72,58 @@ export function SessionQuestionStage({ questionId, ready, review }: QuestionStag
     };
     const [prefix, suffix] = wrappers[format] ?? ['', ''];
     const next = `${answer.slice(0, start)}${prefix}${selected}${suffix}${answer.slice(end)}`;
-    setAnswer(next);
+    onAnswerChange(next);
     window.requestAnimationFrame(() => {
       element.focus();
       element.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
     });
   };
 
-  const submit = () => {
-    if (!answer.trim()) {
-      showToast('Please write your response first', 'error');
-      answerRef.current?.focus();
-      return;
+  const submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!editable || !answer.trim()) return;
+    setSubmitting(true);
+    try {
+      await onSubmit();
+    } finally {
+      setSubmitting(false);
     }
-    setBusy(true);
-    writeStored(`samepage_user_answer_q${String(questionId)}`, answer);
-    writeStored('samepage_user_answer', answer);
-    showToast('Response saved');
-    window.setTimeout(() => {
-      router.push(`/comparison?q=${String(questionId)}&review=1`);
-    }, 500);
   };
 
+  const participantLabel = `${String(submittedCount)} of ${String(participantCount)} participants answered`;
   return (
-    <main className={`session-canvas-wrapper${ready ? '' : ' is-launching'}`}>
-      <div className="question-stage-clean">
-        <div className="question-round-indicator">
-          <span
-            className="round-indicator-dot"
-            aria-hidden="true"
-            style={review ? { background: '#10B981' } : undefined}
-          />
-          <span>
-            Question {questionId} of 2{review ? ' • Review Mode' : ''}
-          </span>
-        </div>
-        <h1 className="question-headline">{question.title}</h1>
-        <p className="question-sub-prompt">{question.sub}</p>
+    <section className="question-stage-clean live-question-editor" aria-labelledby="live-question-title">
+      <div className="question-round-indicator"><span className="round-indicator-dot" aria-hidden="true" />Question {String(questionNumber)}</div>
+      <h2 className="question-headline" id="live-question-title">{questionText}</h2>
+      <p className="question-sub-prompt">Share your honest perspective. Your response stays private until the round closes.</p>
+      <form onSubmit={(event) => { void submit(event); }}>
         <div className="rich-editor-box">
-          <SessionToolbar mode={mode} onFormat={applyFormat} onMode={setMode} />
+          <SessionToolbar mode={mode} onFormat={applyFormat} onMode={setMode} disabled={!editable} />
           <div className="editor-textarea-wrapper">
             {mode === 'write' ? (
               <textarea
                 ref={answerRef}
                 id="participant-answer-input"
                 className="answer-textarea"
-                placeholder="Write your honest perspective here..."
-                aria-label="Write your honest perspective here"
-                rows={4}
+                placeholder={operator ? 'Operator view — participants answer from their own tabs.' : responseClosed ? 'Responses are closed for this question.' : 'Write your honest perspective here...'}
+                aria-label="Write your response"
                 value={answer}
-                onChange={(event) => { setAnswer(event.target.value); }}
+                disabled={disabled || busy || submitting}
+                onChange={(event) => { onAnswerChange(event.target.value); }}
               />
-            ) : (
-              <div className="answer-preview-pane">
-                <MarkdownPreview value={answer} />
-              </div>
-            )}
-            <div className="editor-grab-handle" title="Drag to resize box" aria-label="Resize handle">
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round">
-                <line x1="8.5" y1="1.5" x2="1.5" y2="8.5" />
-                <line x1="8.5" y1="5" x2="5" y2="8.5" />
-              </svg>
+            ) : <div className="answer-preview-pane"><MarkdownPreview value={answer} /></div>}
+            <div className="editor-grab-handle" title="Drag to resize box" aria-label="Resize handle" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><line x1="8.5" y1="1.5" x2="1.5" y2="8.5" /><line x1="8.5" y1="5" x2="5" y2="8.5" /></svg>
             </div>
           </div>
         </div>
         <div className="question-actions-row">
-          <div className="avatar-stack-container">
-            <SessionAvatarStack />
-            <span className="avatar-stack-label">
-              <strong>2 of 2 participants</strong> have answered
-            </span>
-          </div>
-          {review && (
-            <Link href={`/comparison?q=${String(questionId)}&review=1`} className="dock-btn-secondary btn-session-review-back">
-              ← <span>Review Question {questionId} Comparison</span>
-            </Link>
-          )}
-          <button type="button" className="btn-submit-answer" onClick={submit} disabled={busy} aria-busy={busy}>
-            <span>{busy ? 'Saving…' : review ? 'Update Response' : 'Submit Response'}</span>{' '}
-            <span aria-hidden="true">→</span>
+          <span className="question-participant-status">{operator ? `Operator view · ${participantLabel}` : responseClosed ? 'Response window closed' : participantLabel}</span>
+          <button type="submit" className="btn-submit-answer" disabled={!editable || !answer.trim()} aria-busy={busy || submitting}>
+            <span>{operator ? 'Operator view' : responseClosed ? 'Response window closed' : busy || submitting ? 'Saving…' : answer.trim() ? 'Update Response' : 'Submit Response'}</span><span aria-hidden="true"> →</span>
           </button>
         </div>
-      </div>
-    </main>
+      </form>
+    </section>
   );
 }

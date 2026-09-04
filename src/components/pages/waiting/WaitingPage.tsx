@@ -14,6 +14,7 @@ import { ShareRolesModal } from './ShareRolesModal';
 import { useWaitingRoom } from './useWaitingRoom';
 import { useSessionWebMCP } from './useSessionWebMCP';
 import { PAIR_MODE } from '@/lib/pairMode';
+import { durationLabel, secondsElapsed } from '@/lib/session';
 
 interface Room {
   code: string;
@@ -40,12 +41,21 @@ const fallbackRoom: Room = {
 
 // Waiting-room WebMCP surface for everyone; the operator additionally gets
 // start_session + kick_participant. Session-only tools hint "not yet".
-function WaitingSessionTools({ code, live }: { code: string; live: ReturnType<typeof useWaitingRoom> }) {
+function WaitingSessionTools({
+  code,
+  live,
+  goHome,
+}: {
+  code: string;
+  live: ReturnType<typeof useWaitingRoom>;
+  goHome: () => void;
+}) {
   useSessionWebMCP({
     getCode: () => code,
     getGuestId,
     isOperator: () => live?.amOperator === true,
     getStatus: () => live?.status ?? 'waiting',
+    goHome,
     phase: 'waiting',
     watchKey: `${live?.amOperator === true ? 'op' : 'player'}:${live?.status ?? 'loading'}`,
   });
@@ -57,11 +67,16 @@ export function WaitingPage() {
   const router = useRouter();
   const { showToast } = useToast();
   const [room, setRoom] = useState<Room>(fallbackRoom);
-  const [elapsed, setElapsed] = useState(45);
+  const [clock, setClock] = useState(() => Date.now());
   const [shareOpen, setShareOpen] = useState(false);
 
   const queryCode = params.get('code');
   const live = useWaitingRoom(queryCode);
+  const hasLive = live !== null;
+  const liveKicked = live?.kicked ?? false;
+  const liveDissolved = live?.dissolved ?? false;
+  const liveSessionReady = live?.sessionReady ?? false;
+  const liveStatus = live?.status ?? 'waiting';
 
   useEffect(() => {
     const stored = readStored<Partial<Room> | null>('samepage_active_room', null);
@@ -101,21 +116,18 @@ export function WaitingPage() {
   }, [live?.dissolved, router, showToast]);
 
   useEffect(() => {
-    // Once the session starts (status leaves waiting) or has questions, every
-    // participant enters the real session screen. The session tools mount
-    // there instead, so the waiting tools (leave_room, kick_participant)
-    // disappear when the session starts.
-    if (!queryCode || !live || live.kicked || live.dissolved) return;
-    if (!live.sessionReady && live.status === 'waiting') return;
+    // The live session keeps the role-aware WebMCP roadmap mounted after this hand-off.
+    if (!queryCode || !hasLive || liveKicked || liveDissolved) return;
+    if (!liveSessionReady && liveStatus === 'waiting') return;
     router.replace(`/session?code=${encodeURIComponent(queryCode)}`);
-  }, [live?.dissolved, live?.kicked, live?.sessionReady, live?.status, queryCode, router]);
+  }, [hasLive, liveDissolved, liveKicked, liveSessionReady, liveStatus, queryCode, router]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => { setElapsed((value) => value + 1); }, 1000);
+    const timer = window.setInterval(() => { setClock(Date.now()); }, 1000);
     return () => { window.clearInterval(timer); };
   }, []);
 
-  const duration = `${String(Math.floor(elapsed / 60)).padStart(2, '0')}:${String(elapsed % 60).padStart(2, '0')}`;
+  const duration = durationLabel(secondsElapsed(live?.timerStartedAt, null, clock));
 
   const copyCode = async () => {
     if (await copyText(room.code)) showToast('Room code copied');
@@ -147,7 +159,7 @@ export function WaitingPage() {
         onCopy={() => { void copyCode(); }}
       />
       <WaitingStage room={room} onShare={() => { setShareOpen(true); }} live={live} isLiveRoom={Boolean(queryCode)} onLeave={leaveRoom} />
-      {queryCode ? <WaitingSessionTools code={queryCode} live={live} /> : null}
+      {queryCode ? <WaitingSessionTools code={queryCode} live={live} goHome={() => { router.push('/'); }} /> : null}
       {shareOpen && PAIR_MODE && (
         <ShareInviteModal
           roomCode={room.code}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseServer';
 import { bad, findRoomByCode, guestIdOf } from '@/lib/waitingServer';
-import { QUESTION_STATUS, SESSION_STATUS, stringArrayOf } from '@/lib/session';
+import { QUESTION_STATUS, SESSION_STATUS, questionSummaryTemplate, stringArrayOf } from '@/lib/session';
 import { auditSession, getSessionMembers, getSessionQuestions, requireSessionOperator, sessionPlayers, workflowFor } from '@/lib/sessionServer';
 
 interface SummaryItem {
@@ -53,25 +53,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const rawSummaries: unknown = payload.summaries;
   const summaries = (Array.isArray(rawSummaries) ? rawSummaries : []) as SummaryItem[];
   if (summaries.length !== players.length) {
-    return bad(`Provide one summary per player (${String(players.length)} required).`);
+    return NextResponse.json({ error: `Provide one summary per player (${String(players.length)} required).`, expected_template: questionSummaryTemplate() }, { status: 400 });
   }
   const cleanSummaries: { guest_id: string; summary: string }[] = [];
   for (const item of summaries) {
     const target = typeof item.guest_id === 'string' ? item.guest_id : '';
     const summary = typeof item.summary === 'string' ? item.summary.trim() : '';
-    if (!players.some((player) => player.guest_id === target)) return bad(`Unknown player "${target}" in summaries.`);
-    if (summary.length < 1 || summary.length > 2000) return bad('Each summary must be 1..2000 characters.');
+    if (!players.some((player) => player.guest_id === target)) return NextResponse.json({ error: `Unknown player "${target}" in summaries.`, expected_template: questionSummaryTemplate() }, { status: 400 });
+    if (summary.length < 1 || summary.length > 2000) return NextResponse.json({ error: 'Each summary must be 1..2000 characters.', expected_template: questionSummaryTemplate() }, { status: 400 });
     cleanSummaries.push({ guest_id: target, summary });
   }
   if (new Set(cleanSummaries.map((item) => item.guest_id)).size !== players.length) {
-    return bad('Provide exactly one summary for each distinct player.');
+    return NextResponse.json({ error: 'Provide exactly one summary for each distinct player.', expected_template: questionSummaryTemplate() }, { status: 400 });
   }
 
   if (room.status !== SESSION_STATUS.ANALYZING) return bad('The room is not waiting for round analytics.', 409);
 
   const alignmentInput: unknown = payload.alignment ?? null;
   if (alignmentInput !== null && (typeof alignmentInput !== 'number' || !Number.isInteger(alignmentInput) || alignmentInput < 0 || alignmentInput > 100)) {
-    return bad('Provide alignment as an integer 0..100 or null.');
+    return NextResponse.json({ error: 'Provide alignment as an integer 0..100 or null.', expected_template: questionSummaryTemplate() }, { status: 400 });
   }
   const alignment = typeof alignmentInput === 'number' ? alignmentInput : null;
   const agreed = stringArrayOf(payload.agreed ?? [], 20, 500);
@@ -80,10 +80,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const assumptions = stringArrayOf(payload.assumptions ?? [], 20, 500);
   const flags = stringArrayOf(payload.flags ?? [], 20, 500);
   if (!agreed || !disagreed || !hiddenMismatches || !assumptions || !flags) {
-    return bad('Provide agreed/disagreed/hidden_mismatches/assumptions/flags as string arrays (max 20 items, 500 chars each).');
+    return NextResponse.json({ error: 'Provide agreed/disagreed/hidden_mismatches/assumptions/flags as string arrays (max 20 items, 500 chars each).', expected_template: questionSummaryTemplate() }, { status: 400 });
   }
   const confidence = typeof payload.confidence === 'string' ? payload.confidence.trim() : '';
-  if (confidence.length > 1000) return bad('Provide confidence as text up to 1000 characters.');
+  if (confidence.length > 1000) return NextResponse.json({ error: 'Provide confidence as text up to 1000 characters.', expected_template: questionSummaryTemplate() }, { status: 400 });
 
   const supabase = getServiceSupabase();
   const { error } = await supabase.from('round_analytics').insert({

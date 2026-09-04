@@ -8,6 +8,11 @@ export interface SessionToolsBindings {
   isOperator: () => boolean;
   /** Latest known room status ('waiting' before live data loads). */
   getStatus?: () => string;
+  /** Participant answer draft bindings are supplied only by the live session UI. */
+  getAnswerDraft?: () => string;
+  setAnswerDraft?: (value: string) => void;
+  submitAnswer?: () => Promise<{ question: number; saved: true }>;
+  goHome?: () => void;
 }
 
 export interface SnapshotQuestion {
@@ -39,8 +44,12 @@ export interface SnapshotAnalytics {
 }
 
 export interface SessionSnapshot {
-  room?: { status?: unknown };
-  current?: { number?: unknown } | null;
+  room?: {
+    status?: unknown;
+    timer_started_at?: unknown;
+    timer_ended_at?: unknown;
+  };
+  current?: { number?: unknown; deadline_at?: unknown; seconds_left?: unknown } | null;
   questions?: SnapshotQuestion[];
   answers?: SnapshotAnswer[];
   analytics?: SnapshotAnalytics[];

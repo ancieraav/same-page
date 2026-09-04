@@ -36,6 +36,26 @@ export function secondsLeft(deadlineIso: string, nowMs = Date.now()): number {
   return Math.max(0, Math.floor((deadline - nowMs) / 1000));
 }
 
+/** Seconds elapsed from a server timestamp, optionally frozen at an end timestamp. */
+export function secondsElapsed(startIso: string | null | undefined, endIso?: string | null, nowMs = Date.now()): number | null {
+  if (!startIso) return null;
+  const start = new Date(startIso).getTime();
+  if (Number.isNaN(start)) return null;
+  const candidateEnd = endIso ? new Date(endIso).getTime() : nowMs;
+  const end = Number.isNaN(candidateEnd) ? nowMs : candidateEnd;
+  return Math.max(0, Math.floor((end - start) / 1000));
+}
+
+/** Human-readable MM:SS / HH:MM:SS duration label. */
+export function durationLabel(seconds: number | null): string {
+  if (seconds === null) return '--:--';
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const rest = seconds % 60;
+  const two = (value: number) => String(value).padStart(2, '0');
+  return hours > 0 ? `${two(hours)}:${two(minutes)}:${two(rest)}` : `${two(minutes)}:${two(rest)}`;
+}
+
 /** ISO deadline ROUND_SECONDS after `nowMs` (server stamps this on publish). */
 export function roundDeadlineFrom(nowMs = Date.now()): string {
   return new Date(nowMs + ROUND_SECONDS * 1000).toISOString();
@@ -190,6 +210,21 @@ export function goalsWorkflow(): Record<string, unknown> {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** Required shape behind `send_question_summary`, matching the analysis card UI. */
+export function questionSummaryTemplate(): Record<string, unknown> {
+  return {
+    number: 'integer',
+    summaries: '[{guest_id: string, summary: string}] (one per player)',
+    alignment: 'integer 0..100 | null',
+    agreed: 'string[]',
+    disagreed: 'string[]',
+    hidden_mismatches: 'string[]',
+    assumptions: 'string[]',
+    flags: 'string[]',
+    confidence: 'string',
+  };
 }
 
 /** Required template behind `send_room_summary`. Extra keys are allowed. */

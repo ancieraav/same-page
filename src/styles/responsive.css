@@ -6,9 +6,9 @@
 /* ---------- Header (all pages) ---------- */
 @media (max-width: 640px) {
   .minimal-header {
-    flex-wrap: wrap;
-    gap: 10px 12px;
-    row-gap: 10px;
+    flex-wrap: nowrap;
+    gap: 8px;
+    min-width: 0;
   }
 
   .brand-group {
@@ -26,10 +26,11 @@
   }
 
   .header-nav {
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 6px;
+    flex-wrap: nowrap;
     justify-content: flex-end;
     margin-left: auto;
+    min-width: 0;
   }
 
   .live-activity-badge,
@@ -59,6 +60,33 @@
   .nav-avatar-icon {
     width: 34px;
     height: 34px;
+  }
+}
+
+@media (max-width: 520px) {
+  .minimal-header .brand-group {
+    display: none;
+  }
+
+  .minimal-header {
+    justify-content: flex-end;
+  }
+
+  .header-nav {
+    width: 100%;
+  }
+
+  .header-participants-count,
+  .session-timer-label {
+    display: none;
+  }
+
+  .header-participants-badge,
+  .header-duration-badge,
+  .header-room-code-badge,
+  .session-timer-pill {
+    gap: 5px;
+    padding: 0 8px;
   }
 }
 

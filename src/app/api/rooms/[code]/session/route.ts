@@ -102,6 +102,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const suggests = await getSuggests(room.id);
   const suggestResponses = await getSuggestResponses(room.id);
   const roomSummary = await getRoomSummary(room.id);
+  const operator = members.find((member) => member.is_operator) ?? null;
+  const timerStartedAt = operator?.joined_at ?? room.created_at;
   const workflow = workflowFor(roomStatus, questions, analyticsIds, suggests.length);
   const completedCount = questions.filter((q) => q.status === QUESTION_STATUS.CLOSED && analyticsIds.has(q.id)).length;
 
@@ -112,11 +114,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       topic: room.topic,
       notes: room.notes,
       status: roomStatus,
+      timer_started_at: timerStartedAt,
+      timer_ended_at: roomSummary?.created_at ?? null,
       attachments,
     },
     now: new Date(nowMs).toISOString(),
     just_closed: closed.closed,
-    operator: members.find((member) => member.is_operator) ?? null,
+    operator,
     players: players.map((player) => ({ guest_id: player.guest_id, name: player.name, ready: player.ready })),
     current: active
       ? {

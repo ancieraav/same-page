@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   const [members, messages, reactions, sessionQuestions] = await Promise.all([
     supabase
       .from('room_members')
-      .select('guest_id, name, avatar_url, is_host, is_operator, ready, last_seen_at')
+      .select('guest_id, name, avatar_url, is_host, is_operator, ready, last_seen_at, joined_at')
       .eq('room_id', room.id)
       .is('left_at', null)
       .order('joined_at', { ascending: true }),
@@ -41,6 +41,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
   const onlineCutoff = Date.now() - 90_000;
   const attachments = await resolveRoomAttachments(room.attachments);
+  const activeMembers = members.data ?? [];
+  const operator = activeMembers.find((member) => member.is_operator === true);
   return NextResponse.json({
     room: {
       code: room.code,
@@ -48,6 +50,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       topic: room.topic,
       notes: room.notes,
       status: room.status,
+      timer_started_at: (operator?.joined_at as string | undefined) ?? room.created_at,
       attachments,
     },
     session: {
@@ -55,13 +58,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       current: sessionQuestions.find((question) => question.status === 'active') ?? null,
     },
     self: guestId,
-    members: (members.data ?? []).map((member) => ({
+    members: activeMembers.map((member) => ({
       guest_id: member.guest_id as string,
       name: member.name as string,
       avatar_url: (member.avatar_url as string | null) ?? null,
       is_host: member.is_host as boolean,
       is_operator: (member.is_operator as boolean | undefined) ?? false,
       ready: (member.ready as boolean | undefined) ?? false,
+      joined_at: member.joined_at as string,
       online: new Date(member.last_seen_at as string).getTime() >= onlineCutoff,
     })),
     messages: (messages.data ?? []).reverse().map((message) => ({

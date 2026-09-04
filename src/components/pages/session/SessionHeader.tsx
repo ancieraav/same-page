@@ -2,7 +2,12 @@ import Link from 'next/link';
 import { AvatarMenu } from '@/components/layout/AvatarMenu';
 import { BrandLogo } from '@/components/brand/BrandLogo';
 
-export function SessionHeader({ timer }: { timer: string }) {
+interface SessionHeaderProps {
+  roomTimer: string;
+  deadlineTimer: string | null;
+}
+
+export function SessionHeader({ roomTimer, deadlineTimer }: SessionHeaderProps) {
   return (
     <header className="minimal-header">
       <Link href="/" className="brand-group" id="brand-logo-link">
@@ -30,10 +35,18 @@ export function SessionHeader({ timer }: { timer: string }) {
           </svg>
           <span id="header-participants-count">2 Participants</span>
         </div>
-        <span className="session-timer-pill" id="session-timer-badge" title="Question countdown">
+        <span className="session-timer-pill" id="session-room-timer-badge" title="Total room duration">
           <span className="session-timer-dot" aria-hidden="true" />
-          <span id="session-timer-countdown">{timer}</span>
+          <span className="session-timer-label">Room</span>
+          <span id="session-room-timer">{roomTimer}</span>
         </span>
+        {deadlineTimer !== null ? (
+          <span className="session-timer-pill is-deadline" id="session-deadline-badge" title="Question deadline">
+            <span className="session-timer-dot" aria-hidden="true" />
+            <span className="session-timer-label">Deadline</span>
+            <span id="session-timer-countdown">{deadlineTimer}</span>
+          </span>
+        ) : null}
         <AvatarMenu />
       </div>
     </header>

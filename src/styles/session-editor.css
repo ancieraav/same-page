@@ -71,6 +71,17 @@
   animation: pulseDot 2s infinite;
 }
 
+.session-timer-pill.is-deadline .session-timer-dot {
+  background: #F97316;
+}
+
+.session-timer-label {
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
 /* Question Round Indicator (Positioned Above Question Headline) */
 .question-round-indicator {
   display: inline-flex;
@@ -204,4 +215,3 @@
   background: rgba(203, 213, 225, 0.8);
   margin: 0 4px;
 }
-

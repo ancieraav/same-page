@@ -3,10 +3,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useToast } from '@/components/ui/ToastProvider';
 import { getGuestId } from '@/lib/guest';
-import { secondsLeft } from '@/lib/session';
+import { durationLabel, secondsElapsed, secondsLeft } from '@/lib/session';
 import { sessionGet, sessionPost } from '@/lib/sessionClient';
-import { useSessionWebMCP } from '@/components/pages/waiting/useSessionWebMCP';
 import { SessionHeader } from './SessionHeader';
+import { SessionWebMCPBridge } from './SessionWebMCPBridge';
+import { SessionQuestionStage } from './SessionQuestionStage';
+import { SessionQuestionTransition } from './SessionQuestionTransition';
 
 interface CurrentQuestion {
   number: number;
@@ -50,7 +52,15 @@ interface SuggestItem {
 }
 
 interface SessionState {
-  room: { code: string; name: string; topic: string; notes?: string; status: string };
+  room: {
+    code: string;
+    name: string;
+    topic: string;
+    notes?: string;
+    status: string;
+    timer_started_at?: string | null;
+    timer_ended_at?: string | null;
+  };
   operator: { guest_id: string; name: string } | null;
   players: { guest_id: string; name: string }[];
   current: CurrentQuestion | null;
@@ -60,7 +70,7 @@ interface SessionState {
   completed_count?: number;
   suggests?: SuggestItem[];
   suggest_responses?: { suggest_number: number; guest_id: string; name: string; body: string }[];
-  room_summary?: { available: boolean; summary?: Record<string, unknown> };
+  room_summary?: { available: boolean; summary?: Record<string, unknown>; created_at?: string };
 }
 
 function errorMessage(error: unknown): string {
@@ -68,8 +78,7 @@ function errorMessage(error: unknown): string {
 }
 
 function clockLabel(seconds: number | null): string {
-  if (seconds === null) return '--:--';
-  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+  return durationLabel(seconds);
 }
 
 function ListBlock({ title, items }: { title: string; items: string[] }) {
@@ -162,11 +171,6 @@ function RoomSummaryCard({ summary }: { summary: Record<string, unknown> }) {
   );
 }
 
-function SessionOperatorTools({ code, guestId }: { code: string; guestId: string }) {
-  useSessionWebMCP({ getCode: () => code, getGuestId: () => guestId, isOperator: () => true, phase: 'session', watchKey: 'session' });
-  return null;
-}
-
 /** Real participant session view backed by the server session state. */
 export function LiveSessionPage({ code }: { code: string }) {
   const { showToast } = useToast();
@@ -181,6 +185,7 @@ export function LiveSessionPage({ code }: { code: string }) {
   const [error, setError] = useState('');
   const questionRef = useRef<number | null>(null);
   const draftDirtyRef = useRef(false);
+  const draftRef = useRef('');
 
   const load = useCallback(async () => {
     try {
@@ -191,9 +196,13 @@ export function LiveSessionPage({ code }: { code: string }) {
       if (nextNumber !== questionRef.current) {
         questionRef.current = nextNumber;
         draftDirtyRef.current = false;
-        setDraft(next.current?.my_answer?.body ?? '');
+        const nextDraft = next.current?.my_answer?.body ?? '';
+        draftRef.current = nextDraft;
+        setDraft(nextDraft);
       } else if (!draftDirtyRef.current && next.current?.my_answer) {
-        setDraft(next.current.my_answer.body ?? '');
+        const nextDraft = next.current.my_answer.body ?? '';
+        draftRef.current = nextDraft;
+        setDraft(nextDraft);
       }
     } catch (loadError) {
       setError(errorMessage(loadError));
@@ -217,28 +226,42 @@ export function LiveSessionPage({ code }: { code: string }) {
   const isOperatorView = snapshot?.operator?.guest_id === selfId;
   const canAnswer = Boolean(active && remaining !== null && remaining > 0 && !busy && !isOperatorView);
 
-  const submit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!active || !draft.trim() || !canAnswer) {
-      if (!draft.trim()) showToast('Please write your response first.', 'error');
-      return;
+  const setAnswerDraft = useCallback((value: string) => {
+    draftDirtyRef.current = true;
+    draftRef.current = value;
+    setDraft(value);
+  }, []);
+
+  const submitAnswer = useCallback(async (): Promise<{ question: number; saved: true }> => {
+    if (!active || !draftRef.current.trim() || !canAnswer) {
+      if (!draftRef.current.trim()) throw new Error('Please write your response first.');
+      throw new Error('This response can no longer be submitted.');
     }
     setBusy(true);
     try {
-      await sessionPost(code, 'answers', { guest_id: selfId, number: active.number, body: draft });
+      await sessionPost(code, 'answers', { guest_id: selfId, number: active.number, body: draftRef.current });
       draftDirtyRef.current = false;
       await load();
-      showToast('Response saved');
-    } catch (submitError) {
-      showToast(errorMessage(submitError), 'error');
+      return { question: active.number, saved: true };
     } finally {
       setBusy(false);
     }
-  };
+  }, [active, canAnswer, code, load, selfId]);
+
+  const submitQuestion = useCallback(async () => {
+    try {
+      await submitAnswer();
+      showToast('Response saved');
+    } catch (submitError) {
+      showToast(errorMessage(submitError), 'error');
+    }
+  }, [showToast, submitAnswer]);
 
   const latestAnalysis = snapshot?.analytics.at(-1) ?? null;
   const isOperator = isOperatorView;
   const status = snapshot?.room.status ?? 'waiting';
+  const roomTimer = durationLabel(secondsElapsed(snapshot?.room.timer_started_at, snapshot?.room.timer_ended_at, clock));
+  const deadlineTimer = active?.deadline_at ? clockLabel(remaining) : null;
   const alignmentTrend = snapshot?.final?.alignment_trend.filter((item): item is number => item !== null) ?? [];
   const alignmentTrendLabel = alignmentTrend.length > 0 ? alignmentTrend.join(' → ') : 'not available';
   const latestSuggest = snapshot?.suggests?.at(-1) ?? null;
@@ -264,7 +287,7 @@ export function LiveSessionPage({ code }: { code: string }) {
 
   return (
     <div className="live-session-page">
-      <SessionHeader timer={clockLabel(remaining)} />
+      <SessionHeader roomTimer={roomTimer} deadlineTimer={deadlineTimer} />
       <main className="live-session-shell" id="live-session-shell">
         {loading && !snapshot ? <div className="live-state-card">Loading session…</div> : null}
         {error && !snapshot ? <div className="live-state-card live-state-error" role="alert">{error}</div> : null}
@@ -309,41 +332,18 @@ export function LiveSessionPage({ code }: { code: string }) {
             ) : null}
 
             {active ? (
-              <section className="live-question-card" aria-labelledby="live-question-title">
-                <div className="live-question-meta">
-                  <span>Question {active.number}</span>
-                  <span>{active.submitted.length} of {snapshot.players.length} answered</span>
-                </div>
-                <h2 id="live-question-title">{active.text}</h2>
-                {isOperator ? (
-                  <p className="live-operator-note" role="status">
-                    Operator view — {active.submitted.length} of {snapshot.players.length} answered.
-                    Participants answer from their own tabs; you cannot submit answers.
-                  </p>
-                ) : (
-                <form onSubmit={(event) => { void submit(event); }}>
-                  <textarea
-                    id="participant-answer-input"
-                    aria-label="Write your response"
-                    placeholder="Write your honest perspective here..."
-                    value={draft}
-                    disabled={!canAnswer}
-                    onChange={(event) => {
-                      draftDirtyRef.current = true;
-                      setDraft(event.target.value);
-                    }}
-                  />
-                  <div className="live-question-footer">
-                    <span className={remaining !== null && remaining < 30 ? 'is-urgent' : ''}>
-                      {remaining === 0 ? 'Round closing…' : `${clockLabel(remaining)} remaining`}
-                    </span>
-                    <button type="submit" disabled={!canAnswer || !draft.trim()}>
-                      {busy ? 'Saving…' : active.my_answer ? 'Update Response' : 'Submit Response'} <span aria-hidden="true">→</span>
-                    </button>
-                  </div>
-                </form>
-                )}
-              </section>
+              <SessionQuestionStage
+                questionNumber={active.number}
+                questionText={active.text}
+                answer={isOperator ? '' : draft}
+                operator={isOperator}
+                disabled={isOperator || !canAnswer}
+                busy={busy}
+                submittedCount={active.submitted.length}
+                participantCount={snapshot.players.length}
+                onAnswerChange={setAnswerDraft}
+                onSubmit={submitQuestion}
+              />
             ) : (
               <section className="live-state-card" aria-live="polite">
                 {status === 'waiting' ? <><h2>Waiting for the session to start</h2><p>The agent will publish the first question when everyone is ready.</p></> : null}
@@ -358,7 +358,19 @@ export function LiveSessionPage({ code }: { code: string }) {
           </>
         ) : null}
       </main>
-      {snapshot && isOperator ? <SessionOperatorTools code={code} guestId={selfId} /> : null}
+      {snapshot ? <SessionQuestionTransition status={status} hasActiveQuestion={active !== null} /> : null}
+      {snapshot ? (
+        <SessionWebMCPBridge
+          code={code}
+          guestId={selfId}
+          isOperator={isOperator}
+          status={status}
+          activeNumber={active?.number ?? null}
+          getAnswerDraft={() => draftRef.current}
+          setAnswerDraft={setAnswerDraft}
+          submitAnswer={submitAnswer}
+        />
+      ) : null}
     </div>
   );
 }

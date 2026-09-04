@@ -21,6 +21,7 @@ export interface LiveWaitingData {
   name: string;
   topic: string;
   status: string;
+  timerStartedAt: string | null;
   sessionReady: boolean;
   participants: LiveParticipant[];
   /** Latest chat message per participant id (for speech balloons). */
@@ -42,7 +43,7 @@ export interface LiveWaitingData {
 }
 
 interface StatePayload {
-  room?: { name?: unknown; topic?: unknown; status?: unknown };
+  room?: { name?: unknown; topic?: unknown; status?: unknown; timer_started_at?: unknown };
   session?: { has_questions?: unknown };
   members?: { guest_id?: unknown; name?: unknown; avatar_url?: unknown; is_host?: unknown; is_operator?: unknown; ready?: unknown }[];
   messages?: { id?: unknown; guest_id?: unknown; body?: unknown }[];
@@ -77,6 +78,7 @@ export function useWaitingRoom(code: string | null): LiveWaitingData | null {
   const [roomName, setRoomName] = useState('');
   const [roomTopic, setRoomTopic] = useState('');
   const [roomStatus, setRoomStatus] = useState('waiting');
+  const [timerStartedAt, setTimerStartedAt] = useState<string | null>(null);
   const [sessionReady, setSessionReady] = useState(false);
   const [participants, setParticipants] = useState<LiveParticipant[]>([]);
   const [speech, setSpeech] = useState<Record<string, string>>({});
@@ -117,6 +119,7 @@ export function useWaitingRoom(code: string | null): LiveWaitingData | null {
           if (typeof payload.room?.name === 'string') setRoomName(payload.room.name);
           if (typeof payload.room?.topic === 'string') setRoomTopic(payload.room.topic);
           if (typeof payload.room?.status === 'string') setRoomStatus(payload.room.status);
+          if (typeof payload.room?.timer_started_at === 'string') setTimerStartedAt(payload.room.timer_started_at);
           setSessionReady(payload.session?.has_questions === true);
           const next = toParticipants(payload.members, selfId);
           const pending = pendingReadyRef.current;
@@ -291,6 +294,6 @@ export function useWaitingRoom(code: string | null): LiveWaitingData | null {
 
   return useMemo(() => {
     if (!code || !ready) return null;
-    return { name: roomName, topic: roomTopic, status: roomStatus, sessionReady, participants, speech, selfId, amOperator, kicked, dissolved, lastEmoji, sendChat, sendEmoji, kickPlayer, playerReady, setPlayerReady };
-  }, [code, ready, roomName, roomTopic, roomStatus, sessionReady, participants, speech, selfId, amOperator, kicked, dissolved, lastEmoji, sendChat, sendEmoji, kickPlayer, playerReady, setPlayerReady]);
+    return { name: roomName, topic: roomTopic, status: roomStatus, timerStartedAt, sessionReady, participants, speech, selfId, amOperator, kicked, dissolved, lastEmoji, sendChat, sendEmoji, kickPlayer, playerReady, setPlayerReady };
+  }, [code, ready, roomName, roomTopic, roomStatus, timerStartedAt, sessionReady, participants, speech, selfId, amOperator, kicked, dissolved, lastEmoji, sendChat, sendEmoji, kickPlayer, playerReady, setPlayerReady]);
 }

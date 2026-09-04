@@ -19,7 +19,7 @@ interface HomeWebMCPBindings {
   getCodeString: () => string;
   applyCode: (raw: string) => string;
   clearCode: () => void;
-  requestJoin: () => { ok: boolean; code: string; error?: string };
+  requestJoin: () => Promise<{ ok: boolean; code: string; error?: string }>;
 }
 
 /** Ref sync that commits before paint, so back-to-back tool calls see fresh state. */
@@ -110,7 +110,7 @@ export function useHomeWebMCP(bindings: HomeWebMCPBindings) {
           if (pending.length !== 7) {
             throw new Error(`Room code "${pending}" is incomplete (${String(pending.length)}/7).`);
           }
-          const result = bindingsRef.current.requestJoin();
+          const result = await bindingsRef.current.requestJoin();
           if (!result.ok) throw new Error(result.error ?? 'Could not join.');
           return `Joining room ${result.code}. Navigating to /join?code=${result.code}.`;
         },

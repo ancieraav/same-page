@@ -53,20 +53,51 @@ export function IndexPage() {
     else applyCode(value);
   };
 
-  const requestJoin = () => {
+  const requestJoin = async () => {
     const roomCode = code.join('');
     if (roomCode.length !== 7) {
       showToast('Please enter all 7 characters', 'error');
       return { ok: false as const, code: roomCode, error: 'Please enter all 7 characters' };
     }
     setBusy(true);
-    showToast(`Joining room ${roomCode}…`);
-    window.setTimeout(() => { router.push(`/join?code=${encodeURIComponent(roomCode)}`); }, 450);
-    return { ok: true as const, code: roomCode };
+    try {
+      const response = await fetch(`/api/rooms/${encodeURIComponent(roomCode)}`);
+      const payload = ((await response.json().catch(() => null)) ?? {}) as {
+        code?: unknown;
+        status?: unknown;
+        isFull?: unknown;
+        error?: unknown;
+      };
+      if (!response.ok) {
+        const error = typeof payload.error === 'string' ? payload.error : 'Could not find this room.';
+        showToast(error, 'error');
+        return { ok: false as const, code: roomCode, error };
+      }
+      if (payload.status !== 'waiting') {
+        const error = 'This room is no longer accepting participants.';
+        showToast(error, 'error');
+        return { ok: false as const, code: roomCode, error };
+      }
+      if (payload.isFull === true) {
+        const error = 'This room is already full (2 of 2 players).';
+        showToast(error, 'error');
+        return { ok: false as const, code: roomCode, error };
+      }
+      const resolvedCode = typeof payload.code === 'string' ? payload.code : roomCode;
+      showToast(`Joining room ${resolvedCode}…`);
+      router.push(`/join?code=${encodeURIComponent(resolvedCode)}`);
+      return { ok: true as const, code: resolvedCode };
+    } catch {
+      const error = 'Could not check this room. Please retry.';
+      showToast(error, 'error');
+      return { ok: false as const, code: roomCode, error };
+    } finally {
+      setBusy(false);
+    }
   };
 
   const onJoin = () => {
-    requestJoin();
+    void requestJoin();
   };
 
   useHomeWebMCP({

@@ -6,6 +6,7 @@ import {
   readRequiredString,
   type WebMCPTool,
 } from '@/lib/webmcp';
+import { roomSummaryTemplate } from '@/lib/session';
 import {
   guard,
   readIntList,
@@ -96,14 +97,38 @@ export function sessionToolsFinal(bindings: () => SessionToolsBindings): WebMCPT
     },
     {
       name: 'send_room_summary',
-      description: 'Send the final room summary following the required template. A wrong format is rejected with the correct template; a valid one completes the session.',
+      description: `Send the final room summary following this required template: ${JSON.stringify(roomSummaryTemplate())}`,
       inputSchema: objectSchema({
-        summary: { type: 'object', description: 'Final summary following the template.' },
+        summary: {
+          type: 'object',
+          description: 'Final summary following the template. The rounds array should contain the completed question, answers, and analytics shown in the final report.',
+          properties: {
+            room: {
+              type: 'object',
+              properties: {
+                code: { type: 'string' },
+                name: { type: 'string' },
+                topic: { type: 'string' },
+              },
+              required: ['code', 'name', 'topic'],
+              additionalProperties: false,
+            },
+            questions_completed: { type: 'integer', minimum: 0 },
+            rounds_answered: { type: 'integer', minimum: 0 },
+            alignment_trend: { type: 'array', items: { type: ['integer', 'null'] } },
+            rounds: { type: 'array', items: { type: 'object' } },
+            agreements: { type: 'array', items: { type: 'string' } },
+            disagreements: { type: 'array', items: { type: 'string' } },
+            open_points: { type: 'array', items: { type: 'string' } },
+          },
+          required: ['room', 'questions_completed', 'rounds_answered', 'alignment_trend', 'rounds', 'agreements', 'disagreements', 'open_points'],
+          additionalProperties: true,
+        },
       }, ['summary']),
       annotations: { readOnlyHint: false },
       execute: async (args: unknown) => {
         if (typeof args !== 'object' || args === null || !('summary' in args)) {
-          throw new Error('Provide "summary" as an object. Ask view_current_workflow in finalization for the goal.');
+          throw new Error(`Provide "summary" as an object following this template: ${JSON.stringify(roomSummaryTemplate())}`);
         }
         const summary = (args as Record<string, unknown>)['summary'];
         return act('room-summary', { summary: summary ?? {} });
