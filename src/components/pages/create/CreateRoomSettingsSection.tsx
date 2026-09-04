@@ -5,12 +5,10 @@ import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
 interface CreateRoomSettingsSectionProps {
   participantMode: 'flexible' | 'fixed';
   participantCount: number;
-  useMemes: boolean;
   viewResponses: boolean;
   anonymousNames: boolean;
   onParticipantModeChange: (mode: 'flexible' | 'fixed') => void;
   onParticipantCountChange: (count: number) => void;
-  onUseMemesChange: (val: boolean) => void;
   onViewResponsesChange: (val: boolean) => void;
   onAnonymousNamesChange: (val: boolean) => void;
 }
@@ -18,12 +16,10 @@ interface CreateRoomSettingsSectionProps {
 export function CreateRoomSettingsSection({
   participantMode,
   participantCount,
-  useMemes,
   viewResponses,
   anonymousNames,
   onParticipantModeChange,
   onParticipantCountChange,
-  onUseMemesChange,
   onViewResponsesChange,
   onAnonymousNamesChange,
 }: CreateRoomSettingsSectionProps) {
@@ -99,29 +95,6 @@ export function CreateRoomSettingsSection({
         )}
       </div>
       )}
-
-      <div className="clean-form-row">
-        <div className="clean-label">
-          Use memes? <span className="clean-mandatory">*</span>
-        </div>
-        <p className="clean-hint">Allow participants to react with GIFs and visual stickers.</p>
-        <div className="clean-segmented-toggle">
-          <button
-            type="button"
-            className={`seg-btn${!useMemes ? ' active' : ''}`}
-            onClick={() => { onUseMemesChange(false); }}
-          >
-            No
-          </button>
-          <button
-            type="button"
-            className={`seg-btn${useMemes ? ' active' : ''}`}
-            onClick={() => { onUseMemesChange(true); }}
-          >
-            Yes
-          </button>
-        </div>
-      </div>
 
       {/* REVIVE: view-responses + anonymous toggles (hidden in PAIR_MODE) */}
       {!PAIR_MODE && (

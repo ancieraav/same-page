@@ -6,11 +6,12 @@ import { HeaderParticipantsBadge } from '@/components/layout/HeaderParticipantsB
 interface WaitingHeaderProps {
   roomCode: string;
   duration: string;
+  presenceLabel?: string;
   onShare: () => void;
   onCopy: () => void;
 }
 
-export function WaitingHeader({ roomCode, duration, onShare, onCopy }: WaitingHeaderProps) {
+export function WaitingHeader({ roomCode, duration, presenceLabel = '2/2 Ready', onShare, onCopy }: WaitingHeaderProps) {
   return (
     <header className="minimal-header">
       <Link href="/" className="brand-group" id="brand-logo-link">
@@ -45,7 +46,7 @@ export function WaitingHeader({ roomCode, duration, onShare, onCopy }: WaitingHe
             </svg>
           </button>
         </div>
-        <HeaderParticipantsBadge label="2/2 Ready" title="Connected participants" />
+        <HeaderParticipantsBadge label={presenceLabel} title="Connected participants" />
         <div className="header-duration-badge" id="header-duration-badge" title="Waiting room duration">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="10" />

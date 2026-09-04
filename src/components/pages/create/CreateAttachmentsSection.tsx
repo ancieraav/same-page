@@ -44,7 +44,7 @@ export function CreateAttachmentsSection({
         {attachments.length > 0 && <span className="attachment-counter-pill">{attachments.length} of 20</span>}
       </div>
       <p className="clean-hint">
-        Upload up to 20 documents or images to share with the room (PDF, Word, Excel, PNG, JPG up to 25MB each). Click any document to view its content.
+        Upload up to 20 files for the agent to read (PDF, DOCX, PNG, SVG, JPG up to 25MB each).
       </p>
       <input
         ref={fileInputRef}
@@ -52,7 +52,7 @@ export function CreateAttachmentsSection({
         id="file-input"
         multiple
         hidden
-        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+        accept=".pdf,.docx,.png,.svg,.jpg,.jpeg"
         aria-label="Upload documents"
         onChange={(event: ChangeEvent<HTMLInputElement>) => { onAddFiles(event.target.files); }}
       />
@@ -82,7 +82,7 @@ export function CreateAttachmentsSection({
             <div className="upload-text-main">
               <span className="upload-link-text">Click to choose files</span> or drag &amp; drop
             </div>
-            <div className="upload-text-sub">Add up to 20 files (PDF, PNG, JPG, DOCX, XLSX up to 25MB each)</div>
+            <div className="upload-text-sub">Add up to 20 files (PDF, DOCX, PNG, SVG, JPG up to 25MB each)</div>
           </div>
         ) : (
           <div className="attachments-list-wrapper">

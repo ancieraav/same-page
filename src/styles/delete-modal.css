@@ -117,5 +117,65 @@
   background: #B91C1C;
 }
 
+.modal-icon-badge.info {
+  background: var(--primary-light, #EEF2FF);
+  color: var(--primary, #4F46E5);
+}
+
+.modal-tool-box {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 12px);
+  background: #F8FAFC;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.modal-tool-box p {
+  margin: 0;
+}
+
+.modal-tool-box strong {
+  color: var(--text-main);
+}
+
+.modal-tool-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.modal-tool-name {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.btn-modal-primary {
+  padding: 9px 20px;
+  border-radius: var(--radius-full);
+  background: var(--primary, #4F46E5);
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+}
+
+.btn-modal-primary:hover {
+  background: var(--primary-dark, #4338CA);
+}
+
 
 

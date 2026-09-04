@@ -1,0 +1,120 @@
+/* ==========================================================================
+   OPERATOR KICK MENU + KICKABLE PROFILE HOVER (waiting room)
+   ========================================================================== */
+
+/* Other profiles react to the operator's hover: smooth grow + red ring. */
+.participant-bubble-card.is-kickable {
+  cursor: pointer;
+}
+
+.participant-bubble-card.is-kickable .bubble-avatar-frame {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.participant-bubble-card.is-kickable:hover .bubble-avatar-frame,
+.participant-bubble-card.is-kickable:focus-visible .bubble-avatar-frame {
+  transform: scale(1.07);
+  border-color: #F87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.22),
+    0 8px 24px -4px rgba(239, 68, 68, 0.25);
+}
+
+/* Small popup menu anchored under the selected profile. */
+.kick-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  min-width: 168px;
+  background: #FFFFFF;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+  padding: 8px;
+  z-index: 30;
+  opacity: 0;
+  animation: kickMenuIn 0.18s ease-out forwards;
+}
+
+@keyframes kickMenuIn {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.kick-menu-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #DC2626;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.kick-menu-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.kick-confirm-text {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-main);
+  text-align: center;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.kick-confirm-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.kick-confirm-yes,
+.kick-confirm-no {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.kick-confirm-yes {
+  background: #DC2626;
+  border: 1px solid #DC2626;
+  color: #FFFFFF;
+}
+
+.kick-confirm-yes:hover {
+  filter: brightness(1.08);
+}
+
+.kick-confirm-no {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+
+.kick-confirm-no:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+@media (max-width: 640px) {
+  .kick-menu {
+    min-width: 150px;
+  }
+}

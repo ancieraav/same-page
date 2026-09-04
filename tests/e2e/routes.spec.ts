@@ -19,12 +19,17 @@ test('join code flow uses the Next route', async ({ page }) => {
   await expect(page).toHaveURL(/\/join\?code=ABC1234/);
 });
 
-test('create room stores the demo room and opens waiting room', async ({ page }) => {
+test('create room goes through host profile then opens waiting room', async ({ page }) => {
   await page.goto('/create');
   await page.locator('#room-name').fill('Release Planning');
   await page.getByRole('button', { name: 'Create' }).click();
-  await expect(page).toHaveURL(/\/waiting/);
+  await expect(page).toHaveURL(/\/join\?code=[A-Z0-9]+&as=host/);
+  await expect(page.getByRole('heading', { name: 'Introduce Yourself as Host' })).toBeVisible();
+  await page.locator('#join-input-name').fill('Host Hermawan');
+  await page.getByRole('button', { name: 'Enter Waiting Room' }).click();
+  await expect(page).toHaveURL(/\/waiting\?code=[A-Z0-9]+/);
   await expect(page.getByRole('heading', { name: 'Release Planning' })).toBeVisible();
+  await expect(page.getByText('Host Hermawan')).toBeVisible();
 });
 
 test('session editor submits an answer to comparison', async ({ page }) => {
@@ -34,6 +39,15 @@ test('session editor submits an answer to comparison', async ({ page }) => {
   await page.locator('#participant-answer-input').fill('Ship the reliable checkout loop first.');
   await page.getByRole('button', { name: 'Submit Response' }).click();
   await expect(page).toHaveURL(/\/comparison\?q=1&review=1/);
+});
+
+test('manual launch shows the AI-start-required popup', async ({ page }) => {
+  await page.goto('/waiting');
+  await page.getByRole('button', { name: 'Launch Session' }).click();
+  await expect(page.getByRole('heading', { name: 'AI start required' })).toBeVisible();
+  await expect(page.getByText('start_session').first()).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('heading', { name: 'AI start required' })).toHaveCount(0);
 });
 
 test('participant cards open an accessible modal', async ({ page }) => {

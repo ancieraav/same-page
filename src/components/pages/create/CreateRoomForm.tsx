@@ -1,14 +1,75 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { CreateAttachmentsSection } from '@/components/pages/create/CreateAttachmentsSection';
 import { CreateGroupsSection } from '@/components/pages/create/CreateGroupsSection';
 import { CreateRoomSettingsSection } from '@/components/pages/create/CreateRoomSettingsSection';
 import { useCreateRoomState } from '@/components/pages/create/useCreateRoomState';
-import { PAIR_MODE } from '@/lib/pairMode';
+import { useCreateWebMCP } from '@/components/pages/create/useCreateWebMCP';
+import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
 
 export function CreateRoomForm() {
   const formState = useCreateRoomState();
+  const router = useRouter();
+
+  const clearText = (get: () => string, set: (value: string) => void) => () => {
+    const had = get().length > 0;
+    if (had) set('');
+    return had;
+  };
+
+  useCreateWebMCP({
+    getRoomName: () => formState.name,
+    setRoomName: formState.setName,
+    clearRoomName: clearText(() => formState.name, formState.setName),
+    getTopic: () => formState.topic,
+    setTopic: formState.setTopic,
+    clearTopic: clearText(() => formState.topic, formState.setTopic),
+    getNotes: () => formState.notes,
+    setNotes: formState.setNotes,
+    clearNotes: clearText(() => formState.notes, formState.setNotes),
+    getMaxParticipants: () => ({
+      value: PAIR_MODE ? PAIR_SIZE : formState.participantCount,
+      fixed: PAIR_MODE,
+    }),
+    getAttachments: () => formState.attachments.map((item) => ({ id: item.id, name: item.name, size: item.size, ext: item.ext })),
+    addAttachmentFromUrl: (url, filename) => formState.addRemoteAttachment(url, filename),
+    removeAttachments: (targets) => {
+      const removed: string[] = [];
+      const notFound: string[] = [];
+      const idsToRemove = new Set<string>();
+      const byId = new Map(formState.attachments.map((item) => [item.id, item]));
+      const byName = new Map(formState.attachments.map((item) => [item.name, item]));
+      for (const key of targets) {
+        const target = byId.get(key) ?? byName.get(key);
+        if (!target) {
+          notFound.push(key);
+          continue;
+        }
+        if (idsToRemove.has(target.id)) continue;
+        idsToRemove.add(target.id);
+        removed.push(target.name);
+      }
+      if (idsToRemove.size > 0) {
+        formState.setAttachments((current) => current.filter((file) => !idsToRemove.has(file.id)));
+      }
+      return { removed, notFound };
+    },
+    openAttachmentPicker: () => {
+      formState.fileInputRef.current?.click();
+      return formState.fileInputRef.current !== null;
+    },
+    submitCreateForm: () => {
+      if (!formState.name.trim()) return { ok: false, error: 'Please provide a room name.' };
+      if (formState.busy) return { ok: false, error: 'Room creation is already in progress.' };
+      formState.launchRoom();
+      return { ok: true };
+    },
+    cancelCreateForm: () => {
+      router.push('/');
+    },
+  });
 
   return (
     <main className="create-clean-canvas" id="main-content">
@@ -32,13 +93,15 @@ export function CreateRoomForm() {
               <button
                 type="button"
                 className="btn-text-action"
-                onClick={formState.suggestName}
+                id="btn-suggest-name"
+                onClick={() => { formState.suggestName(); }}
               >
                 Suggest name
               </button>
             </div>
             <input
               id="room-name"
+              name="roomName"
               className="clean-input"
               placeholder="Give your room a name."
               aria-label="Room name"
@@ -56,6 +119,7 @@ export function CreateRoomForm() {
             </div>
             <input
               id="room-topic"
+              name="topic"
               className="clean-input"
               placeholder="What is this room about?"
               aria-label="Room topic"
@@ -82,6 +146,7 @@ export function CreateRoomForm() {
             <p className="clean-hint">Add context, instructions, or anything participants should know.</p>
             <textarea
               id="room-notes"
+              name="notes"
               className="clean-textarea"
               placeholder="Add ground rules, instructions, or agenda notes..."
               aria-label="Additional notes"
@@ -93,12 +158,10 @@ export function CreateRoomForm() {
           <CreateRoomSettingsSection
             participantMode={formState.participantMode}
             participantCount={formState.participantCount}
-            useMemes={formState.useMemes}
             viewResponses={formState.viewResponses}
             anonymousNames={formState.anonymousNames}
             onParticipantModeChange={formState.setParticipantMode}
             onParticipantCountChange={formState.setParticipantCount}
-            onUseMemesChange={formState.setUseMemes}
             onViewResponsesChange={formState.setViewResponses}
             onAnonymousNamesChange={formState.setAnonymousNames}
           />

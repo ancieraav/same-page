@@ -310,6 +310,15 @@
 .avatar-color-cyan { background: linear-gradient(135deg, #06B6D4, #0891B2); }
 .avatar-color-purple { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
 
+/* Uploaded profile photo inside the bubble frame */
+.bubble-avatar-photo {
+  width: 70px;
+  height: 70px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  display: block;
+}
+
 /* Online Badge on Avatar */
 .bubble-online-dot {
   position: absolute;

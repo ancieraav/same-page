@@ -6,6 +6,7 @@ import { cleanRoomCode, pasteText } from '@/lib/clipboard';
 import { useToast } from '@/components/ui/ToastProvider';
 import { AmbientBackground } from '@/components/layout/AmbientBackground';
 import { HomeStage } from './HomeStage';
+import { useHomeWebMCP } from './useHomeWebMCP';
 
 export function IndexPage() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export function IndexPage() {
     setCode((current) => current.map((_, index) => clean[index] ?? ''));
     inputRefs.current[Math.min(clean.length, 6)]?.focus();
     if (clean) showToast('Room code pasted');
+    return clean;
   };
 
   const onCodeKeyDown = (index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -51,16 +53,31 @@ export function IndexPage() {
     else applyCode(value);
   };
 
-  const onJoin = () => {
+  const requestJoin = () => {
     const roomCode = code.join('');
     if (roomCode.length !== 7) {
       showToast('Please enter all 7 characters', 'error');
-      return;
+      return { ok: false as const, code: roomCode, error: 'Please enter all 7 characters' };
     }
     setBusy(true);
     showToast(`Joining room ${roomCode}…`);
     window.setTimeout(() => { router.push(`/join?code=${encodeURIComponent(roomCode)}`); }, 450);
+    return { ok: true as const, code: roomCode };
   };
+
+  const onJoin = () => {
+    requestJoin();
+  };
+
+  useHomeWebMCP({
+    getCodeString: () => code.join(''),
+    applyCode,
+    clearCode: () => {
+      setCode(Array.from({ length: 7 }, () => ''));
+      inputRefs.current[0]?.focus();
+    },
+    requestJoin,
+  });
 
   return (
     <>

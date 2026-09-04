@@ -2,10 +2,12 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getGuestId } from '@/lib/guest';
 import { writeStored } from '@/lib/storage';
 import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
 import { useToast } from '@/components/ui/ToastProvider';
 import { blobToDataUrl } from '@/lib/blob';
+import { isHttpUrl, isSupportedAttachment, maxAttachmentBytes, remoteFileName, SUPPORTED_ATTACHMENT_LABEL } from '@/lib/attachmentRemote';
 import type { Attachment } from '@/components/pages/create/CreateAttachmentsSection';
 import type { Group } from '@/components/pages/create/CreateGroupsSection';
 
@@ -32,6 +34,42 @@ function extension(name: string) {
   return (name.split('.').pop() ?? 'FILE').toUpperCase();
 }
 
+async function toAttachmentMeta(file: File, index: number): Promise<Attachment> {
+  const url = file.type.startsWith('image/') ? await blobToDataUrl(file) : '';
+  return {
+    id: `${String(Date.now())}-${String(index)}-${file.name}`,
+    file,
+    name: file.name,
+    size: readableSize(file.size),
+    ext: extension(file.name),
+    isImage: file.type.startsWith('image/'),
+    url,
+  };
+}
+
+function appendAttachments(
+  files: File[],
+  currentCount: number,
+  commit: (next: Attachment[]) => void,
+  onToast: (message: string, kind?: 'success' | 'error') => void,
+) {
+  const available = 20 - currentCount;
+  if (available <= 0) { onToast('Maximum 20 documents reached', 'error'); return; }
+  const valid = files.slice(0, available).filter((file) => {
+    if (!isSupportedAttachment(file.name, file.type)) {
+      onToast(`${file.name} is not supported. Use ${SUPPORTED_ATTACHMENT_LABEL}.`, 'error');
+      return false;
+    }
+    if (file.size > maxAttachmentBytes()) { onToast(`${file.name} is larger than 25MB`, 'error'); return false; }
+    return true;
+  });
+  if (valid.length === 0) return;
+  void Promise.all(valid.map(async (file, index) => toAttachmentMeta(file, index))).then((next) => {
+    commit(next);
+    onToast(`${String(next.length)} document${next.length > 1 ? 's' : ''} added`);
+  });
+}
+
 export function useCreateRoomState() {
   const router = useRouter();
   const { showToast } = useToast();
@@ -41,7 +79,7 @@ export function useCreateRoomState() {
   const [notes, setNotes] = useState('');
   const [participantMode, setParticipantMode] = useState<'flexible' | 'fixed'>(PAIR_MODE ? 'fixed' : 'flexible');
   const [participantCount, setParticipantCount] = useState(PAIR_MODE ? PAIR_SIZE : 10);
-  const [useMemes, setUseMemes] = useState(true);
+  const [useMemes] = useState(false);
   // REVIVE: set back to true to restore groups & roles UI.
   const [useGroups, setUseGroups] = useState(PAIR_MODE ? false : true);
   const [viewResponses, setViewResponses] = useState(true);
@@ -58,31 +96,40 @@ export function useCreateRoomState() {
 
   const addFiles = (fileList: FileList | null) => {
     if (!fileList?.length) return;
-    const available = 20 - attachments.length;
-    if (available <= 0) { showToast('Maximum 20 documents reached', 'error'); return; }
-    const selected = Array.from(fileList).slice(0, available);
-    const valid = selected.filter((file) => {
-      if (file.size > 25 * 1024 * 1024) { showToast(`${file.name} is larger than 25MB`, 'error'); return false; }
-      return true;
-    });
-    void Promise.all(
-      valid.map(async (file, index) => {
-        const url = file.type.startsWith('image/') ? await blobToDataUrl(file) : '';
-        return {
-          id: `${String(Date.now())}-${String(index)}-${file.name}`,
-          file,
-          name: file.name,
-          size: readableSize(file.size),
-          ext: extension(file.name),
-          isImage: file.type.startsWith('image/'),
-          url,
-        };
-      })
-    ).then((next) => {
+    appendAttachments(Array.from(fileList), attachments.length, (next) => {
       setAttachments((current) => [...current, ...next]);
-      if (next.length) showToast(`${String(next.length)} document${next.length > 1 ? 's' : ''} added`);
       if (fileInputRef.current) fileInputRef.current.value = '';
-    });
+    }, (message, kind) => { showToast(message, kind ?? 'success'); });
+  };
+
+  /** Agent path: fetch an http(s) URL and attach it as a file. Returns a result for the tool output. */
+  const addRemoteAttachment = async (
+    url: string,
+    suggestedName?: string,
+  ): Promise<{ ok: boolean; name?: string; error?: string }> => {
+    const cleanUrl = url.trim();
+    if (!isHttpUrl(cleanUrl)) return { ok: false, error: 'Provide a valid http(s) URL.' };
+    if (attachments.length >= 20) return { ok: false, error: 'Maximum 20 documents reached.' };
+    let response: Response;
+    try {
+      response = await fetch(cleanUrl);
+    } catch {
+      return { ok: false, error: 'Could not download the URL. Check the link or CORS access.' };
+    }
+    if (!response.ok) return { ok: false, error: `Download failed with status ${String(response.status)}.` };
+    const blob = await response.blob();
+    if (blob.size > maxAttachmentBytes()) return { ok: false, error: 'The file is larger than 25MB.' };
+    if (blob.size === 0) return { ok: false, error: 'The downloaded file is empty.' };
+    const fileName = remoteFileName(cleanUrl, response.headers.get('content-type'), suggestedName);
+    if (!isSupportedAttachment(fileName, blob.type || response.headers.get('content-type'))) {
+      return { ok: false, error: `Unsupported attachment. Use ${SUPPORTED_ATTACHMENT_LABEL}.` };
+    }
+    const file = new File([blob], fileName, { type: blob.type || 'application/octet-stream' });
+    const meta = await toAttachmentMeta(file, attachments.length);
+    setAttachments((current) => (current.length >= 20 ? current : [...current, meta]));
+    showToast(`1 document added`);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    return { ok: true, name: fileName };
   };
 
   const addGroup = (groupName?: string) => {
@@ -153,7 +200,9 @@ export function useCreateRoomState() {
     if (picked) {
       setName(picked);
       showToast('Room name suggested');
+      return picked;
     }
+    return null;
   };
 
   const launchRoom = () => {
@@ -179,56 +228,94 @@ export function useCreateRoomState() {
     }
 
     setBusy(true);
-    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const guestId = getGuestId();
+    const roomName = name.trim();
+    const roomTopic = topic.trim() || 'No explicit topic set';
     const effectiveCount = PAIR_MODE ? PAIR_SIZE : participantCount;
     const effectiveMode = PAIR_MODE ? 'fixed' as const : participantMode;
-    writeStored('roomCode', code);
-    writeStored('roomName', name.trim());
-    writeStored('roomTopic', topic.trim() || 'No explicit topic set');
-    writeStored('roomUseMemes', useMemes ? 'true' : 'false');
-    writeStored('roomSeparateRoles', separateRoleLinks ? 'true' : 'false');
-    writeStored('roomNotes', notes);
-    writeStored('roomParticipantCount', effectiveCount);
-    writeStored('roomParticipantMode', effectiveMode);
-
     const attachmentsMeta = attachments.map((item) => ({
       id: item.id,
       name: item.name,
       size: item.size,
       ext: item.ext,
       isImage: item.isImage,
-      url: item.url,
     }));
-    writeStored('roomAttachments', JSON.stringify(attachmentsMeta));
 
-    if (useGroups && !PAIR_MODE) {
-      writeStored('roomGroups', JSON.stringify(groups));
-      const roleCodes: Record<string, string> = {};
-      groups.forEach((group, index) => {
-        roleCodes[group.name] = `${code}-${String(index + 1)}`;
-      });
-      writeStored('roomRoleCodes', JSON.stringify(roleCodes));
-    } else {
-      writeStored('roomGroups', '[]');
-      writeStored('roomRoleCodes', '{}');
-    }
-
-    // PAIR_MODE: single-code room (no per-group/role codes). Also write the
-    // legacy aggregate key so /waiting picks up the fresh name/topic.
+    // PAIR_MODE: single-code room (no per-group/role codes).
     // REVIVE: remove this block when groups & roles return.
-    writeStored('samepage_active_room', {
-      code,
-      name: name.trim(),
-      topic: topic.trim() || 'No explicit topic set',
-      notes,
-      participantMode: effectiveMode,
-      participantCount: effectiveCount,
-      groups: [],
-      attachments: attachmentsMeta,
-    });
+    const create = async () => {
+      const response = await fetch('/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: roomName, topic: roomTopic, notes, guest_id: guestId, attachments: attachmentsMeta }),
+      });
+      const payload = (await response.json().catch(() => null)) as { code?: unknown; error?: unknown } | null;
+      if (!response.ok || typeof payload?.code !== 'string') {
+        showToast(typeof payload?.error === 'string' ? payload.error : 'Could not create the room. Please retry.', 'error');
+        setBusy(false);
+        return;
+      }
+      const code = payload.code;
+      let persistedAttachments = attachmentsMeta;
+      if (attachments.length > 0) {
+        const uploadForm = new FormData();
+        uploadForm.set('guest_id', guestId);
+        uploadForm.set('metadata', JSON.stringify(attachmentsMeta));
+        attachments.forEach((attachment) => { uploadForm.append('files', attachment.file, attachment.name); });
+        const uploadResponse = await fetch(`/api/rooms/${encodeURIComponent(code)}/attachments`, {
+          method: 'POST',
+          body: uploadForm,
+        });
+        const uploadPayload = (await uploadResponse.json().catch(() => null)) as {
+          attachments?: unknown;
+          error?: unknown;
+        } | null;
+        if (!uploadResponse.ok || !Array.isArray(uploadPayload?.attachments)) {
+          showToast(typeof uploadPayload?.error === 'string' ? uploadPayload.error : 'Could not upload room attachments.', 'error');
+          setBusy(false);
+          return;
+        }
+        persistedAttachments = uploadPayload.attachments as typeof attachmentsMeta;
+      }
+      writeStored('roomCode', code);
+      writeStored('roomName', roomName);
+      writeStored('roomTopic', roomTopic);
+      writeStored('roomUseMemes', useMemes ? 'true' : 'false');
+      writeStored('roomSeparateRoles', separateRoleLinks ? 'true' : 'false');
+      writeStored('roomNotes', notes);
+      writeStored('roomParticipantCount', effectiveCount);
+      writeStored('roomParticipantMode', effectiveMode);
+      writeStored('roomAttachments', JSON.stringify(persistedAttachments));
+      if (useGroups && !PAIR_MODE) {
+        writeStored('roomGroups', JSON.stringify(groups));
+        const roleCodes: Record<string, string> = {};
+        groups.forEach((group, index) => {
+          roleCodes[group.name] = `${code}-${String(index + 1)}`;
+        });
+        writeStored('roomRoleCodes', JSON.stringify(roleCodes));
+      } else {
+        writeStored('roomGroups', '[]');
+        writeStored('roomRoleCodes', '{}');
+      }
+      writeStored('samepage_active_room', {
+        code,
+        name: roomName,
+        topic: roomTopic,
+        notes,
+        participantMode: effectiveMode,
+        participantCount: effectiveCount,
+        groups: [],
+        attachments: persistedAttachments,
+      });
 
-    showToast('Room initialized successfully!');
-    router.push('/waiting');
+      showToast('Room created! Set up your host profile.');
+      // Host sets name + photo next (same identity form as joiners, different wording).
+      router.push(`/join?code=${encodeURIComponent(code)}&as=host`);
+    };
+    void create().catch(() => {
+      showToast('Could not create the room. Please retry.', 'error');
+      setBusy(false);
+    });
   };
 
   const currentGroupQuery = newGroup.trim().toLowerCase();
@@ -243,7 +330,7 @@ export function useCreateRoomState() {
     notes, setNotes,
     participantMode, setParticipantMode,
     participantCount, setParticipantCount,
-    useMemes, setUseMemes,
+    useMemes,
     useGroups, setUseGroups,
     viewResponses, setViewResponses,
     anonymousNames, setAnonymousNames,
@@ -259,6 +346,7 @@ export function useCreateRoomState() {
     fileInputRef,
     suggestedGroups,
     addFiles,
+    addRemoteAttachment,
     addGroup,
     addRole,
     removeRole,

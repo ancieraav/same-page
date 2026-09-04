@@ -1,169 +1,87 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/ui/ToastProvider';
 import { copyText } from '@/lib/clipboard';
 import { PAIR_MODE, PAIR_SIZE } from '@/lib/pairMode';
+import { WAITING_EMOJIS } from '@/lib/waiting';
+import { EmojiFountain, type EmojiParticle } from './EmojiFountain';
+import { LaunchBlockedModal } from './LaunchBlockedModal';
+import type { LiveWaitingData } from './useWaitingRoom';
+import {
+  makeFallbackParticipants,
+  type FallbackParticipant,
+  type WaitingRoomInfo,
+} from './waitingFallback';
 
-interface Group {
-  id: number;
-  name: string;
-  isSourceOfTruth: boolean;
-  roles: string[];
-}
+type Room = WaitingRoomInfo;
+type Participant = FallbackParticipant;
 
-interface Room {
-  code: string;
-  name: string;
-  topic?: string;
-  participantMode?: 'flexible' | 'fixed';
-  participantCount?: number;
-  groups?: Group[];
-}
+const reactions = [...WAITING_EMOJIS];
 
-interface Participant {
-  id: string;
-  name: string;
-  initials: string;
-  group: string;
-  role: string;
-  color: string;
-  operator?: boolean;
-  sot?: boolean;
-}
-
-const mockProfiles = [
-  ['Elena Rostova', 'ER', 'avatar-color-cyan'],
-  ['Marcus Vance', 'MV', 'avatar-color-amber'],
-  ['Siti Sarah', 'SS', 'avatar-color-rose'],
-  ['David Chen', 'DC', 'avatar-color-purple'],
-] as const satisfies readonly (readonly [string, string, string])[];
-
-function getMockProfile(index: number): readonly [string, string, string] {
-  const profile = mockProfiles[index % mockProfiles.length];
-  return profile ?? mockProfiles[0];
-}
-
-const reactions = ['👋', '☕', '🚀', '💡', '🔥', '🎉', '❤️', '👏'];
-
-function makeParticipants(room: Room): Participant[] {
-  // PAIR_MODE: 2-person, no roles, no SOT, single code.
-  // REVIVE: multi-group/role/SOT logic below.
-  if (PAIR_MODE) {
-    return [
-      {
-        id: 'p1',
-        name: 'You',
-        initials: 'AR',
-        group: '',
-        role: '',
-        color: 'avatar-color-indigo',
-        operator: true,
-      },
-      {
-        id: 'p2',
-        name: 'Alex Morgan',
-        initials: 'AL',
-        group: '',
-        role: '',
-        color: 'avatar-color-cyan',
-      },
-    ];
-  }
-  const defaultGroup: Group = { id: 1, name: 'General', isSourceOfTruth: true, roles: ['Participant'] };
-  const groups = room.groups?.length ? room.groups : [defaultGroup];
-  const source = groups.find((group) => group.isSourceOfTruth) ?? groups[0] ?? defaultGroup;
-  const initialRole = source.roles[0] ?? 'Host';
-  const result: Participant[] = [{
-    id: 'p1',
-    name: 'You (Operator)',
-    initials: 'AR',
-    group: source.name,
-    role: initialRole,
-    color: 'avatar-color-indigo',
-    operator: true,
-    sot: source.isSourceOfTruth,
-  }];
-
-  let profileIndex = 0;
-  for (const group of groups.filter((item) => item.id !== source.id)) {
-    const roles = group.roles.length ? group.roles : ['Contributor'];
-    for (const role of roles) {
-      if (result.length >= 5) break;
-      if (group.id === source.id && role === initialRole) continue;
-      const [name, initials, color] = getMockProfile(profileIndex++);
-      result.push({
-        id: `p${String(result.length + 1)}`,
-        name,
-        initials,
-        group: group.name,
-        role,
-        color,
-        sot: group.isSourceOfTruth,
-      });
-    }
-  }
-
-  for (const role of source.roles.slice(1)) {
-    if (result.length >= 5) break;
-    const [name, initials, color] = getMockProfile(profileIndex++);
-    result.push({
-      id: `p${String(result.length + 1)}`,
-      name,
-      initials,
-      group: source.name,
-      role,
-      color,
-      sot: true,
-    });
-  }
-
-  while (result.length < 5) {
-    const [name, initials, color] = getMockProfile(profileIndex++);
-    result.push({
-      id: `p${String(result.length + 1)}`,
-      name,
-      initials,
-      group: 'General',
-      role: 'Participant',
-      color,
-    });
-  }
-
-  return result;
-}
-
-interface EmojiParticle {
-  id: string;
+interface EmojiBurst {
   emoji: string;
-  left: number;
-  top: number;
-  sway: string;
-  fontSize: string;
-  delay: string;
-  duration: string;
+  participantId: string;
 }
 
-export function WaitingStage({ room, onShare }: { room: Room; onShare: () => void }) {
-  const router = useRouter();
+export function WaitingStage({ room, onShare, live, onLeave, isLiveRoom = false }: { room: Room; onShare: () => void; live: LiveWaitingData | null; onLeave?: () => void; isLiveRoom?: boolean }) {
   const { showToast } = useToast();
-  const operatorCardRef = useRef<HTMLDivElement>(null);
-  const participants = useMemo(() => makeParticipants(room), [room]);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const mockParticipants = useMemo(() => makeFallbackParticipants(room), [room]);
+  // Live room but data not loaded yet: never show mock profiles (Alex Morgan
+  // et al). Show a single joining placeholder instead.
+  const joiningPlaceholder: Participant[] = [{
+    id: 'self',
+    name: 'Joining…',
+    initials: '…',
+    group: '',
+    role: '',
+    color: 'avatar-color-indigo',
+    avatarUrl: null,
+    operator: true,
+  }];
+  const participants: Participant[] = live
+    ? live.participants.map((peer) => ({
+        id: peer.id,
+        name: peer.name,
+        initials: peer.initials,
+        group: '',
+        role: '',
+        color: peer.color,
+        avatarUrl: peer.avatarUrl,
+        operator: peer.operator,
+      }))
+    : isLiveRoom
+      ? joiningPlaceholder
+      : mockParticipants;
+  const selfId = live?.selfId ?? participants.find((item) => item.operator)?.id ?? 'p1';
   const [comment, setComment] = useState('');
-  const [speech, setSpeech] = useState<Record<string, string>>({ p1: 'Ready to launch whenever everyone is here!' });
+  const [localSpeech, setLocalSpeech] = useState<Record<string, string>>(
+    live ? {} : { p1: 'Ready to launch whenever everyone is here!' }
+  );
+  const speech = live ? live.speech : localSpeech;
   const [particles, setParticles] = useState<EmojiParticle[]>([]);
-  const [launching, setLaunching] = useState(false);
+  const [launchBlocked, setLaunchBlocked] = useState(false);
+  const [kickMenuId, setKickMenuId] = useState<string | null>(null);
+  const [kickConfirm, setKickConfirm] = useState(false);
 
-  const joinedLabel = PAIR_MODE
+  const amOperator = live?.amOperator ?? false;
+  const isLivePlayer = live !== null && !amOperator;
+  const isLoadingLiveSeat = isLiveRoom && live === null;
+  const isKickable = (participantId: string) =>
+    amOperator && live !== null && participantId !== selfId;
+
+  const joinedLabel = live
+    ? `${String(live.participants.filter((peer) => !peer.isOperator).length)} of ${String(PAIR_SIZE)} players joined · ${String(live.participants.filter((peer) => !peer.isOperator && peer.ready).length)} ready`
+    : PAIR_MODE
     ? `${String(PAIR_SIZE)} of ${String(PAIR_SIZE)} joined`
     : room.participantMode === 'fixed'
     ? `4 of ${String(room.participantCount ?? 10)} joined`
     : '4 joined (Open capacity)';
 
-  const triggerReaction = (emoji: string) => {
-    const rect = operatorCardRef.current?.getBoundingClientRect()
+  const spawnBurst = ({ emoji, participantId }: EmojiBurst) => {
+    const rect = cardRefs.current[participantId]?.getBoundingClientRect()
       ?? document.querySelector('.participant-bubble-card:first-child')?.getBoundingClientRect()
       ?? { left: window.innerWidth / 2 - 40, top: window.innerHeight * 0.45, width: 80, height: 80 };
 
@@ -190,14 +108,30 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
     }, 3400);
   };
 
+  const triggerReaction = (emoji: string, participantId: string = selfId) => {
+    spawnBurst({ emoji, participantId });
+  };
+
+  useEffect(() => {
+    if (live?.lastEmoji) {
+      spawnBurst({ emoji: live.lastEmoji.emoji, participantId: live.lastEmoji.guestId });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [live?.lastEmoji?.nonce]);
+
   const submitComment = (event: React.SyntheticEvent) => {
     event.preventDefault();
     const clean = comment.trim();
     if (!clean) return;
-    setSpeech((current) => ({ ...current, p1: clean }));
+    if (live) {
+      live.sendChat(clean);
+      setComment('');
+      return;
+    }
+    setLocalSpeech((current) => ({ ...current, p1: clean }));
     setComment('');
     window.setTimeout(() => {
-      setSpeech((current) => ({ ...current, p2: 'Getting ready for the session.' }));
+      setLocalSpeech((current) => ({ ...current, p2: 'Getting ready for the session.' }));
     }, 1200);
   };
 
@@ -208,11 +142,9 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
   };
 
   const launch = () => {
-    setLaunching(true);
-    showToast('Launching session for all participants…');
-    window.setTimeout(() => {
-      router.push('/session');
-    }, 900);
+    if (isLivePlayer) return;
+    // Manual launch is disabled — only the AI agent may start via WebMCP.
+    setLaunchBlocked(true);
   };
 
   return (
@@ -220,7 +152,7 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
       <div className="waiting-hero-block">
         <div className="waiting-status-pill">
           <span className="pulsing-live-dot" aria-hidden="true" />
-          <span>{launching ? 'Starting session' : 'Waiting for participants to get ready'}</span>
+          <span>Waiting for participants to get ready</span>
         </div>
         <h1 className="waiting-room-title">{room.name}</h1>
         <div className="waiting-meta-bar">
@@ -246,9 +178,19 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
         <div className="bubbles-flex-grid">
           {participants.map((participant) => (
             <div
-              className="participant-bubble-card"
+              className={`participant-bubble-card${isKickable(participant.id) ? ' is-kickable' : ''}`}
               key={participant.id}
-              ref={participant.operator ? operatorCardRef : undefined}
+              ref={(node) => {
+                cardRefs.current[participant.id] = node;
+              }}
+              onClick={() => {
+                if (!isKickable(participant.id)) return;
+                setKickMenuId((current) => (current === participant.id ? null : participant.id));
+                setKickConfirm(false);
+              }}
+              role={isKickable(participant.id) ? 'button' : undefined}
+              tabIndex={isKickable(participant.id) ? 0 : undefined}
+              aria-label={isKickable(participant.id) ? `Manage ${participant.name}` : undefined}
             >
               <div className={`bubble-speech-balloon${speech[participant.id] ? ' active' : ''}`}>
                 {speech[participant.id]}
@@ -258,7 +200,12 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
                   participant.sot && !PAIR_MODE ? ' is-sot' : ''
                 }`}
               >
-                <div className={`bubble-avatar-inner ${participant.color}`}>{participant.initials}</div>
+                {participant.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img className="bubble-avatar-photo" src={participant.avatarUrl} alt={participant.name} />
+                ) : (
+                  <div className={`bubble-avatar-inner ${participant.color}`}>{participant.initials}</div>
+                )}
                 <span className="bubble-online-dot" title="Online now" />
                 {/* REVIVE: SOT crown badge (hidden in PAIR_MODE) */}
                 {!PAIR_MODE && participant.sot && (
@@ -283,6 +230,50 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
                 </div>
                 )}
               </div>
+              {kickMenuId === participant.id && live && (
+                <div className="kick-menu" role="menu" aria-label={`Manage ${participant.name}`}>
+                  {!kickConfirm ? (
+                    <button
+                      type="button"
+                      className="kick-menu-btn"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setKickConfirm(true);
+                      }}
+                    >
+                      Kick from room
+                    </button>
+                  ) : (
+                    <div className="kick-confirm-row">
+                      <span className="kick-confirm-text">Remove {participant.name}?</span>
+                      <div className="kick-confirm-actions">
+                        <button
+                          type="button"
+                          className="kick-confirm-yes"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            live.kickPlayer(participant.id);
+                            setKickMenuId(null);
+                            setKickConfirm(false);
+                          }}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          className="kick-confirm-no"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            setKickConfirm(false);
+                          }}
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
           {/* REVIVE: Open Seat invite slot for +3 multi-user (hidden in PAIR_MODE, room is 2/2 full) */}
@@ -313,7 +304,10 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
                   className="btn-emoji-react"
                   key={emoji}
                   title={`React ${emoji}`}
-                  onClick={() => { triggerReaction(emoji); }}
+                  onClick={() => {
+                    triggerReaction(emoji, selfId);
+                    live?.sendEmoji(emoji);
+                  }}
                 >
                   {emoji}
                 </button>
@@ -340,12 +334,34 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
           </form>
           <div className="dock-divider-v" aria-hidden="true" />
           <div className="waiting-launch-area">
-            <button type="button" className="btn-launch-session" onClick={launch} disabled={launching}>
-              <span>{launching ? 'Starting session…' : 'Launch Session'}</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-            </button>
+            {isLivePlayer ? (
+              <button
+                type="button"
+                className="btn-launch-session"
+                aria-pressed={live.playerReady}
+                disabled={live.status !== 'waiting'}
+                onClick={() => { live.setPlayerReady(!live.playerReady); }}
+              >
+                <span>{live.status !== 'waiting' ? 'Starting…' : live.playerReady ? 'Ready ✓' : 'I’m Ready'}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              </button>
+            ) : isLoadingLiveSeat ? (
+              <div className="waiting-ready-state" role="status" aria-live="polite">
+                <span className="waiting-ready-copy">
+                  <strong>Checking your seat…</strong>
+                  <small>Loading the waiting-room status.</small>
+                </span>
+              </div>
+            ) : (
+              <button type="button" className="btn-launch-session" onClick={launch}>
+                <span>Launch Session</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
         <div className="waiting-sub-actions">
@@ -360,7 +376,7 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
             </svg>
             <span>Copy Invite Link</span>
           </button>
-          <Link href="/" className="btn-sub-action leave-link">
+          <Link href="/" className="btn-sub-action leave-link" onClick={() => { onLeave?.(); }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
               <polyline points="16 17 21 12 16 7" />
@@ -370,25 +386,9 @@ export function WaitingStage({ room, onShare }: { room: Room; onShare: () => voi
           </Link>
         </div>
       </div>
-      {particles.length > 0 && (
-        <div className="emoji-fountain-layer" aria-hidden="true">
-          {particles.map((particle) => (
-            <span
-              className="floating-emoji-item"
-              key={particle.id}
-              style={{
-                left: `${String(particle.left)}px`,
-                top: `${String(particle.top)}px`,
-                fontSize: particle.fontSize,
-                animationDelay: particle.delay,
-                animationDuration: particle.duration,
-                ['--sway' as string]: particle.sway,
-              }}
-            >
-              {particle.emoji}
-            </span>
-          ))}
-        </div>
+      <EmojiFountain particles={particles} />
+      {launchBlocked && (
+        <LaunchBlockedModal roomCode={room.code} onClose={() => { setLaunchBlocked(false); }} />
       )}
     </main>
   );

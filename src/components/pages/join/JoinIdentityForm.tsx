@@ -2,6 +2,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 interface JoinIdentityFormProps {
+  title: string;
+  subtitle: string;
+  submitLabel: string;
   name: string;
   avatarSrc: string;
   busy: boolean;
@@ -13,6 +16,9 @@ interface JoinIdentityFormProps {
 }
 
 export function JoinIdentityForm({
+  title,
+  subtitle,
+  submitLabel,
   name,
   avatarSrc,
   busy,
@@ -26,9 +32,9 @@ export function JoinIdentityForm({
     <main className="join-identity-stage">
       <div className="join-identity-card">
         <div className="join-hero-header">
-          <h1 className="join-main-title">Set Your Room Identity</h1>
+          <h1 className="join-main-title">{title}</h1>
           <p className="join-subtitle">
-            Customize your display name and photo specifically for this session.
+            {subtitle}
           </p>
         </div>
         <div className="join-profile-side-row">
@@ -111,7 +117,7 @@ export function JoinIdentityForm({
             disabled={busy}
             aria-busy={busy}
           >
-            <span>{busy ? 'Entering Room…' : 'Enter Waiting Room'}</span>
+            <span>{busy ? 'Entering Room…' : submitLabel}</span>
             <svg
               width="16"
               height="16"
