@@ -3,8 +3,6 @@ import { buildRoomContext, type AgentRoomContext } from '@/lib/attachmentContext
 import { bad, findRoomByCode, guestIdOf } from '@/lib/waitingServer';
 import { requireSessionOperator } from '@/lib/sessionServer';
 
-export const runtime = 'nodejs';
-
 function withList(payload: AgentRoomContext) {
   const attachments = Array.isArray(payload.attachments) ? payload.attachments : [];
   return {
