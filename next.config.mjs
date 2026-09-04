@@ -8,6 +8,16 @@ const nextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: 'media.giphy.com' }],
   },
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'samepage.verttra.xyz' }],
+        destination: 'https://same-page.verttra.xyz/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
