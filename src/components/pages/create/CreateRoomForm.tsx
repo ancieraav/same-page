@@ -60,11 +60,10 @@ export function CreateRoomForm() {
       formState.fileInputRef.current?.click();
       return formState.fileInputRef.current !== null;
     },
-    submitCreateForm: () => {
+    submitCreateForm: async () => {
       if (!formState.name.trim()) return { ok: false, error: 'Please provide a room name.' };
       if (formState.busy) return { ok: false, error: 'Room creation is already in progress.' };
-      formState.launchRoom();
-      return { ok: true };
+      return await formState.launchRoom();
     },
     cancelCreateForm: () => {
       router.push('/');
@@ -82,7 +81,7 @@ export function CreateRoomForm() {
           id="create-room-form"
           onSubmit={(event) => {
             event.preventDefault();
-            formState.launchRoom();
+            void formState.launchRoom();
           }}
         >
           <div className="clean-form-row">

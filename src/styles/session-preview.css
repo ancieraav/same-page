@@ -238,6 +238,13 @@
   box-shadow: 0 0 0 2px var(--primary);
 }
 
+.stacked-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .stacked-avatar-check {
   position: absolute;
   bottom: -2px;

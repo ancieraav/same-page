@@ -12,7 +12,8 @@ export interface SessionToolsBindings {
   getAnswerDraft?: () => string;
   setAnswerDraft?: (value: string) => void;
   submitAnswer?: () => Promise<{ question: number; saved: true }>;
-  goHome?: () => void;
+  goHome?: (() => void) | undefined;
+  setPlayerReady?: ((ready: boolean) => void) | undefined;
 }
 
 export interface SnapshotQuestion {
@@ -62,8 +63,8 @@ export interface SessionSnapshot {
 }
 
 export interface RoomContextPayload {
-  room?: { topic?: unknown; information?: unknown };
-  attachments?: { id?: unknown; name?: unknown }[] & Record<string, unknown>[];
+  room?: { name?: unknown; topic?: unknown; information?: unknown };
+  attachments?: { id?: unknown; name?: unknown; file_type?: unknown; page_count?: unknown }[];
   contexts?: { id?: unknown; name?: unknown; kind?: unknown }[];
   [key: string]: unknown;
 }
@@ -124,7 +125,7 @@ export function readOptionalBool(args: unknown, field: string): boolean {
   return (args as Record<string, unknown>)[field] === true;
 }
 
-function sleep(ms: number): Promise<void> {
+export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => { setTimeout(resolve, ms); });
 }
 
@@ -138,21 +139,22 @@ export async function waitForQuestionClose(
   code: string,
   guestId: string,
   number: number,
-  options?: { signal?: AbortSignal },
+  options?: { signal?: AbortSignal; timeoutSeconds?: number | null },
 ): Promise<{ closed: boolean; timedOut: boolean }> {
+  if (options?.timeoutSeconds === 0) {
+    return { closed: false, timedOut: true };
+  }
   const started = Date.now();
-  let maxWaitMs = 210_000;
+  const maxWaitMs = typeof options?.timeoutSeconds === 'number' && options.timeoutSeconds > 0
+    ? options.timeoutSeconds * 1000
+    : 60_000;
   for (let attempt = 0; attempt < 120; attempt += 1) {
     if (options?.signal?.aborted) throw new Error('Wait aborted. Resume with view_question_context_responses.');
     const snapshot = await readSnapshot(code, guestId);
     const questions = Array.isArray(snapshot.questions) ? snapshot.questions : [];
     const target = questions.find((q) => q.number === number) ?? null;
     if (target?.status !== 'active') return { closed: true, timedOut: false };
-    if (attempt === 0 && typeof target.deadline_at === 'string') {
-      const left = new Date(target.deadline_at).getTime() - started;
-      if (!Number.isNaN(left)) maxWaitMs = Math.min(240_000, Math.max(15_000, left + 30_000));
-    }
-    if (Date.now() - started > maxWaitMs) return { closed: false, timedOut: true };
+    if (Date.now() - started >= maxWaitMs) return { closed: false, timedOut: true };
     await sleep(2000);
   }
   return { closed: false, timedOut: true };

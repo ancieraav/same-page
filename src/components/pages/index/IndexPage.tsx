@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { cleanRoomCode, pasteText } from '@/lib/clipboard';
+import { getGuestId } from '@/lib/guest';
 import { useToast } from '@/components/ui/ToastProvider';
 import { AmbientBackground } from '@/components/layout/AmbientBackground';
 import { HomeStage } from './HomeStage';
@@ -60,8 +61,9 @@ export function IndexPage() {
       return { ok: false as const, code: roomCode, error: 'Please enter all 7 characters' };
     }
     setBusy(true);
+    const guestId = getGuestId();
     try {
-      const response = await fetch(`/api/rooms/${encodeURIComponent(roomCode)}`);
+      const response = await fetch(`/api/rooms/${encodeURIComponent(roomCode)}?guest_id=${encodeURIComponent(guestId)}`);
       const payload = ((await response.json().catch(() => null)) ?? {}) as {
         code?: unknown;
         status?: unknown;

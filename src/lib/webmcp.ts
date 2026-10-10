@@ -74,6 +74,15 @@ export function assertExactMatch(current: string, guard: string | undefined, kin
   }
 }
 
+/** Read an optional integer field. Returns undefined when absent. Throws when not an integer. */
+export function readOptionalInt(args: unknown, field: string, hint = ''): number | undefined {
+  if (typeof args !== 'object' || args === null || !(field in args)) return undefined;
+  const value = (args as Record<string, unknown>)[field];
+  if (value === undefined || value === null) return undefined;
+  if (typeof value === 'number' && Number.isInteger(value)) return value;
+  throw new Error(`"${field}" must be an integer${hint ? `, ${hint}` : ''}. Received: ${summarizeArgs(args)}.`);
+}
+
 /** Read a required integer field. Throws when missing or not an integer. */
 export function readRequiredInt(args: unknown, field: string, hint = ''): number {
   if (typeof args === 'object' && args !== null && field in args) {

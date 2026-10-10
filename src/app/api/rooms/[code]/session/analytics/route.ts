@@ -85,6 +85,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const confidence = typeof payload.confidence === 'string' ? payload.confidence.trim() : '';
   if (confidence.length > 1000) return NextResponse.json({ error: 'Provide confidence as text up to 1000 characters.', expected_template: questionSummaryTemplate() }, { status: 400 });
 
+  const nowIso = new Date().toISOString();
   const supabase = getServiceSupabase();
   const { error } = await supabase.from('round_analytics').insert({
     room_id: room.id,
@@ -97,19 +98,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     assumptions,
     flags,
     confidence,
+    published_at: nowIso,
   });
   if (error) {
     if ((error.code as string | undefined) === '23505') return bad(`Summary for question ${String(number)} already exists.`, 409);
     return bad('Could not publish the summary. Please retry.', 500);
   }
   await auditSession(room.id, 'send_question_summary', guestId, { number });
+  await supabase.from('rooms').update({ status: SESSION_STATUS.ANSWERING }).eq('id', room.id);
   const freshQuestions = await getSessionQuestions(room.id);
   const { data: analyticsRows } = await supabase.from('round_analytics').select('question_id').eq('room_id', room.id);
   const analyticsIds = new Set((Array.isArray(analyticsRows) ? analyticsRows : []).map((r) => r.question_id as string));
   const { data: suggests } = await supabase.from('question_suggests').select('id').eq('room_id', room.id);
+  const closesAt = new Date(Date.now() + 30_000).toISOString();
   return NextResponse.json({
     code: room.code,
     published: number,
+    published_at: nowIso,
+    closes_at: closesAt,
+    seconds_left: 30,
     workflow: workflowFor(room.status, freshQuestions, analyticsIds, Array.isArray(suggests) ? suggests.length : 0),
   });
 }

@@ -3,6 +3,7 @@
 import {
   emptySchema,
   objectSchema,
+  readOptionalInt,
   readRequiredString,
   type WebMCPTool,
 } from '@/lib/webmcp';
@@ -30,39 +31,52 @@ export function sessionToolsCore(bindings: () => SessionToolsBindings): WebMCPTo
       description: 'Start the session (waiting to answering). Requires exactly 2 ready players. Afterwards send Q1 with send_question_context.',
       inputSchema: emptySchema(),
       annotations: { readOnlyHint: false },
-      execute: async () => act('start', {}),
+      execute: async () => act('status', { status: 'answering' }),
     },
     {
       name: 'view_goals_workflow',
-      description: 'Read the Same Page goals, how the session works, and the AI agent role.',
+      description: 'Read the fixed goal milestones (target questions, suggested questions on multiples of 5, wrap-up criteria).',
       inputSchema: emptySchema(),
       annotations: { readOnlyHint: true },
       execute: async () => {
-        guard(bindings());
         await Promise.resolve();
         return JSON.stringify(goalsWorkflow());
       },
     },
     {
       name: 'view_current_workflow',
-      description: 'Read the current session state, the present goal, and which function to call.',
+      description: 'Read the single next recommended action based on current state (start, publish Q, wait, summarize, suggest, stop).',
       inputSchema: emptySchema(),
       annotations: { readOnlyHint: true },
       execute: async () => {
         const { code, guestId } = guard(bindings());
         const snapshot = await readSnapshot(code, guestId);
-        return JSON.stringify({ workflow: snapshot.workflow ?? null, completed_count: snapshot.completed_count ?? 0 });
+        return JSON.stringify({ workflow: snapshot.workflow ?? null });
       },
     },
     {
       name: 'list_context',
-      description: 'List available contexts (id, name, kind) without opening contents.',
+      description: 'List context ids and kinds (topic, information, attachment with file type/pages) without heavy payloads.',
       inputSchema: emptySchema(),
       annotations: { readOnlyHint: true },
       execute: async () => {
         const { code, guestId } = guard(bindings());
         const context = await readRoomContext(code, guestId);
-        return JSON.stringify({ contexts: Array.isArray(context.contexts) ? context.contexts : [] });
+        const attachments = Array.isArray(context.attachments) ? context.attachments : [];
+        return JSON.stringify({
+          room: context.room ? { name: context.room.name, topic: context.room.topic } : null,
+          items: [
+            { id: 'topic', kind: 'topic', title: 'Room Topic' },
+            { id: 'information', kind: 'information', title: 'Room Information' },
+            ...attachments.map((a) => ({
+              id: typeof a.id === 'string' ? a.id : '',
+              kind: 'attachment',
+              title: typeof a.name === 'string' ? a.name : 'attachment',
+              file_type: typeof a.file_type === 'string' ? a.file_type : '',
+              page_count: typeof a.page_count === 'number' ? a.page_count : null,
+            })),
+          ],
+        });
       },
     },
     {
@@ -91,19 +105,35 @@ export function sessionToolsCore(bindings: () => SessionToolsBindings): WebMCPTo
     },
     {
       name: 'send_question_context',
-      description: 'Send exactly one context question, then wait until every required participant answers or the deadline passes.',
+      description: 'Send exactly one context question, then wait until every required participant answers or timeout_seconds passes (default 60s, max 180s). Set timeout_seconds=0 to return immediately after publishing.',
       inputSchema: objectSchema({
         text: { type: 'string', description: 'Question text.', minLength: 1, maxLength: 2000 },
+        timeout_seconds: {
+          type: 'integer',
+          description: 'Maximum seconds to wait for answers (default 60, max 180). Set 0 to return immediately after publishing.',
+          minimum: 0,
+          maximum: 180,
+        },
       }, ['text']),
       annotations: { readOnlyHint: false },
       execute: async (args: unknown, options) => {
         const { code, guestId } = guard(bindings());
         const text = readRequiredString(args, 'text', 'e.g. {"text": "What matters most?"}');
+        const timeoutSeconds = readOptionalInt(args, 'timeout_seconds');
         const sent = JSON.parse(await postSession(code, 'questions/context', { guest_id: guestId, text })) as { number?: unknown };
         const number = typeof sent.number === 'number' ? sent.number : 0;
-        const wait = await waitForQuestionClose(code, guestId, number, options);
+        const wait = await waitForQuestionClose(code, guestId, number, {
+          ...(options.signal ? { signal: options.signal } : {}),
+          ...(timeoutSeconds !== undefined ? { timeoutSeconds } : {}),
+        });
         const snapshot = await readSnapshot(code, guestId);
-        return JSON.stringify({ number, timed_out: wait.timedOut, workflow: snapshot.workflow ?? null });
+        return JSON.stringify({
+          number,
+          timed_out: wait.timedOut,
+          status: wait.closed ? 'closed' : 'active',
+          ...(wait.timedOut ? { message: 'Question is active. Waiting for participant responses. Check with view_question_context_responses.' } : {}),
+          workflow: snapshot.workflow ?? null,
+        });
       },
     },
     {

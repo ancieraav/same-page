@@ -5,9 +5,11 @@ import { BrandLogo } from '@/components/brand/BrandLogo';
 interface SessionHeaderProps {
   roomTimer: string;
   deadlineTimer: string | null;
+  deadlineLabel?: string;
+  participantCount?: number;
 }
 
-export function SessionHeader({ roomTimer, deadlineTimer }: SessionHeaderProps) {
+export function SessionHeader({ roomTimer, deadlineTimer, deadlineLabel = 'Deadline', participantCount = 2 }: SessionHeaderProps) {
   return (
     <header className="minimal-header">
       <Link href="/" className="brand-group" id="brand-logo-link">
@@ -33,7 +35,9 @@ export function SessionHeader({ roomTimer, deadlineTimer }: SessionHeaderProps) 
             <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
             <path d="M16 3.13a4 4 0 0 1 0 7.75" />
           </svg>
-          <span id="header-participants-count">2 Participants</span>
+          <span id="header-participants-count">
+            {participantCount} Participant{participantCount === 1 ? '' : 's'}
+          </span>
         </div>
         <span className="session-timer-pill" id="session-room-timer-badge" title="Total room duration">
           <span className="session-timer-dot" aria-hidden="true" />
@@ -43,7 +47,7 @@ export function SessionHeader({ roomTimer, deadlineTimer }: SessionHeaderProps) 
         {deadlineTimer !== null ? (
           <span className="session-timer-pill is-deadline" id="session-deadline-badge" title="Question deadline">
             <span className="session-timer-dot" aria-hidden="true" />
-            <span className="session-timer-label">Deadline</span>
+            <span className="session-timer-label">{deadlineLabel}</span>
             <span id="session-timer-countdown">{deadlineTimer}</span>
           </span>
         ) : null}

@@ -5,10 +5,18 @@ import { useToast } from '@/components/ui/ToastProvider';
 import { getGuestId } from '@/lib/guest';
 import { durationLabel, secondsElapsed, secondsLeft } from '@/lib/session';
 import { sessionGet, sessionPost } from '@/lib/sessionClient';
+import { getBrowserSupabase } from '@/lib/supabaseBrowser';
 import { SessionHeader } from './SessionHeader';
 import { SessionWebMCPBridge } from './SessionWebMCPBridge';
 import { SessionQuestionStage } from './SessionQuestionStage';
 import { SessionQuestionTransition } from './SessionQuestionTransition';
+import { LiveQuestionSummaryStage } from './LiveQuestionSummaryStage';
+import {
+  FinalReportCard,
+  RoomSummaryCard,
+  type FinalReport,
+  type SessionAnalytics,
+} from './SessionAnalysisCards';
 
 interface CurrentQuestion {
   number: number;
@@ -19,36 +27,12 @@ interface CurrentQuestion {
   my_answer: { body?: string; missing?: boolean } | null;
 }
 
-interface SessionAnalytics {
-  question: number | null;
-  summaries: { guest_id: string; name: string; summary: string }[];
-  alignment: number | null;
-  agreed: string[];
-  disagreed: string[];
-  hidden_mismatches: string[];
-  assumptions: string[];
-  flags: string[];
-  confidence: string;
-}
-
-interface FinalRound {
-  number: number;
-  text: string;
-  answers: { name: string; body: string; missing: boolean }[];
-  analytics: { summaries: { name: string; summary: string }[]; alignment: number | null; agreed: string[]; disagreed: string[] } | null;
-}
-
-interface FinalReport {
-  questions_completed: number;
-  rounds_answered: number;
-  alignment_trend: (number | null)[];
-  rounds: FinalRound[];
-}
-
 interface SuggestItem {
   number: number;
   text: string;
   created_at?: string;
+  deadline_at?: string | null;
+  seconds_left?: number | null;
 }
 
 interface SessionState {
@@ -62,7 +46,7 @@ interface SessionState {
     timer_ended_at?: string | null;
   };
   operator: { guest_id: string; name: string } | null;
-  players: { guest_id: string; name: string }[];
+  players: { guest_id: string; name: string; avatar_url?: string | null }[];
   current: CurrentQuestion | null;
   questions: { number: number; status: string; has_analytics: boolean }[];
   analytics: SessionAnalytics[];
@@ -81,97 +65,7 @@ function clockLabel(seconds: number | null): string {
   return durationLabel(seconds);
 }
 
-function ListBlock({ title, items }: { title: string; items: string[] }) {
-  if (items.length === 0) return null;
-  return (
-    <div className="live-analysis-list">
-      <strong>{title}</strong>
-      <ul>{items.map((item, index) => <li key={`${title}-${String(index)}`}>{item}</li>)}</ul>
-    </div>
-  );
-}
-
-function AnalysisCard({ analysis }: { analysis: SessionAnalytics }) {
-  return (
-    <section className="live-analysis-card" aria-live="polite">
-      <div className="live-card-heading">
-        <div>
-          <span className="live-eyebrow">Agent analysis</span>
-          <h2>Round {analysis.question ?? '—'} summary</h2>
-        </div>
-        {analysis.alignment !== null && (
-          <div className="live-alignment-score"><strong>{analysis.alignment}</strong><span>% aligned</span></div>
-        )}
-      </div>
-      <div className="live-player-summaries">
-        {analysis.summaries.map((summary) => (
-          <article key={summary.guest_id}>
-            <strong>{summary.name || 'Participant'}</strong>
-            <p>{summary.summary}</p>
-          </article>
-        ))}
-      </div>
-      <div className="live-analysis-columns">
-        <ListBlock title="Agreed" items={analysis.agreed} />
-        <ListBlock title="Different" items={analysis.disagreed} />
-        <ListBlock title="Hidden mismatch" items={analysis.hidden_mismatches} />
-        <ListBlock title="Shared assumptions" items={analysis.assumptions} />
-      </div>
-      {analysis.confidence ? <p className="live-confidence"><strong>Confidence:</strong> {analysis.confidence}</p> : null}
-    </section>
-  );
-}
-
-function FinalReportCard({ report }: { report: FinalReport }) {
-  return (
-    <section className="live-final-card" aria-labelledby="live-final-title">
-      <div className="live-card-heading">
-        <div>
-          <span className="live-eyebrow">Final report</span>
-          <h2 id="live-final-title">Session alignment journey</h2>
-        </div>
-        <div className="live-alignment-score">
-          <strong>{report.questions_completed}</strong><span>rounds</span>
-        </div>
-      </div>
-      <p className="live-final-trend">
-        Alignment trend: {report.alignment_trend.filter((item): item is number => item !== null).join(' → ') || 'not available'}
-      </p>
-      <div className="live-final-rounds">
-        {report.rounds.map((round) => (
-          <article key={round.number}>
-            <div className="live-final-round-heading">
-              <strong>Q{round.number}</strong>
-              {round.analytics && round.analytics.alignment !== null ? <span>{round.analytics.alignment}% aligned</span> : null}
-            </div>
-            <p>{round.analytics ? round.analytics.summaries.map((summary) => `${summary.name}: ${summary.summary}`).join(' ') || 'No analysis available.' : 'No analysis available.'}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function RoomSummaryCard({ summary }: { summary: Record<string, unknown> }) {
-  const list = (key: string): string[] => (Array.isArray(summary[key]) ? (summary[key] as string[]) : []);
-  return (
-    <section className="live-final-card" aria-labelledby="live-room-summary-title">
-      <div className="live-card-heading">
-        <div>
-          <span className="live-eyebrow">Room summary</span>
-          <h2 id="live-room-summary-title">Final alignment</h2>
-        </div>
-      </div>
-      <div className="live-analysis-columns">
-        <ListBlock title="Agreements" items={list('agreements')} />
-        <ListBlock title="Disagreements" items={list('disagreements')} />
-        <ListBlock title="Open points" items={list('open_points')} />
-      </div>
-    </section>
-  );
-}
-
-/** Real participant session view backed by the server session state. */
+/** Real participant and operator session view backed by server state and Supabase realtime. */
 export function LiveSessionPage({ code }: { code: string }) {
   const { showToast } = useToast();
   const [selfId] = useState(() => getGuestId());
@@ -221,10 +115,42 @@ export function LiveSessionPage({ code }: { code: string }) {
     };
   }, [load]);
 
+  useEffect(() => {
+    const supabase = getBrowserSupabase();
+    if (!supabase || !code) return;
+    const channel = supabase.channel(`session:${code}`, {
+      config: { broadcast: { self: false } },
+    });
+    channel
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${code}` }, () => {
+        void load();
+      })
+      .on('broadcast', { event: 'answer_submitted' }, () => {
+        void load();
+      })
+      .on('broadcast', { event: 'session_update' }, () => {
+        void load();
+      })
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [code, load]);
+
   const active = snapshot?.current ?? null;
   const remaining = active?.deadline_at ? secondsLeft(active.deadline_at, clock) : active?.seconds_left ?? null;
-  const isOperatorView = snapshot?.operator?.guest_id === selfId;
-  const canAnswer = Boolean(active && remaining !== null && remaining > 0 && !busy && !isOperatorView);
+  const isOperator = snapshot?.operator?.guest_id === selfId;
+  const isRoundClosed = remaining !== null && remaining <= 0;
+  const canAnswer = Boolean(active && remaining !== null && remaining > 0 && !busy && !isOperator);
+
+  const expiredRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (active && remaining !== null && remaining <= 0 && expiredRef.current !== active.number) {
+      expiredRef.current = active.number;
+      void load();
+    }
+  }, [active, remaining, load]);
 
   const setAnswerDraft = useCallback((value: string) => {
     draftDirtyRef.current = true;
@@ -242,6 +168,17 @@ export function LiveSessionPage({ code }: { code: string }) {
       await sessionPost(code, 'answers', { guest_id: selfId, number: active.number, body: draftRef.current });
       draftDirtyRef.current = false;
       await load();
+
+      const supabase = getBrowserSupabase();
+      if (supabase) {
+        const channel = supabase.channel(`session:${code}`);
+        void channel.send({
+          type: 'broadcast',
+          event: 'answer_submitted',
+          payload: { guest_id: selfId, number: active.number },
+        });
+      }
+
       return { question: active.number, saved: true };
     } finally {
       setBusy(false);
@@ -258,19 +195,35 @@ export function LiveSessionPage({ code }: { code: string }) {
   }, [showToast, submitAnswer]);
 
   const latestAnalysis = snapshot?.analytics.at(-1) ?? null;
-  const isOperator = isOperatorView;
+  const summaryClosesAt = latestAnalysis?.closes_at ? new Date(latestAnalysis.closes_at).getTime() : null;
+  const summarySecondsLeft = summaryClosesAt ? Math.max(0, Math.ceil((summaryClosesAt - clock) / 1000)) : null;
+  const isShowingSummary = Boolean(
+    latestAnalysis &&
+    !active &&
+    (summarySecondsLeft === null || summarySecondsLeft > 0) &&
+    snapshot?.room.status !== 'completed' &&
+    snapshot?.room.status !== 'waiting'
+  );
   const status = snapshot?.room.status ?? 'waiting';
   const roomTimer = durationLabel(secondsElapsed(snapshot?.room.timer_started_at, snapshot?.room.timer_ended_at, clock));
   const deadlineTimer = active?.deadline_at ? clockLabel(remaining) : null;
-  const alignmentTrend = snapshot?.final?.alignment_trend.filter((item): item is number => item !== null) ?? [];
-  const alignmentTrendLabel = alignmentTrend.length > 0 ? alignmentTrend.join(' → ') : 'not available';
   const latestSuggest = snapshot?.suggests?.at(-1) ?? null;
+  const suggestRemaining = latestSuggest?.deadline_at ? secondsLeft(latestSuggest.deadline_at, clock) : null;
+  const isSuggestActive = Boolean(latestSuggest && !active && !isShowingSummary && status !== 'completed' && status !== 'waiting');
   const mySuggestResponse = latestSuggest
     ? snapshot?.suggest_responses?.find((r) => r.suggest_number === latestSuggest.number && r.guest_id === selfId) ?? null
     : null;
 
-  const submitSuggest = async (event: React.SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const headerDeadline = active
+    ? deadlineTimer
+    : isShowingSummary && summarySecondsLeft !== null
+    ? clockLabel(summarySecondsLeft)
+    : isSuggestActive && suggestRemaining !== null
+    ? clockLabel(suggestRemaining)
+    : null;
+  const headerDeadlineLabel = isShowingSummary ? 'Summary' : 'Deadline';
+
+  const submitSuggest = async () => {
     if (!latestSuggest || !suggestDraft.trim() || suggestBusy) return;
     setSuggestBusy(true);
     try {
@@ -286,79 +239,98 @@ export function LiveSessionPage({ code }: { code: string }) {
   };
 
   return (
-    <div className="live-session-page">
-      <SessionHeader roomTimer={roomTimer} deadlineTimer={deadlineTimer} />
-      <main className="live-session-shell" id="live-session-shell">
-        {loading && !snapshot ? <div className="live-state-card">Loading session…</div> : null}
-        {error && !snapshot ? <div className="live-state-card live-state-error" role="alert">{error}</div> : null}
-        {snapshot ? (
-          <>
-            <header className="live-session-heading">
-              <span className={`live-status-pill is-${status}`}>{status === 'answering' ? 'Live session' : status}</span>
-              <h1>{snapshot.room.name}</h1>
-              <p>{snapshot.room.topic || 'Alignment session'} <span aria-hidden="true">·</span> {snapshot.players.length} participants</p>
-            </header>
+    <div className={`page-root viewport-fit-page session-body${isShowingSummary ? ' comparison-body' : ''}`}>
+      <SessionHeader
+        roomTimer={roomTimer}
+        deadlineTimer={headerDeadline}
+        deadlineLabel={headerDeadlineLabel}
+        participantCount={snapshot?.players.length ?? 0}
+      />
+      {isShowingSummary && latestAnalysis && snapshot ? (
+        <LiveQuestionSummaryStage
+          analysis={latestAnalysis}
+          snapshot={snapshot}
+          selfId={selfId}
+          secondsLeft={summarySecondsLeft}
+        />
+      ) : (
+        <main className="session-canvas-wrapper" id="session-canvas-wrapper">
+          {loading && !snapshot ? <div className="live-state-card">Loading session…</div> : null}
+          {error && !snapshot ? <div className="live-state-card live-state-error" role="alert">{error}</div> : null}
+          {snapshot ? (
+            <>
+              {!active && !isShowingSummary && !isSuggestActive && (
+                <header className="live-session-heading">
+                  <span className={`live-status-pill is-${status}`}>{status === 'answering' ? 'Live session' : status}</span>
+                  <h1>{snapshot.room.name}</h1>
+                  <p>{snapshot.room.topic || 'Alignment session'} <span aria-hidden="true">·</span> {snapshot.players.length} participants</p>
+                </header>
+              )}
 
-            {status === 'completed' && snapshot.final ? <FinalReportCard report={snapshot.final} /> : null}
-            {status === 'completed' && snapshot.room_summary?.available && snapshot.room_summary.summary
-              ? <RoomSummaryCard summary={snapshot.room_summary.summary} />
-              : null}
-            {latestAnalysis && status !== 'waiting' && status !== 'completed' ? <AnalysisCard analysis={latestAnalysis} /> : null}
+              {status === 'completed' && snapshot.final ? <FinalReportCard report={snapshot.final} /> : null}
+              {status === 'completed' && snapshot.room_summary?.available && snapshot.room_summary.summary
+                ? <RoomSummaryCard summary={snapshot.room_summary.summary} />
+                : null}
 
-            {latestSuggest && status !== 'completed' && status !== 'waiting' ? (
-              <section className="live-question-card" aria-labelledby="live-suggest-title">
-                <div className="live-question-meta">
-                  <span>Suggest question {latestSuggest.number}</span>
-                  <span>{mySuggestResponse ? 'answered' : 'awaiting your input'}</span>
-                </div>
-                <h2 id="live-suggest-title">{latestSuggest.text}</h2>
-                <form onSubmit={(event) => { void submitSuggest(event); }}>
-                  <textarea
-                    id="participant-suggest-input"
-                    aria-label="Write your suggestion"
-                    placeholder="Any suggested follow-up question?"
-                    value={mySuggestResponse?.body ?? suggestDraft}
-                    disabled={Boolean(mySuggestResponse) || suggestBusy}
-                    onChange={(event) => { setSuggestDraft(event.target.value); }}
-                  />
-                  <div className="live-question-footer">
-                    <span>Suggestion for the agent</span>
-                    <button type="submit" disabled={Boolean(mySuggestResponse) || suggestBusy || !suggestDraft.trim()}>
-                      {suggestBusy ? 'Sending…' : mySuggestResponse ? 'Sent' : 'Send Suggestion'} <span aria-hidden="true">→</span>
-                    </button>
-                  </div>
-                </form>
-              </section>
-            ) : null}
+              {isSuggestActive && latestSuggest ? (
+                <SessionQuestionStage
+                  questionNumber={latestSuggest.number}
+                  questionText={latestSuggest.text}
+                  answer={isOperator ? '' : (mySuggestResponse?.body ?? suggestDraft)}
+                  operator={isOperator}
+                  disabled={isOperator ? false : Boolean(mySuggestResponse)}
+                  busy={suggestBusy}
+                  submittedCount={snapshot.suggest_responses?.filter((r) => r.suggest_number === latestSuggest.number).length ?? 0}
+                  participantCount={snapshot.players.length}
+                  players={snapshot.players}
+                  submittedIds={snapshot.suggest_responses?.filter((r) => r.suggest_number === latestSuggest.number).map((r) => r.guest_id) ?? []}
+                  selfId={selfId}
+                  badgeLabel="Milestone Suggestion & Continuation"
+                  subPrompt="Weigh in on whether to stop or continue the session, and add/weight any suggested questions."
+                  placeholder="Do you want to wrap up or continue? Suggest or weigh in on the next questions..."
+                  submitLabel="Send Suggestion"
+                  onAnswerChange={setSuggestDraft}
+                  onSubmit={submitSuggest}
+                />
+              ) : null}
 
-            {active ? (
-              <SessionQuestionStage
-                questionNumber={active.number}
-                questionText={active.text}
-                answer={isOperator ? '' : draft}
-                operator={isOperator}
-                disabled={isOperator || !canAnswer}
-                busy={busy}
-                submittedCount={active.submitted.length}
-                participantCount={snapshot.players.length}
-                onAnswerChange={setAnswerDraft}
-                onSubmit={submitQuestion}
-              />
-            ) : (
-              <section className="live-state-card" aria-live="polite">
-                {status === 'waiting' ? <><h2>Waiting for the session to start</h2><p>The agent will publish the first question when everyone is ready.</p></> : null}
-                {status === 'answering' ? <><h2>Agent is preparing the next question</h2><p>Your saved answers are safe. The next round will appear here automatically.</p></> : null}
-                {status === 'analyzing' ? <><h2>Agent is analyzing the round</h2><p>The next question will appear after the analysis is published.</p></> : null}
-                {status === 'finalization' ? <><h2>Session is being finalized</h2><p>The agent is writing the final room summary.</p></> : null}
-                {status === 'completed' ? <><h2>Session complete</h2><p>The final report is ready. Alignment trend: {alignmentTrendLabel}.</p></> : null}
-              </section>
-            )}
+              {active ? (
+                <SessionQuestionStage
+                  questionNumber={active.number}
+                  questionText={active.text}
+                  answer={isOperator ? '' : draft}
+                  operator={isOperator}
+                  disabled={isOperator ? isRoundClosed : !canAnswer}
+                  busy={busy}
+                  submittedCount={active.submitted.length}
+                  participantCount={snapshot.players.length}
+                  players={snapshot.players}
+                  submittedIds={active.submitted}
+                  selfId={selfId}
+                  onAnswerChange={setAnswerDraft}
+                  onSubmit={submitQuestion}
+                />
+              ) : !isSuggestActive && status !== 'completed' ? (
+                <section className="live-state-card" aria-live="polite">
+                  {status === 'waiting' ? <><h2>Waiting for the session to start</h2><p>The agent will publish the first question when everyone is ready.</p></> : null}
+                  {status === 'answering' ? <><h2>Agent is preparing the next question</h2><p>Your saved answers are safe. The next round will appear here automatically.</p></> : null}
+                  {status === 'analyzing' ? <><h2>Agent is analyzing the round</h2><p>The next question will appear after the analysis is published.</p></> : null}
+                  {status === 'finalization' ? <><h2>Session is being finalized</h2><p>The agent is writing the final room summary.</p></> : null}
+                </section>
+              ) : null}
 
-            {error ? <p className="live-inline-error" role="status">{error}</p> : null}
-          </>
-        ) : null}
-      </main>
-      {snapshot ? <SessionQuestionTransition status={status} hasActiveQuestion={active !== null} /> : null}
+              {error ? <p className="live-inline-error" role="status">{error}</p> : null}
+            </>
+          ) : null}
+        </main>
+      )}
+      {snapshot ? (
+        <SessionQuestionTransition
+          status={status}
+          hasActiveQuestion={active !== null}
+          hasSummary={isShowingSummary}
+        />
+      ) : null}
       {snapshot ? (
         <SessionWebMCPBridge
           code={code}
