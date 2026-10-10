@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServiceSupabase } from '@/lib/supabaseServer';
-import { bad, findRoomByCode } from '@/lib/waitingServer';
+import { bad, findRoomByCode, guestIdOf, ipHashOf } from '@/lib/waitingServer';
 
 /** Public room lookup for join-code validation. */
-export async function GET(_request: Request, { params }: { params: Promise<{ code: string }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
   let room;
   try {
@@ -14,6 +14,21 @@ export async function GET(_request: Request, { params }: { params: Promise<{ cod
   if (!room) return bad('Room not found.', 404);
 
   const supabase = getServiceSupabase();
+  const guestId = guestIdOf(new URL(request.url).searchParams.get('guest_id'));
+  if (guestId) {
+    const banClauses = [`guest_id.eq.${guestId}`];
+    const ipHash = ipHashOf(request);
+    if (ipHash) banClauses.push(`ip_hash.eq.${ipHash}`);
+    const { data: ban } = await supabase
+      .from('room_bans')
+      .select('id')
+      .eq('room_id', room.id)
+      .or(banClauses.join(','))
+      .maybeSingle();
+    if (ban) {
+      return bad('You have been removed from this room and cannot rejoin.', 403);
+    }
+  }
   const { data: active } = await supabase
     .from('room_members')
     .select('is_operator')

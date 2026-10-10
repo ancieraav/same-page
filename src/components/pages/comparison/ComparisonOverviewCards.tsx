@@ -1,25 +1,45 @@
-interface ComparisonOverviewCardsProps {
+export interface ComparisonOverviewCardsProps {
   summaryOpen: boolean;
   onToggleSummary: () => void;
+  alignment?: number | null | undefined;
+  userAlignment?: number | null | undefined;
+  consensusSummary?: string | undefined;
+  sharedNorthStar?: string | undefined;
+  divergencePoint?: string | undefined;
 }
 
 export function ComparisonOverviewCards({
   summaryOpen,
   onToggleSummary,
+  alignment,
+  userAlignment,
+  consensusSummary,
+  sharedNorthStar,
+  divergencePoint,
 }: ComparisonOverviewCardsProps) {
+  const score = typeof alignment === 'number' ? alignment : 78;
+  const userScore = typeof userAlignment === 'number' ? userAlignment : typeof alignment === 'number' ? alignment : 84;
+  const toneClass = score >= 75 ? 'tone-positive' : score >= 50 ? 'tone-indigo' : 'tone-warning';
+  const toneLabel = score >= 75 ? 'Strong Consensus' : score >= 50 ? 'Moderate Consensus' : 'Divergent Views';
+  const userToneLabel = userScore >= 75 ? 'Strong Alignment' : userScore >= 50 ? 'Above Average' : 'Needs Discussion';
+
+  const previewText = consensusSummary ?? 'The group perspectives have been analyzed across key trade-offs, core priorities, and operational assumptions for this question.';
+  const northStar = sharedNorthStar ?? 'All participants converge on foundational strategic outcomes and delivering core value.';
+  const divergence = divergencePoint ?? 'Minor variances in tactical timing or sequencing were noted between participants.';
+
   return (
     <section className="alignment-overview-grid">
       <div className="alignment-metric-card">
         <div className="metric-card-header">
           <span className="metric-label">Overall Alignment</span>
-          <span className="metric-badge-pill tone-positive">Strong Consensus</span>
+          <span className={`metric-badge-pill ${toneClass}`}>{toneLabel}</span>
         </div>
         <div className="metric-value-row">
           <span className="metric-score-giant">
-            78<span className="metric-score-percent">%</span>
+            {score}<span className="metric-score-percent">%</span>
           </span>
           <div className="metric-progress-wrapper">
-            <div className="curved-progress-container" title="78% Team Alignment">
+            <div className="curved-progress-container" title={`${String(score)}% Team Alignment`}>
               <svg className="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gradient-scurve-team" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -42,25 +62,25 @@ export function ComparisonOverviewCards({
                   strokeLinecap="round"
                   pathLength="100"
                   strokeDasharray="100"
-                  strokeDashoffset="22"
+                  strokeDashoffset={Math.max(0, Math.min(100, 100 - score))}
                 />
               </svg>
             </div>
-            <span className="metric-sub-detail">Both perspectives share core assumptions</span>
+            <span className="metric-sub-detail">Shared assumptions & consensus score</span>
           </div>
         </div>
       </div>
       <div className="alignment-metric-card">
         <div className="metric-card-header">
           <span className="metric-label">Your Alignment Score</span>
-          <span className="metric-badge-pill tone-indigo">Above Average</span>
+          <span className="metric-badge-pill tone-indigo">{userToneLabel}</span>
         </div>
         <div className="metric-value-row">
           <span className="metric-score-giant text-indigo">
-            84<span className="metric-score-percent">%</span>
+            {userScore}<span className="metric-score-percent">%</span>
           </span>
           <div className="metric-progress-wrapper">
-            <div className="curved-progress-container" title="84% Personal Alignment">
+            <div className="curved-progress-container" title={`${String(userScore)}% Personal Alignment`}>
               <svg className="curved-progress-svg" viewBox="0 0 220 30" fill="none" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="gradient-scurve-self" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -83,11 +103,11 @@ export function ComparisonOverviewCards({
                   strokeLinecap="round"
                   pathLength="100"
                   strokeDasharray="100"
-                  strokeDashoffset="16"
+                  strokeDashoffset={Math.max(0, Math.min(100, 100 - userScore))}
                 />
               </svg>
             </div>
-            <span className="metric-sub-detail text-indigo">+6% vs general room benchmark</span>
+            <span className="metric-sub-detail text-indigo">Personal resonance with room outcome</span>
           </div>
         </div>
       </div>
@@ -124,15 +144,15 @@ export function ComparisonOverviewCards({
         </div>
         <div className="summary-body-content">
           <p className="summary-preview-paragraph" id="summary-preview">
-            The pair broadly agrees on prioritizing conversion retention and funnel latency over aesthetic revamps. While Alex leans on refining input validation, you both align on hardening the core checkout loop before launching new initiatives.
+            {previewText}
           </p>
           <div className={`summary-extended-drawer${summaryOpen ? ' is-open' : ''}`} id="summary-extended-drawer">
             <div className="summary-extended-inner" id="summary-extended-content">
               <p>
-                <strong>Shared North Star:</strong> Both of you directly identified database throughput and zero checkout regressions as non-negotiable for success.
+                <strong>Shared North Star:</strong> {northStar}
               </p>
               <p>
-                <strong>Divergence Point:</strong> Alex favors shipping polish this sprint, whereas you insist on freezing cosmetic revisions until load testing passes.
+                <strong>Divergence Point:</strong> {divergence}
               </p>
             </div>
           </div>

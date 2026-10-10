@@ -205,25 +205,25 @@ export function useCreateRoomState() {
     return null;
   };
 
-  const launchRoom = () => {
+  const launchRoom = async (): Promise<{ ok: boolean; code?: string; error?: string }> => {
     if (!name.trim()) {
       showToast('Please provide a room name.', 'error');
-      return;
+      return { ok: false, error: 'Please provide a room name.' };
     }
     // REVIVE: group/role/SOT validation (hidden in PAIR_MODE).
     if (useGroups && !PAIR_MODE) {
       if (groups.length === 0) {
         showToast('Please add at least one group or turn groups off.', 'error');
-        return;
+        return { ok: false, error: 'Please add at least one group or turn groups off.' };
       }
       const invalid = groups.find((group) => group.roles.length < 2);
       if (invalid) {
         showToast(`Group "${invalid.name}" must have at least 2 roles.`, 'error');
-        return;
+        return { ok: false, error: `Group "${invalid.name}" must have at least 2 roles.` };
       }
       if (!groups.some((group) => group.isSourceOfTruth)) {
         showToast('Please mark one group as Source of Truth.', 'error');
-        return;
+        return { ok: false, error: 'Please mark one group as Source of Truth.' };
       }
     }
 
@@ -241,19 +241,19 @@ export function useCreateRoomState() {
       isImage: item.isImage,
     }));
 
-    // PAIR_MODE: single-code room (no per-group/role codes).
-    // REVIVE: remove this block when groups & roles return.
-    const create = async () => {
+    try {
       const response = await fetch('/api/rooms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: roomName, topic: roomTopic, notes, guest_id: guestId, attachments: attachmentsMeta }),
+        signal: AbortSignal.timeout(15000),
       });
       const payload = (await response.json().catch(() => null)) as { code?: unknown; error?: unknown } | null;
       if (!response.ok || typeof payload?.code !== 'string') {
-        showToast(typeof payload?.error === 'string' ? payload.error : 'Could not create the room. Please retry.', 'error');
+        const err = typeof payload?.error === 'string' ? payload.error : 'Could not create the room. Please retry.';
+        showToast(err, 'error');
         setBusy(false);
-        return;
+        return { ok: false, error: err };
       }
       const code = payload.code;
       let persistedAttachments = attachmentsMeta;
@@ -265,6 +265,7 @@ export function useCreateRoomState() {
         const uploadResponse = await fetch(`/api/rooms/${encodeURIComponent(code)}/attachments`, {
           method: 'POST',
           body: uploadForm,
+          signal: AbortSignal.timeout(30000),
         });
         const uploadPayload = (await uploadResponse.json().catch(() => null)) as {
           attachments?: unknown;
@@ -273,7 +274,7 @@ export function useCreateRoomState() {
         if (!uploadResponse.ok || !Array.isArray(uploadPayload?.attachments)) {
           showToast(typeof uploadPayload?.error === 'string' ? uploadPayload.error : 'Could not upload room attachments.', 'error');
           setBusy(false);
-          return;
+          return { ok: false, error: 'Could not upload room attachments.' };
         }
         persistedAttachments = uploadPayload.attachments as typeof attachmentsMeta;
       }
@@ -311,11 +312,12 @@ export function useCreateRoomState() {
       showToast('Room created! Set up your host profile.');
       // Host sets name + photo next (same identity form as joiners, different wording).
       router.push(`/join?code=${encodeURIComponent(code)}&as=host`);
-    };
-    void create().catch(() => {
+      return { ok: true, code };
+    } catch {
       showToast('Could not create the room. Please retry.', 'error');
       setBusy(false);
-    });
+      return { ok: false, error: 'Could not create the room. Please retry.' };
+    }
   };
 
   const currentGroupQuery = newGroup.trim().toLowerCase();

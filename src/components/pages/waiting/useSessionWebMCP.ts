@@ -65,7 +65,12 @@ export function useSessionWebMCP(options: SessionWebMCPOptions) {
       ? roleTools.map((tool) => tool.name === 'start_session' ? tool : withWaitingGate(tool, getStatus))
       : roleTools;
     const waitingTools = phase === 'waiting'
-      ? sessionToolsWaiting(getBindings).filter((tool) => isOperator || tool.name !== 'kick_participant')
+      ? sessionToolsWaiting(getBindings).filter((tool) => {
+          if (isOperator) {
+            return tool.name !== 'modify_ready' && tool.name !== 'get_ready';
+          }
+          return tool.name !== 'kick_participant';
+        })
       : [];
     const tools: WebMCPTool[] = [
       ...waitingTools,

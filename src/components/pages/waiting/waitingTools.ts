@@ -170,5 +170,79 @@ export function sessionToolsWaiting(bindings: () => SessionToolsBindings): WebMC
         return JSON.stringify({ kicked: true, removed: typeof payload?.removed === 'string' ? payload.removed : targetId });
       },
     },
+    {
+      name: 'list_participant_ready',
+      description: 'List players currently in the waiting room and their ready status.',
+      inputSchema: emptySchema(),
+      annotations: { readOnlyHint: true },
+      execute: async () => {
+        const { code, guestId } = call();
+        const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/state?guest_id=${encodeURIComponent(guestId)}`);
+        const payload = (await response.json().catch(() => null)) as { members?: StateMember[]; error?: unknown } | null;
+        if (!response.ok || !payload) {
+          throw new Error(typeof payload?.error === 'string' ? payload.error : 'Could not list participant ready status.');
+        }
+        const members = Array.isArray(payload.members) ? payload.members : [];
+        const players = members.filter((m) => m.is_operator !== true);
+        const readyCount = players.filter((m) => m.ready === true).length;
+        return JSON.stringify({
+          total_players: players.length,
+          ready_count: readyCount,
+          all_ready: players.length > 0 && readyCount === players.length,
+          participants: players.map((p) => ({
+            guest_id: typeof p.guest_id === 'string' ? p.guest_id : null,
+            name: typeof p.name === 'string' ? p.name : 'Joining…',
+            ready: p.ready === true,
+            online: p.online !== false,
+          })),
+        });
+      },
+    },
+    {
+      name: 'get_ready',
+      description: 'Player only: check your current ready status in the waiting room.',
+      inputSchema: emptySchema(),
+      annotations: { readOnlyHint: true },
+      execute: async () => {
+        const { code, guestId } = call();
+        const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/state?guest_id=${encodeURIComponent(guestId)}`);
+        const payload = (await response.json().catch(() => null)) as { members?: StateMember[]; error?: unknown } | null;
+        if (!response.ok || !payload) {
+          throw new Error(typeof payload?.error === 'string' ? payload.error : 'Could not check ready status.');
+        }
+        const members = Array.isArray(payload.members) ? payload.members : [];
+        const me = members.find((m) => m.guest_id === guestId);
+        return JSON.stringify({
+          ready: me?.ready === true,
+          is_operator: me?.is_operator === true,
+          name: typeof me?.name === 'string' ? me.name : null,
+          guest_id: guestId,
+        });
+      },
+    },
+    {
+      name: 'modify_ready',
+      description: 'Player only: change your ready status in the waiting room. Pass "ready" boolean (default: true).',
+      inputSchema: objectSchema({
+        ready: { type: 'boolean', description: 'Ready state (true or false). Defaults to true if omitted.' },
+      }),
+      annotations: { readOnlyHint: false },
+      execute: async (args: unknown) => {
+        const { code, guestId } = call();
+        const hasReady = typeof args === 'object' && args !== null && 'ready' in args;
+        const nextReady = hasReady ? (args as Record<string, unknown>)['ready'] !== false : true;
+        const response = await fetch(`/api/rooms/${encodeURIComponent(code)}/ready`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ guest_id: guestId, ready: nextReady }),
+        });
+        const payload = (await response.json().catch(() => null)) as { ready?: unknown; error?: unknown } | null;
+        if (!response.ok) {
+          throw new Error(typeof payload?.error === 'string' ? payload.error : 'Could not update ready status.');
+        }
+        bindings().setPlayerReady?.(nextReady);
+        return JSON.stringify({ ready: payload?.ready === true });
+      },
+    },
   ];
 }

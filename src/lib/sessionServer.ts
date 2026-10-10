@@ -4,6 +4,7 @@ import { QUESTION_STATUS, SESSION_STATUS, buildWorkflow, type WorkflowInfo } fro
 export interface SessionMemberRow {
   guest_id: string;
   name: string;
+  avatar_url?: string | null;
   is_operator: boolean;
   ready: boolean;
   joined_at: string;
@@ -38,7 +39,7 @@ export async function getSessionMembers(roomId: string): Promise<SessionMemberRo
   const supabase = getServiceSupabase();
   const { data } = await supabase
     .from('room_members')
-    .select('guest_id, name, is_operator, ready, joined_at')
+    .select('guest_id, name, avatar_url, is_operator, ready, joined_at')
     .eq('room_id', roomId)
     .is('left_at', null)
     .order('joined_at', { ascending: true });
@@ -46,6 +47,7 @@ export async function getSessionMembers(roomId: string): Promise<SessionMemberRo
   return data.map((member) => ({
     guest_id: member.guest_id as string,
     name: (member.name as string | null) ?? '',
+    avatar_url: (member.avatar_url as string | null) ?? null,
     is_operator: member.is_operator === true,
     ready: member.ready === true,
     joined_at: member.joined_at as string,

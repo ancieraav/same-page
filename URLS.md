@@ -117,3 +117,31 @@ file:///home/vert/Documents/Codes/Quarthar/same-page/redesigns/archive/profile.h
 /home/vert/Documents/Codes/Quarthar/same-page/redesigns/archive/styles.css
 /home/vert/Documents/Codes/Quarthar/same-page/redesigns/archive/app.js
 ```
+
+---
+
+## 4. UI Debug Pages (Next.js — Gated by NEXT_PUBLIC_DEBUG_MODE=true)
+
+These pages are designed to inspect the authentic UI in isolation without requiring an active Supabase room. Only accessible when `NEXT_PUBLIC_DEBUG_MODE=true` in `.env` (returns 404 if disabled).
+
+```text
+Debug Hub:
+http://localhost:3001/debug
+
+1. Agent Thinking Page:
+http://localhost:3001/debug/agent-thinking
+(Alias: http://localhost:3001/debug/thinking)
+
+2. Timer Page:
+http://localhost:3001/debug/timer
+
+3. Question Stage Page:
+http://localhost:3001/debug/question
+
+4. Question Summary Page:
+http://localhost:3001/debug/question-summary
+
+5. Room Summary Page:
+http://localhost:3001/debug/room-summary
+```
+

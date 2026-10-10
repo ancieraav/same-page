@@ -56,6 +56,7 @@ function WaitingSessionTools({
     isOperator: () => live?.amOperator === true,
     getStatus: () => live?.status ?? 'waiting',
     goHome,
+    setPlayerReady: live ? live.setPlayerReady : undefined,
     phase: 'waiting',
     watchKey: `${live?.amOperator === true ? 'op' : 'player'}:${live?.status ?? 'loading'}`,
   });

@@ -175,7 +175,7 @@ export function buildWorkflow(input: WorkflowInput): WorkflowInfo {
   if (input.completedCount > 0 && input.completedCount % SUGGEST_EVERY === 0 && input.suggestsSent < milestones) {
     return {
       state: 'suggest_due',
-      goal: `Ask participants whether they have a suggested question (milestone ${String(input.completedCount)}). Afterwards send the next question.`,
+      goal: `Milestone ${String(input.completedCount)} completed. Ask participants whether to stop or continue with additional questions, presenting suggested candidate questions to weigh in on. If both participants want to stop or 3 minutes expire, call stop_session and send_room_summary. If at least one participant wants to continue, call send_question_context.`,
       next_tool: 'send_suggest_question',
       completed_count: input.completedCount,
     };

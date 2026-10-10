@@ -22,6 +22,7 @@ interface SessionAnalyticsRow {
   assumptions: unknown;
   flags: unknown;
   confidence: unknown;
+  published_at?: string | null;
 }
 
 interface SummaryPayload {
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     ? await supabase.from('session_answers').select('question_id, guest_id, body, missing, updated_at').in('question_id', questionIds)
     : { data: [] as SessionAnswerRow[] };
   const { data: analyticsData } = questionIds.length > 0
-    ? await supabase.from('round_analytics').select('question_id, summaries, alignment, agreed, disagreed, hidden_mismatches, assumptions, flags, confidence').in('question_id', questionIds)
+    ? await supabase.from('round_analytics').select('question_id, summaries, alignment, agreed, disagreed, hidden_mismatches, assumptions, flags, confidence, published_at').in('question_id', questionIds)
     : { data: [] as SessionAnalyticsRow[] };
   const answerRows: SessionAnswerRow[] = Array.isArray(answerData) ? answerData : [];
   const analyticsRows: SessionAnalyticsRow[] = Array.isArray(analyticsData) ? analyticsData : [];
@@ -121,7 +122,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     now: new Date(nowMs).toISOString(),
     just_closed: closed.closed,
     operator,
-    players: players.map((player) => ({ guest_id: player.guest_id, name: player.name, ready: player.ready })),
+    players: players.map((player) => ({
+      guest_id: player.guest_id,
+      name: player.name,
+      ready: player.ready,
+      avatar_url: player.avatar_url ?? null,
+    })),
     current: active
       ? {
           number: active.number,
@@ -157,8 +163,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       })),
     analytics: [...analyticsByQuestion.values()].map((row) => {
       const question = questionById.get(row.question_id);
+      const publishedAt = typeof row.published_at === 'string' ? row.published_at : null;
+      const closesAt = publishedAt ? new Date(new Date(publishedAt).getTime() + 30_000).toISOString() : null;
+      const secondsLeft = closesAt ? Math.max(0, Math.ceil((new Date(closesAt).getTime() - nowMs) / 1000)) : null;
       return {
         question: question?.number ?? null,
+        question_text: question?.text ?? '',
         summaries: readSummaries(row.summaries).map((item) => ({ ...item, name: nameOf(item.guest_id) })),
         alignment: typeof row.alignment === 'number' ? row.alignment : null,
         agreed: readStringList(row.agreed),
@@ -167,11 +177,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         assumptions: readStringList(row.assumptions),
         flags: readStringList(row.flags),
         confidence: typeof row.confidence === 'string' ? row.confidence : '',
+        published_at: publishedAt,
+        closes_at: closesAt,
+        seconds_left: secondsLeft,
       };
     }),
     workflow,
     completed_count: completedCount,
-    suggests: suggests.map((s) => ({ number: s.number, text: s.text, created_at: s.created_at })),
+    suggests: suggests.map((s) => {
+      const deadlineAt = s.created_at ? new Date(new Date(s.created_at).getTime() + 180_000).toISOString() : null;
+      const secondsLeft = deadlineAt ? Math.max(0, Math.ceil((new Date(deadlineAt).getTime() - nowMs) / 1000)) : null;
+      return {
+        number: s.number,
+        text: s.text,
+        created_at: s.created_at,
+        deadline_at: deadlineAt,
+        seconds_left: secondsLeft,
+      };
+    }),
     suggest_responses: suggestResponses.map((r) => ({
       suggest_number: r.suggest_number,
       guest_id: r.guest_id,

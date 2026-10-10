@@ -7,6 +7,7 @@ import {
   isWebMCPSupported,
   objectSchema,
   pollExactValue,
+  readOptionalInt,
   readOptionalString,
   readRequiredInt,
   readRequiredString,
@@ -200,5 +201,15 @@ describe('exact-match guards', () => {
     expect(readRequiredInt({ number: 3 }, 'number')).toBe(3);
     expect(() => readRequiredInt({}, 'number', 'e.g. {"number": 1}')).toThrow('Provide "number" as an integer');
     expect(() => readRequiredInt({ number: 1.5 }, 'number')).toThrow('Received: {"number":1.5}');
+  });
+
+  it('reads optional integers cleanly or throws when invalid', () => {
+    expect(readOptionalInt({}, 'timeout_seconds')).toBeUndefined();
+    expect(readOptionalInt({ timeout_seconds: undefined }, 'timeout_seconds')).toBeUndefined();
+    expect(readOptionalInt({ timeout_seconds: null }, 'timeout_seconds')).toBeUndefined();
+    expect(readOptionalInt({ timeout_seconds: 0 }, 'timeout_seconds')).toBe(0);
+    expect(readOptionalInt({ timeout_seconds: 60 }, 'timeout_seconds')).toBe(60);
+    expect(() => readOptionalInt({ timeout_seconds: '60' }, 'timeout_seconds')).toThrow('must be an integer');
+    expect(() => readOptionalInt({ timeout_seconds: 4.5 }, 'timeout_seconds')).toThrow('must be an integer');
   });
 });
